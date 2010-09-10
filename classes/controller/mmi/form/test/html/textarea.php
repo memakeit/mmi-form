@@ -24,7 +24,7 @@ class Controller_MMI_Form_Test_HTML_Textarea extends Controller
 		$data = MMI_HTML4_Attributes_Textarea::get();
 		MMI_Debug::dump($data, 'html4 textarea attr');
 
-		$data = MMI_HTML5_Attributes_textarea::get();
+		$data = MMI_HTML5_Attributes_Textarea::get();
 		MMI_Debug::dump($data, 'html5 textarea attr');
 	}
 } // End Controller_MMI_Form_Test_HTML_Textarea
