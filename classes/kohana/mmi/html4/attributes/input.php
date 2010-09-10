@@ -33,19 +33,82 @@ class Kohana_MMI_HTML4_Attributes_Input
 	);
 
 	/**
+	 * @var array HTML4 inputs that support the accept attribute
+	 */
+	protected static $_attr_accept = array('file');
+
+	/**
+	 * @var array HTML4 inputs that support the alt attribute
+	 */
+	protected static $_attr_alt = array('image');
+
+	/**
+	 * @var array HTML4 inputs that support the checked attribute
+	 */
+	protected static $_attr_checked = array('checkbox', 'radio');
+
+	/**
+	 * @var array HTML4 inputs that support the disabled attribute
+	 */
+	protected static $_attr_disabled = array
+	(
+		'button',
+		'checkbox',
+		'file',
+		'image',
+		'password',
+		'radio',
+		'reset',
+		'submit',
+		'text',
+	);
+
+	/**
+	 * @var array HTML4 inputs that support the maxlength attribute
+	 */
+	protected static $_attr_maxlength = array('password', 'text');
+
+	/**
+	 * @var array HTML4 inputs that support the readonly attribute
+	 */
+	protected static $_attr_readonly = array('password', 'text');
+
+	/**
+	 * @var array HTML4 inputs that support the size attribute
+	 */
+	protected static $_attr_size = array
+	(
+		'button',
+		'checkbox',
+		'file',
+		'image',
+		'password',
+		'radio',
+		'reset',
+		'submit',
+		'text',
+	);
+
+	/**
 	 * @var array HTML4 inputs that support the src attribute
 	 */
 	protected static $_attr_src = array('image');
-//accept	attribute is only used with <input type="file">
-//alt		attribute is only used with <input type="image">
-//checked	attribute is used with <input type="checkbox"> or <input type="radio">
-//disabled	attribute will NOT work with <input type="hidden">\
-//maxlength	attribute is used with <input type="text"> or <input type="password">
-//name
-//readonly	attribute can be used with <input type="text"> or <input type="password">
-//size		attribute: for <input type="text"> and <input type="password">, the size attribute defines the number of characters that should be visible. For all other input types, size defines the width of the input field in pixels.
-//src		attribute is required with <input type="image">
-//value		attribute can NOT be used with <input type="file">
+
+	/**
+	 * @var array HTML4 inputs that support the value attribute
+	 */
+	protected static $_attr_value = array
+	(
+		'button',
+		'checkbox',
+		'hidden',
+		'image',
+		'password',
+		'radio',
+		'reset',
+		'submit',
+		'text',
+	);
 
 	/**
 	 * Get the valid HTML4 input field attributes.
@@ -58,9 +121,8 @@ class Kohana_MMI_HTML4_Attributes_Input
 		$type = strtolower(trim($type));
 		if ( ! in_array($type, self::$_types))
 		{
-			$msg = 'Invalid HTML4 input type: '.$type;
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
-			throw new Kohana_Exception($msg);
+			// Default type to text
+			$type = 'text';
 		}
 		if (isset(self::$_attributes[$type]))
 		{
@@ -69,7 +131,15 @@ class Kohana_MMI_HTML4_Attributes_Input
 
 		$attr_names = array
 		(
+			'accept',
+			'alt',
+			'checked',
+			'disabled',
+			'maxlength',
+			'readonly',
+			'size',
 			'src',
+			'value',
 		);
 		$custom = array();
 		foreach ($attr_names as $name)
@@ -83,6 +153,7 @@ class Kohana_MMI_HTML4_Attributes_Input
 		self::$_attributes[$type] = array_values(array_unique(array_merge
 		(
 			MMI_HTML4_Attributes::get(),
+			array('name', 'type'),
 			$custom
 		)));
 		return self::$_attributes[$type];

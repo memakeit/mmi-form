@@ -21,9 +21,15 @@ class Controller_MMI_Form_Test_HTML_Input extends Controller
 	 */
 	public function action_index()
 	{
-//		$data = MMI_HTML4_Attributes_Input::get();
-//		MMI_Debug::dump($data, 'html4 form attr');
+		$data = MMI_HTML4_Attributes_Input::get('hidden');
+		MMI_Debug::dump($data, 'html4 hidden attr');
+		$data = MMI_HTML4_Attributes_Input::get();
+		MMI_Debug::dump($data, 'html4 text attr');
+		$data = MMI_HTML4_Attributes_Input::get('range');
+		MMI_Debug::dump($data, 'html4 range attr');
 
+		$data = MMI_HTML5_Attributes_Input::get('hidden');
+		MMI_Debug::dead($data, 'html5 hidden attr');
 		$data = MMI_HTML5_Attributes_Input::get();
 		MMI_Debug::dump($data, 'html5 text attr');
 		$data = MMI_HTML5_Attributes_Input::get('range');
