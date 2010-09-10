@@ -28,6 +28,7 @@ class Kohana_MMI_HTML4_Attributes
 		'style',
 		'tabindex',
 		'title',
+		'xml:lang',
 	);
 
 	/**
