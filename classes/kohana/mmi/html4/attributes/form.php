@@ -34,7 +34,7 @@ class Kohana_MMI_HTML4_Attributes_Form
 	 *
 	 * @return	array
 	 */
-	public static function attributes()
+	public static function get()
 	{
 		(self::$_attributes === NULL) AND self::$_attributes = array_values(array_unique(array_merge
 		(
