@@ -23,6 +23,7 @@ class Controller_MMI_Form_Test_HTML_Events extends Controller
 	{
 		$data = MMI_HTML4_Events::get();
 		MMI_Debug::dump($data, 'html4 events');
+
 		$data = MMI_HTML5_Events::get();
 		MMI_Debug::dump($data, 'html5 events');
 	}

@@ -23,6 +23,7 @@ class Controller_MMI_Form_Test_HTML_Form extends Controller
 	{
 		$data = MMI_HTML4_Attributes_Form::get();
 		MMI_Debug::dump($data, 'html4 form attr');
+
 		$data = MMI_HTML5_Attributes_Form::get();
 		MMI_Debug::dump($data, 'html5 form attr');
 	}
