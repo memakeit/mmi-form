@@ -23,6 +23,7 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 	{
 		$settings = array
 		(
+			'_html' => '<b>sprehe</b>',
 			'_namespace' => 'mmi',
 			'_text' => 'sprehe',
 
@@ -68,6 +69,10 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 		$data = $field->render();
 		MMI_Debug::mdump($data, $type);
 
+		$type = 'textarea';
+		$field = MMI_Form_Field::factory($type, $settings);
+		$data = $field->render();
+		MMI_Debug::mdump($data, $type);
 
 //		$field->attribute('placeholder', 'Enter something!');
 //		MMI_Debug::dump($field->attribute(), 'attr');
