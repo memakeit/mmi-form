@@ -1,4 +1,4 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-echo $before.'<output'.HTML::attributes($attributes).'>'.$text.'</output>'.$after;
+echo $before.'<output'.HTML::attributes($attributes).'>'.$html.'</output>'.$after;
 
