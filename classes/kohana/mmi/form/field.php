@@ -78,28 +78,17 @@ abstract class Kohana_MMI_Form_Field
 			$options = array();
 		}
 
-		// Merge the user-s
-		$options = $this->_merge_options($options);
-		// Separate the meta data from the HTML attributes
-		foreach ($options as $name => $value)
-		{
-			if (substr($name, 0, 1) === '_')
-			{
-				$this->_meta[trim($name, '_')] = $value;
-			}
-			else
-			{
-				$this->_attributes[$name] = $value;
-			}
-		}
+		// Initialize the options
+		$this->_init_options($options);
 	}
 
 	/**
 	 * Merge the user-specified options with the config file defaults.
+	 * Initialize the meta data from the HTML attributes.
 	 *
 	 * @return  void
 	 */
-	protected function _merge_options($options)
+	protected function _init_options($options)
 	{
 		// Get the CSS class
 		$class = $this->_combine_value($options, 'class');
@@ -115,7 +104,19 @@ abstract class Kohana_MMI_Form_Field
 		{
 			$options['class'] = $class;
 		}
-		return $options;
+
+		// Separate the meta data from the HTML attributes
+		foreach ($options as $name => $value)
+		{
+			if (substr($name, 0, 1) === '_')
+			{
+				$this->_meta[trim($name, '_')] = $value;
+			}
+			else
+			{
+				$this->_attributes[$name] = $value;
+			}
+		}
 	}
 
 	/**
@@ -214,22 +215,14 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function render()
 	{
-		$meta = $this->_meta;
-
 //		$value = Arr::get($attributes, 'value', '');
 //		$this->_attributes['value'] = $value;
 
+		$meta = $this->_meta;
 		$name = Arr::get($meta, 'name');
 		$namespace = Arr::get($meta, 'namespace');
 		$this->_attributes['name'] = self::get_field_id($namespace, $name);
-
-		$parms = array
-		(
-			'after'			=> Arr::get($meta, 'after', ''),
-			'attributes'	=> $this->_clean_attributes(),
-			'before'		=> Arr::get($meta, 'before', ''),
-		);
-		return $this->_input($parms);
+		return $this->_input();
 	}
 
 	/**
@@ -255,10 +248,9 @@ abstract class Kohana_MMI_Form_Field
 	/**
 	 * Generate the HTML using a view.
 	 *
-	 * @param	array	the view parameters
 	 * @return	string
 	 */
-	protected function _input($parms = array())
+	protected function _input()
 	{
 		$path = $this->_get_view_path();
 		if (isset(self::$_view_cache[$path]))
@@ -270,6 +262,8 @@ abstract class Kohana_MMI_Form_Field
 			$view = View::factory($path);
 			self::$_view_cache[$path] = $view;
 		}
+
+		$parms = $this->_get_view_parms();
 		return $view->set($parms)->render();
 	}
 
@@ -288,6 +282,22 @@ abstract class Kohana_MMI_Form_Field
 			$file = '_input';
 		}
 		return $dir.'/'.$file;
+	}
+
+	/**
+	 * Get the view parameters.
+	 *
+	 * @return	array
+	 */
+	protected function _get_view_parms()
+	{
+		$meta = $this->_meta;
+		return array
+		(
+			'after'			=> Arr::get($meta, 'after', ''),
+			'attributes'	=> $this->_clean_attributes(),
+			'before'		=> Arr::get($meta, 'before', ''),
+		);
 	}
 
 

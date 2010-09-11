@@ -10,7 +10,7 @@
 class Kohana_MMI_Form_Field_Reset extends MMI_Form_Field
 {
 	/**
-	 * Set the field type.
+	 * Set default options.
 	 *
 	 * @param	array	an associative array of field options
 	 * @return	void
