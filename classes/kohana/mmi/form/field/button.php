@@ -39,7 +39,21 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$parms = parent::_get_view_parms();
-		$parms['text'] = Arr::get($this->_meta, 'text', Arr::get($this->_attributes, 'value', ''));
+		$parms['html'] = Arr::get($this->_meta, 'html', Arr::get($this->_attributes, 'value', ''));
 		return $parms;
+	}
+
+	/**
+	 * Get the HTML attributes allowed.
+	 *
+	 * @return	array
+	 */
+	protected function _get_allowed_attributes()
+	{
+		if ($this->_html5)
+		{
+			return MMI_HTML5_Attributes_Button::get();
+		}
+		return MMI_HTML5_Attributes_Button::get();
 	}
 } // End Kohana_MMI_Form_Field_Button

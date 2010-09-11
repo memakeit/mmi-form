@@ -232,17 +232,23 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _clean_attributes()
 	{
-		$attributes = $this->_attributes;
-		$type = Arr::get($attributes, 'type');
+		$allowed = $this->_get_allowed_attributes();
+		return array_intersect_key($this->_attributes, array_flip($allowed));
+	}
+
+	/**
+	 * Get the HTML attributes allowed.
+	 *
+	 * @return	array
+	 */
+	protected function _get_allowed_attributes()
+	{
+		$type = Arr::get($this->_attributes, 'type');
 		if ($this->_html5)
 		{
-			$allowed_attr = MMI_HTML5_Attributes_Input::get($type);
+			return MMI_HTML5_Attributes_Input::get($type);
 		}
-		else
-		{
-			$allowed_attr = MMI_HTML4_Attributes_Input::get($type);
-		}
-		return array_intersect_key($attributes, array_flip($allowed_attr));
+		return MMI_HTML4_Attributes_Input::get($type);
 	}
 
 	/**
