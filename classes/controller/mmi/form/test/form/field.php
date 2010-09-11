@@ -27,6 +27,7 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 			'_namespace' => 'mmi',
 			'_text' => 'sprehe',
 
+			'checked' => TRUE,
 			'class' => 'mmi',
 			'id' => 'test',
 			'maxlength' => 22,
@@ -35,6 +36,11 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 		);
 
 		$type = 'button';
+		$field = MMI_Form_Field::factory($type, $settings);
+		$data = $field->render();
+		MMI_Debug::mdump($data, $type);
+
+		$type = 'checkbox';
 		$field = MMI_Form_Field::factory($type, $settings);
 		$data = $field->render();
 		MMI_Debug::mdump($data, $type);

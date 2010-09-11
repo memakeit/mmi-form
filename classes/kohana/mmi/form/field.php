@@ -527,25 +527,20 @@ abstract class Kohana_MMI_Form_Field
 		return $view->set($data)->render();
 	}
 
-//	/**
-//	 * Determine if an checkbox or radio button is checked.
-//	 *
-//	 * @return  boolean
-//	 */
-//	protected function _checked()
-//	{
-//		$checked = FALSE;
-//		if (($this->_state ^ Jelly_Form::STATE_RESET) AND $_POST)
-//		{
-//			$temp = Arr::get($_POST, $this->get_form_field_id($this->model_name, $this->name));
-//			$checked = ( ! empty($temp));
-//		}
-//		else
-//		{
-//			$checked = Arr::get($this->_options_field, 'checked', FALSE);
-//		}
-//		return $checked;
-//	}
+	/**
+	 * Get the field id used in the HTML.
+	 *
+	 * @param	string	the field name
+	 * @param	string	the field namespace
+	 * @return	string
+	 */
+	public function get_field_id()
+	{
+		$name = Arr::get($this->_attributes, 'name');
+		$namespace = Arr::get($this->_meta, 'namespace');
+		return self::get_field_id($name, $namespace);
+	}
+
 
 	/**
 	 * Get the field id used in the HTML.
@@ -554,7 +549,7 @@ abstract class Kohana_MMI_Form_Field
 	 * @param	string	the field namespace
 	 * @return	string
 	 */
-	public static function get_field_id($name, $namespace = NULL )
+	public static function get_field_id($name, $namespace = NULL)
 	{
 		if (empty($namespace))
 		{
