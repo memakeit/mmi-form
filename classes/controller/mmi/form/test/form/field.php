@@ -76,6 +76,24 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 		$data = $field->render();
 		MMI_Debug::mdump($data, $type);
 
+		$type = 'select';
+		$field = MMI_Form_Field::factory($type, $settings);
+		$field
+			->add_option('value1', 'name1')
+			->clear_options()
+			->add_option('value2', 'name2')
+			->add_option('value3', array('value4' => 'name4', 'value5' => 'name5'))
+			->add_option('value100', array('value101' => 'name101', 'value102' => 'name102'))
+			->remove_option('value3')
+
+			->attribute('multiple', TRUE)
+			->attribute('size', 10)
+			->blank_option('blank!')
+			->selected('value2');
+		;
+		$data = $field->render();
+		MMI_Debug::mdump($data, $type);
+
 		$type = 'text';
 		$field = MMI_Form_Field::factory($type, $settings);
 		$data = $field->render();
@@ -83,7 +101,8 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 
 		$type = 'textarea';
 		$field = MMI_Form_Field::factory($type, $settings);
-		$field->text('TeXTArea ???');
+		$field->text('TeXTArea \' " &amp; ???');
+		$field->double_encode(FALSE);
 		$data = $field->render();
 		MMI_Debug::mdump($data, $type);
 
