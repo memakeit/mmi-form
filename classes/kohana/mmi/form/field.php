@@ -90,13 +90,19 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _init_options($options)
 	{
+		// Ensure the type is set for the meta settings
+		if (empty($options['_type']))
+		{
+			$options['_type'] = Arr::get($options, 'type', 'text');
+		}
+
 		// Get the CSS class
 		$class = $this->_combine_value($options, 'class');
 
 		// Merge the options
 		$config = self::get_config();
 		$defaults = $config->get('_defaults', array());
-		$type_specific = $config->get($options['type'], array());
+		$type_specific = $config->get($options['_type'], array());
 		$options = array_merge($defaults, $type_specific, $options);
 
 		// Set the CSS class
@@ -132,7 +138,7 @@ abstract class Kohana_MMI_Form_Field
 	{
 		$config = self::get_config();
 		$defaults = $config->get('_defaults', array());
-		$type_specific = $config->get($options['type'], array());
+		$type_specific = $config->get($options['_type'], array());
 		$value =
 			Arr::get($defaults, $name, '').' '.
 			Arr::get($type_specific, $name, '').' '.
@@ -247,7 +253,7 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _get_allowed_attributes()
 	{
-		$type = Arr::get($this->_attributes, 'type');
+		$type = Arr::get($this->_meta, 'type');
 		if ($this->_html5)
 		{
 			return MMI_HTML5_Attributes_Input::get($type);
@@ -285,7 +291,7 @@ abstract class Kohana_MMI_Form_Field
 	protected function _get_view_path()
 	{
 		$dir = 'mmi/form/field';
-		$file = $this->_attributes['type'];
+		$file = Arr::get($this->_meta, 'type', '_input');
 		if ( ! Kohana::find_file('views/'.$dir, $file))
 		{
 			// Use the default view if the type-specific view is not found
@@ -347,7 +353,7 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function reset()
 	{
-		$type = $this->_attributes['type'];
+		$type = Arr::get($this->_meta, 'type');
 		if ( ! in_array($type, array('checkbox', 'radio')))
 		{
 			$this->value = (is_null($this->default)) ? '' : ($this->default);
@@ -618,7 +624,7 @@ abstract class Kohana_MMI_Form_Field
 		if (is_array($options) AND count($options) > 0)
 		{
 			$choices = Arr::get($options, '_choices');
-			$temp = Arr::get($options, 'type');
+			$temp = Arr::get($options, '_type', Arr::get($options, 'type'));
 			if ( ! empty($temp))
 			{
 				$type = strtolower(trim($temp));
