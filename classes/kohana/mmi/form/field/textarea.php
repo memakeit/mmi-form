@@ -80,6 +80,6 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 		{
 			return MMI_HTML5_Attributes_Textarea::get();
 		}
-		return MMI_HTML5_Attributes_Textarea::get();
+		return MMI_HTML4_Attributes_Textarea::get();
 	}
 } // End Kohana_MMI_Form_Field_Textarea

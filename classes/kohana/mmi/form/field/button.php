@@ -69,6 +69,6 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 		{
 			return MMI_HTML5_Attributes_Button::get();
 		}
-		return MMI_HTML5_Attributes_Button::get();
+		return MMI_HTML4_Attributes_Button::get();
 	}
 } // End Kohana_MMI_Form_Field_Button

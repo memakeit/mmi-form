@@ -173,6 +173,6 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 		{
 			return MMI_HTML5_Attributes_Select::get();
 		}
-		return MMI_HTML5_Attributes_Select::get();
+		return MMI_HTML4_Attributes_Select::get();
 	}
 } // End Kohana_MMI_Form_Field_Select
