@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Button button.
+ * Button.
  *
  * @package		MMI Form
  * @author		Me Make It
@@ -29,6 +29,21 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 			$options['_order'] = array(MMI_Form::ORDER_FIELD);
 		}
 		parent::__construct($options);
+	}
+
+	/**
+	 * Set the HTML to be displayed between the button tags.
+	 *
+	 * @param	string	the HTML
+	 * @return	mixed
+	 */
+	public function html($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			return $this->meta('html');
+		}
+		return $this->meta('html', $value);
 	}
 
 	/**

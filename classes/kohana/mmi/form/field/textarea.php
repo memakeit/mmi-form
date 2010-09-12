@@ -26,6 +26,21 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 	}
 
 	/**
+	 * Set the text to be displayed between the textarea tags.
+	 *
+	 * @param	string	the text
+	 * @return	mixed
+	 */
+	public function text($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			return $this->meta('text');
+		}
+		return $this->meta('text', $value);
+	}
+
+	/**
 	 * Get the view parameters.
 	 *
 	 * @return	array

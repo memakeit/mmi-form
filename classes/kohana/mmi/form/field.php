@@ -528,13 +528,11 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
-	 * Get the field id used in the HTML.
+	 * Get the field id.
 	 *
-	 * @param	string	the field name
-	 * @param	string	the field namespace
 	 * @return	string
 	 */
-	public function get_field_id()
+	public function get_id()
 	{
 		$name = Arr::get($this->_attributes, 'name');
 		$namespace = Arr::get($this->_meta, 'namespace');

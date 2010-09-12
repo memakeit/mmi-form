@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Checkbox field.
+ * Checkbox.
  *
  * @package		MMI Form
  * @author		Me Make It
@@ -47,7 +47,7 @@ class Kohana_MMI_Form_Field_Checkbox extends MMI_Form_Field
 		$checked = FALSE;
 		if ($_POST AND ($this->_state ^ MMI_Form::STATE_RESET))
 		{
-			$temp = Arr::get($_POST, $this->get_field_id());
+			$temp = Arr::get($_POST, $this->get_id());
 			$checked = ( ! empty($temp));
 		}
 		else
