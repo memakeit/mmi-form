@@ -37,6 +37,7 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 
 		$type = 'button';
 		$field = MMI_Form_Field::factory($type, $settings);
+		$field->html('<i>buTTon !!!</i>');
 		$data = $field->render();
 		MMI_Debug::mdump($data, $type);
 
@@ -60,6 +61,11 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 		$data = $field->render();
 		MMI_Debug::mdump($data, $type);
 
+		$type = 'radio';
+		$field = MMI_Form_Field::factory($type, $settings);
+		$data = $field->render();
+		MMI_Debug::mdump($data, $type);
+
 		$type = 'reset';
 		$field = MMI_Form_Field::factory($type, $settings);
 		$data = $field->render();
@@ -77,6 +83,7 @@ class Controller_MMI_Form_Test_Form_Field extends Controller
 
 		$type = 'textarea';
 		$field = MMI_Form_Field::factory($type, $settings);
+		$field->text('TeXTArea ???');
 		$data = $field->render();
 		MMI_Debug::mdump($data, $type);
 
