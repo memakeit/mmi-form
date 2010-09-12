@@ -33,7 +33,14 @@ class Kohana_MMI_Form_Field_Radio extends MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$parms = parent::_get_view_parms();
-		$parms['checked'] = $this->_checked();
+		if ($this->_checked())
+		{
+			$parms['attributes']['checked'] = 'checked';
+		}
+		elseif (isset($parms['attributes']['checked']))
+		{
+			unset($parms['attributes']['checked']);
+		}
 		return $parms;
 	}
 
