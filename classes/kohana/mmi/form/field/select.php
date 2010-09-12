@@ -120,21 +120,25 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 	{
 		$parms = parent::_get_view_parms();
 		$this->_process_blank_option();
-		$attributes= $this->_attributes;
+		$attributes = $this->_attributes;
 		$meta = $this->_meta;
 		$parms['options'] = Arr::get($meta, 'choices', array());
 		$parms['selected'] = Arr::get($meta, 'selected', array());
 
 		$multiple = Arr::get($attributes, 'multiple', FALSE);
-		if ($multiple !== FALSE)
+		if ($multiple === FALSE)
+		{
+			$parms['name'] = Arr::get($attributes, 'name', '');
+			if (isset($parms['attributes']['multiple']))
+			{
+				unset($parms['attributes']['multiple']);
+			}
+		}
+		else
 		{
 			$parms['attributes']['multiple'] = 'multiple';
 			$parms['attributes']['size'] = Arr::get($attributes, 'size', 5);
 			$parms['name'] = Arr::get($attributes, 'name', '').'[]';
-		}
-		else
-		{
-			$parms['name'] = Arr::get($attributes, 'name', '');
 		}
 		return $parms;
 	}
