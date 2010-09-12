@@ -36,9 +36,9 @@ class Controller_MMI_Form_Test_Field_Image extends Controller
 
 		$type = 'image';
 		$field = MMI_Form_Field::factory($type, $settings);
-		MMI_Debug::dump($field->render(), $type, '(relative src specified)');
+		MMI_Debug::dump($field->render(), $type.' (relative src specified)');
 
 		$field->attribute('src', 'http:://www.yahoo.com/favicon.ico');
-		MMI_Debug::dump($field->render(), $type, '(absolute src specified)');
+		MMI_Debug::dump($field->render(), $type.' (absolute src specified)');
 	}
 } // End Controller_MMI_Form_Test_Field_Image
