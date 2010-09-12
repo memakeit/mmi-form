@@ -32,7 +32,7 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 	}
 
 	/**
-	 * Set the HTML to be displayed between the button tags.
+	 * Get or set the button HTML.
 	 *
 	 * @param	string	the HTML
 	 * @return	mixed

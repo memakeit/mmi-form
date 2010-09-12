@@ -155,6 +155,7 @@ abstract class Kohana_MMI_Form_Field
 		{
 			return $this->_attributes;
 		}
+
 		$args = func_get_args();
 		$key = $args[0];
 		if ($num_args === 1)
@@ -165,6 +166,7 @@ abstract class Kohana_MMI_Form_Field
 		if ($this->_state ^ MMI_Form::STATE_FROZEN)
 		{
 			$this->_attributes[$key] = $args[1];
+			return $this;
 		}
 		else
 		{
@@ -189,6 +191,7 @@ abstract class Kohana_MMI_Form_Field
 		{
 			return $this->_meta;
 		}
+
 		$args = func_get_args();
 		$key = $args[0];
 		if ($num_args === 1)
@@ -199,6 +202,7 @@ abstract class Kohana_MMI_Form_Field
 		if ($this->_state ^ MMI_Form::STATE_FROZEN)
 		{
 			$this->_meta[$key] = $args[1];
+			return $this;
 		}
 		else
 		{

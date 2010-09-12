@@ -26,7 +26,22 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 	}
 
 	/**
-	 * Set the text to be displayed between the textarea tags.
+	 * Get or set whether to double encode the textarea text.
+	 *
+	 * @param	boolean	double encode the text?
+	 * @return	mixed
+	 */
+	public function double_encode($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			return $this->meta('double_encode');
+		}
+		return $this->meta('double_encode', $value);
+	}
+
+	/**
+	 * Get or set the textarea text.
 	 *
 	 * @param	string	the text
 	 * @return	mixed
@@ -49,7 +64,7 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 	{
 		$parms = parent::_get_view_parms();
 		$meta = $this->_meta;
-		$parms['double_encode'] = Arr::get($meta, '_double_encode', TRUE);
+		$parms['double_encode'] = Arr::get($meta, 'double_encode', FALSE);
 		$parms['text'] = Arr::get($meta, 'text', Arr::get($this->_attributes, 'value', ''));
 		return $parms;
 	}
