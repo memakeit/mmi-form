@@ -23,21 +23,12 @@ class Controller_MMI_Form_Test_Field_HTML extends Controller
 	{
 		$settings = array
 		(
-			'_html' => '<b>sprehe</b>',
-			'_namespace' => 'mmi',
-			'_text' => 'sprehe',
-
-			'checked' => TRUE,
-			'class' => 'mmi',
-			'id' => 'test',
-			'maxlength' => 22,
-			'readonly' => 'readonly',
-			'value' => 'shawn',
+			'_html' => '<b>mmi!!!</b>',
 		);
 
 		$type = 'html';
 		$field = MMI_Form_Field::factory($type, $settings);
-		$field->html('<i>buTTon !!!</i>');
+		$field->html('<i>HTML string !!!</i>');
 		MMI_Debug::dump($field->render(), 'html text');
 
 		$field->html_callback('Controller_MMI_Form_Test_Field_HTML::test_static');
