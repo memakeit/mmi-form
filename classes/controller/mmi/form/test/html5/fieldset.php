@@ -1,13 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for HTML events.
+ * Test controller for HTML5 fieldset attributes.
  *
  * @package		MMI Form
+ * @category	HTML5
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_HTML_Events extends Controller
+class Controller_MMI_Form_Test_HTML5_Fieldset extends Controller
 {
 	/**
 	 * @var boolean turn debugging on?
@@ -15,16 +16,13 @@ class Controller_MMI_Form_Test_HTML_Events extends Controller
 	public $debug = TRUE;
 
 	/**
-	 * Test the HTML events.
+	 * Test the HTML5 fieldset attributes.
 	 *
 	 * @return	void
 	 */
 	public function action_index()
 	{
-		$data = MMI_HTML4_Events::get();
-		MMI_Debug::dump($data, 'html4 events');
-
-		$data = MMI_HTML5_Events::get();
-		MMI_Debug::dump($data, 'html5 events');
+		$data = MMI_HTML5_Attributes_Fieldset::get();
+		MMI_Debug::dump($data, 'html5 fieldset attr');
 	}
-} // End Controller_MMI_Form_Test_HTML_Events
+} // End Controller_MMI_Form_Test_HTML5_Fieldset

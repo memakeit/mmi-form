@@ -1,13 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for HTML datalist attributes.
+ * Test controller for HTML5 keygen attributes.
  *
  * @package		MMI Form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_HTML_Datalist extends Controller
+class Controller_MMI_Form_Test_HTML5_Keygen extends Controller
 {
 	/**
 	 * @var boolean turn debugging on?
@@ -15,13 +15,13 @@ class Controller_MMI_Form_Test_HTML_Datalist extends Controller
 	public $debug = TRUE;
 
 	/**
-	 * Test the HTML datalist attributes.
+	 * Test the HTML5 keygen attributes.
 	 *
 	 * @return	void
 	 */
 	public function action_index()
 	{
-		$data = MMI_HTML5_Attributes_Datalist::get();
-		MMI_Debug::dump($data, 'html5 datalist attr');
+		$data = MMI_HTML5_Attributes_Keygen::get();
+		MMI_Debug::dump($data, 'html5 keygen attr');
 	}
-} // End Controller_MMI_Form_Test_HTML_Datalist
+} // End Controller_MMI_Form_Test_HTML5_Keygen

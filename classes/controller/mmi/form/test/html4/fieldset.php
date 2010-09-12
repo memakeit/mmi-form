@@ -1,13 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for HTML fieldset attributes.
+ * Test controller for HTML4 fieldset attributes.
  *
  * @package		MMI Form
+ * @category	HTML4
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_HTML_Fieldset extends Controller
+class Controller_MMI_Form_Test_HTML4_Fieldset extends Controller
 {
 	/**
 	 * @var boolean turn debugging on?
@@ -15,7 +16,7 @@ class Controller_MMI_Form_Test_HTML_Fieldset extends Controller
 	public $debug = TRUE;
 
 	/**
-	 * Test the HTML fieldset attributes.
+	 * Test the HTML4 fieldset attributes.
 	 *
 	 * @return	void
 	 */
@@ -23,8 +24,5 @@ class Controller_MMI_Form_Test_HTML_Fieldset extends Controller
 	{
 		$data = MMI_HTML4_Attributes_Fieldset::get();
 		MMI_Debug::dump($data, 'html4 fieldset attr');
-
-		$data = MMI_HTML5_Attributes_Fieldset::get();
-		MMI_Debug::dump($data, 'html5 fieldset attr');
 	}
-} // End Controller_MMI_Form_Test_HTML_Fieldset
+} // End Controller_MMI_Form_Test_HTML4_Fieldset

@@ -1,13 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for HTML attributes.
+ * Test controller for HTML4 attributes.
  *
  * @package		MMI Form
+ * @category	HTML4
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_HTML_Attributes extends Controller
+class Controller_MMI_Form_Test_HTML4_Attributes extends Controller
 {
 	/**
 	 * @var boolean turn debugging on?
@@ -15,7 +16,7 @@ class Controller_MMI_Form_Test_HTML_Attributes extends Controller
 	public $debug = TRUE;
 
 	/**
-	 * Test the HTML attributes.
+	 * Test the HTML4 attributes.
 	 *
 	 * @return	void
 	 */
@@ -23,7 +24,5 @@ class Controller_MMI_Form_Test_HTML_Attributes extends Controller
 	{
 		$data = MMI_HTML4_Attributes::get();
 		MMI_Debug::dump($data, 'html4 attributes');
-
-		$data = MMI_HTML5_Attributes::get();
-		MMI_Debug::dump($data, 'html5 attributes');	}
-} // End Controller_MMI_Form_Test_HTML_Attributes
+	}
+} // End Controller_MMI_Form_Test_HTML4_Attributes

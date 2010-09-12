@@ -1,13 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for HTML textarea attributes.
+ * Test controller for HTML5 textarea attributes.
  *
  * @package		MMI Form
+ * @category	HTML5
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_HTML_Textarea extends Controller
+class Controller_MMI_Form_Test_HTML5_Textarea extends Controller
 {
 	/**
 	 * @var boolean turn debugging on?
@@ -15,16 +16,13 @@ class Controller_MMI_Form_Test_HTML_Textarea extends Controller
 	public $debug = TRUE;
 
 	/**
-	 * Test the HTML textarea attributes.
+	 * Test the HTML5 textarea attributes.
 	 *
 	 * @return	void
 	 */
 	public function action_index()
 	{
-		$data = MMI_HTML4_Attributes_Textarea::get();
-		MMI_Debug::dump($data, 'html4 textarea attr');
-
 		$data = MMI_HTML5_Attributes_Textarea::get();
 		MMI_Debug::dump($data, 'html5 textarea attr');
 	}
-} // End Controller_MMI_Form_Test_HTML_Textarea
+} // End Controller_MMI_Form_Test_HTML5_Textarea

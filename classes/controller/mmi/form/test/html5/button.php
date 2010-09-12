@@ -1,13 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for HTML button attributes.
+ * Test controller for HTML5 button attributes.
  *
  * @package		MMI Form
+ * @category	HTML5
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_HTML_Button extends Controller
+class Controller_MMI_Form_Test_HTML5_Button extends Controller
 {
 	/**
 	 * @var boolean turn debugging on?
@@ -15,16 +16,13 @@ class Controller_MMI_Form_Test_HTML_Button extends Controller
 	public $debug = TRUE;
 
 	/**
-	 * Test the HTML button attributes.
+	 * Test the HTML5 button attributes.
 	 *
 	 * @return	void
 	 */
 	public function action_index()
 	{
-		$data = MMI_HTML4_Attributes_Button::get();
-		MMI_Debug::dump($data, 'html4 button attr');
-
 		$data = MMI_HTML5_Attributes_Button::get();
 		MMI_Debug::dump($data, 'html5 button attr');
 	}
-} // End Controller_MMI_Form_Test_HTML_Button
+} // End Controller_MMI_Form_Test_HTML5_Button
