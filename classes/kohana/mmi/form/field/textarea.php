@@ -21,7 +21,7 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 		{
 			$options = array();
 		}
-		$options['type'] = 'textarea';
+		$options['_type'] = 'textarea';
 		parent::__construct($options);
 	}
 

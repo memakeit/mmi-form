@@ -21,6 +21,7 @@ class Kohana_MMI_Form_Field_Radio extends MMI_Form_Field
 		{
 			$options = array();
 		}
+		$options['_type'] = 'input';
 		$options['type'] = 'radio';
 		parent::__construct($options);
 	}
@@ -54,7 +55,7 @@ class Kohana_MMI_Form_Field_Radio extends MMI_Form_Field
 		$checked = FALSE;
 		if ($_POST AND ($this->_state ^ MMI_Form::STATE_RESET))
 		{
-			$temp = Arr::get($_POST, $this->get_id());
+			$temp = Arr::get($_POST, $this->_get_id());
 			$checked = ( ! empty($temp));
 		}
 		else

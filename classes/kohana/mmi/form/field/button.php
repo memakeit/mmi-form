@@ -23,11 +23,9 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 		}
 
 		$options['_type'] = 'button';
-		$options['type'] = 'submit';
-		$order = Arr::get($options, '_order');
-		if (empty($order))
+		if (empty($options['type']))
 		{
-			$options['_order'] = array(MMI_Form::ORDER_FIELD);
+			$options['type'] = 'button';
 		}
 		parent::__construct($options);
 	}

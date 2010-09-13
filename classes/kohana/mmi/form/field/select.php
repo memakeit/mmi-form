@@ -21,7 +21,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 		{
 			$options = array();
 		}
-		$options['type'] = 'select';
+		$options['_type'] = 'select';
 		parent::__construct($options);
 	}
 
@@ -120,7 +120,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 	{
 		$parms = parent::_get_view_parms();
 		$this->_process_blank_option();
-		$attributes = $this->_attributes;
+		$attributes = $parms['attributes'];
 		$meta = $this->_meta;
 		$parms['options'] = Arr::get($meta, 'choices', array());
 		$parms['selected'] = Arr::get($meta, 'selected', array());

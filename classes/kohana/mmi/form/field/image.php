@@ -21,6 +21,7 @@ class Kohana_MMI_Form_Field_Image extends MMI_Form_Field
 		{
 			$options = array();
 		}
+		$options['_type'] = 'input';
 		$options['type'] = 'image';
 		parent::__construct($options);
 	}

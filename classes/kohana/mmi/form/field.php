@@ -46,6 +46,11 @@ abstract class Kohana_MMI_Form_Field
 	protected $_errors = array();
 
 	/**
+	 * @var MMI_Form the form object
+	 */
+	protected $_form;
+
+	/**
 	 * @var boolean use HTML5 markup?
 	 */
 	protected $_html5;
@@ -62,95 +67,22 @@ abstract class Kohana_MMI_Form_Field
 
 	/**
 	 * Set whether to use HTML5 markup.
-	 * Separate the meta data from the HTML attributes.
+	 * Initialize the options.
 	 *
 	 * @param	array	an associative array of field options
 	 * @return	void
 	 */
 	public function __construct($options = array())
 	{
-		// Configuration
-		$config = self::get_config();
-		$this->_html5 = $config->get('html5', TRUE);
-
-		if ( ! is_array($options))
-		{
-			$options = array();
-		}
-
-		// Initialize the options
+		$this->_html5 = self::get_config()->get('html5', TRUE);
 		$this->_init_options($options);
-	}
-
-	/**
-	 * Merge the user-specified options with the config file defaults.
-	 * Initialize the meta data from the HTML attributes.
-	 *
-	 * @return  void
-	 */
-	protected function _init_options($options)
-	{
-		// Ensure the type is set for the meta settings
-		if (empty($options['_type']))
-		{
-			$options['_type'] = Arr::get($options, 'type', 'text');
-		}
-
-		// Get the CSS class
-		$class = $this->_combine_value($options, 'class');
-
-		// Merge the options
-		$config = self::get_config();
-		$defaults = $config->get('_defaults', array());
-		$type_specific = $config->get($options['_type'], array());
-		$options = array_merge($defaults, $type_specific, $options);
-
-		// Set the CSS class
-		if ( ! empty($class))
-		{
-			$options['class'] = $class;
-		}
-
-		// Separate the meta data from the HTML attributes
-		foreach ($options as $name => $value)
-		{
-			if (substr($name, 0, 1) === '_')
-			{
-				$this->_meta[trim($name, '_')] = $value;
-			}
-			else
-			{
-				$this->_attributes[$name] = $value;
-			}
-		}
-	}
-
-	/**
-	 * Combine default values in the config file with a user-specified value.
-	 * When multiple values are found, they are appended in order from most
-	 * general (config file) to most specific (user-specified).
-	 *
-	 * @param	array	the user-specified settings
-	 * @param	string	the name of the value being combined
-	 * @return	string
-	 */
-	protected function _combine_value($options, $name)
-	{
-		$config = self::get_config();
-		$defaults = $config->get('_defaults', array());
-		$type_specific = $config->get($options['_type'], array());
-		$value =
-			Arr::get($defaults, $name, '').' '.
-			Arr::get($type_specific, $name, '').' '.
-			Arr::get($options, $name, '').' ';
-		return trim(preg_replace('/\s+/', ' ', $value));
 	}
 
 	/**
 	 * Get or set an HTML attribute.
 	 * If no parameters are specified, all attributes are returned.
-	 * If a key parameter is specified, it is used to return an attribute value.
-	 * If key and value parameters are specified, they are used to set an attribute value.
+	 * If a key is specified, it is used to retrieve the attribute value.
+	 * If a key and value are specified, they are used to set an attribute value.
 	 *
 	 * @return	mixed
 	 */
@@ -185,8 +117,8 @@ abstract class Kohana_MMI_Form_Field
 	/**
  	 * Get or set field meta data.
 	 * If no parameters are specified, all meta data is returned.
-	 * If a key parameter is specified, it is used to return a meta data value.
-	 * If key and value parameters are specified, they are used to set a meta data value.
+	 * If a key is specified, it is used to retrieve the meta data value.
+	 * If a key and value are specified, they are used to set a meta data value.
 	 *
 	 * @return	mixed
 	 */
@@ -225,49 +157,6 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function render()
 	{
-//		$value = Arr::get($attributes, 'value', '');
-//		$this->_attributes['value'] = $value;
-
-		$meta = $this->_meta;
-		$name = Arr::get($meta, 'name');
-		$namespace = Arr::get($meta, 'namespace');
-		$this->_attributes['name'] = self::get_field_id($namespace, $name);
-		return $this->_input();
-	}
-
-	/**
-	 * Remove invalid attributes and return the cleaned attributes array.
-	 *
-	 * @return	array
-	 */
-	protected function _clean_attributes()
-	{
-		$allowed = $this->_get_allowed_attributes();
-		return array_intersect_key($this->_attributes, array_flip($allowed));
-	}
-
-	/**
-	 * Get the HTML attributes allowed.
-	 *
-	 * @return	array
-	 */
-	protected function _get_allowed_attributes()
-	{
-		$type = Arr::get($this->_meta, 'type');
-		if ($this->_html5)
-		{
-			return MMI_HTML5_Attributes_Input::get($type);
-		}
-		return MMI_HTML4_Attributes_Input::get($type);
-	}
-
-	/**
-	 * Generate the HTML using a view.
-	 *
-	 * @return	string
-	 */
-	protected function _input()
-	{
 		$path = $this->_get_view_path();
 		if (isset(self::$_view_cache[$path]))
 		{
@@ -284,18 +173,146 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
+	 * Freeze the form fields, preventing further modifications.
+	 *
+	 * @return	void
+	 */
+	public function freeze()
+	{
+		$this->_finalize_rules();
+		$this->_state |= Jelly_Form::STATE_FROZEN;
+	}
+
+	/**
+	 * Reset the form field.
+	 *
+	 * @return	void
+	 */
+	public function reset()
+	{
+		$type = Arr::get($this->_attributes, 'type', 'text');
+		if ( ! in_array($type, array('checkbox', 'radio')))
+		{
+			$this->value = Arr::get($this->_meta, 'default', '');
+		}
+		$this->_state |= Jelly_Form::STATE_RESET;
+	}
+
+	/**
+	 * Add an error message for the form field.
+	 *
+	 * @param	string	the error message
+	 * @return	void
+	 */
+	public function add_error($msg = '')
+	{
+		if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
+		{
+			$this->_errors[] = $msg;
+		}
+	}
+
+	/**
+	 * Merge the user-specified and config file settings.
+	 * Separate the meta data from the HTML attributes.
+	 *
+	 * @return	void
+	 */
+	protected function _init_options($options)
+	{
+		if ( ! is_array($options))
+		{
+			$options = array();
+		}
+
+		// Set the meta type
+		if (empty($options['_type']))
+		{
+			$options['_type'] = Arr::get($options, 'type', 'input');
+		}
+
+		// Set the default value
+		if (empty($options['_default']))
+		{
+			$options['_default'] = Arr::get($options, 'value', '');
+		}
+
+		// Get the CSS class
+		$class = $this->_combine_value($options, 'class');
+
+		// Merge the user-specified and config settings
+		$config = self::get_config();
+		$defaults = $config->get('_defaults', array());
+		$type_specific = $config->get($options['type'], array());
+		$options = array_merge($defaults, $type_specific, $options);
+
+		// Set the CSS class
+		if ( ! empty($class))
+		{
+			$class = array_unique(explode(' ', $class));
+			$options['class'] = implode(' ', $class);
+		}
+
+		// Separate the meta data from the HTML attributes
+		foreach ($options as $name => $value)
+		{
+			$name = trim($name);
+			if (substr($name, 0, 1) === '_')
+			{
+				$this->_meta[trim($name, '_')] = $value;
+			}
+			else
+			{
+				$this->_attributes[$name] = $value;
+			}
+		}
+	}
+
+	/**
+	 * Combine default values from the config file with a user-specified value.
+	 * When multiple values are found, they are appended in order from most
+	 * general (config file) to most specific (user-specified).
+	 *
+	 * @param	array	the user-specified settings
+	 * @param	string	the key of the value being combined
+	 * @return	string
+	 */
+	protected function _combine_value($options, $key)
+	{
+		$config = self::get_config();
+		$defaults = $config->get('_defaults', array());
+		$type = Arr::get($options, 'type', 'text');
+		$type_specific = $config->get($type, array());
+		$value =
+			Arr::get($defaults, $key, '').' '.
+			Arr::get($type_specific, $key, '').' '.
+			Arr::get($options, $key, '').' '
+		;
+		$value = trim(preg_replace('/\s+/', ' ', $value));
+
+		// Remove duplicates
+		if ( ! empty($value))
+		{
+			$value = array_unique(explode(' ', $value));
+			$value = implode(' ', $value);
+		}
+		return $value;
+	}
+
+	/**
 	 * Get the view path.
 	 *
 	 * @return	string
 	 */
 	protected function _get_view_path()
 	{
-		$dir = 'mmi/form/field';
-		$file = Arr::get($this->_meta, 'type', '_input');
+		$meta = $this->_meta;
+		$dir = Arr::get($meta, 'view_path', 'mmi/form/field');
+		$file = Arr::get($meta, 'view', Arr::get($meta, 'type', 'input'));
 		if ( ! Kohana::find_file('views/'.$dir, $file))
 		{
 			// Use the default view if the type-specific view is not found
-			$file = '_input';
+			$file = 'input';
 		}
 		return $dir.'/'.$file;
 	}
@@ -307,95 +324,88 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _get_view_parms()
 	{
+		$attributes = $this->_get_view_attributes();
+		$id = $this->_get_id();
+		$attributes['id'] = $id;
+		$attributes['name'] = $id;
+
+		$value = Arr::get($attributes, 'value');
+		if (is_null($value))
+		{
+			$attributes['value'] = '';
+		}
+
 		$meta = $this->_meta;
 		return array
 		(
 			'after'			=> Arr::get($meta, 'after', ''),
-			'attributes'	=> $this->_clean_attributes(),
+			'attributes'	=> $attributes,
 			'before'		=> Arr::get($meta, 'before', ''),
 		);
 	}
 
-
-
-
-
-
-
-
-
-
-
 	/**
-	 * Freeze the form fields, preventing further modifications.
+	 * Remove invalid attributes and return an array of valid attributes.
 	 *
-	 * @return	void
+	 * @return	array
 	 */
-	public function freeze()
+	protected function _get_view_attributes()
 	{
-		// Is field required?
-//		$this->_required = array_key_exists('not_empty', $this->rules);
+		$allowed = $this->_get_allowed_attributes();
+		$attributes = $this->_attributes;
+		$meta = $this->_meta;
 
-		$this->_finalize_relationships();
-		$this->_finalize_html_rules();
-		$this->_finalize_id_and_name();
-//		$this->_merge_options();
-		$this->_finalize_field_settings();
-//		$this->_attributes = Jelly_Form::attributes($this->_options_field);
-
-		$this->_state |= Jelly_Form::STATE_FROZEN;
-	}
-
-	/**
-	 * Reset the form field.
-	 *
-	 * @return	void
-	 */
-	public function reset()
-	{
-		$type = Arr::get($this->_meta, 'type');
-		if ( ! in_array($type, array('checkbox', 'radio')))
+		// If a rule for max-length exists, use it to set the attribute
+		if (in_array('max_length', $allowed))
 		{
-			$this->value = (is_null($this->default)) ? '' : ($this->default);
+			$rules = Arr::get($meta, 'rules', array());
+			if (array_key_exists('max_length', $rules))
+			{
+				$max_length = array_values($rules['max_length']);
+				$attributes['maxlength'] = $max_length[0];
+			}
 		}
-		$this->_state |= Jelly_Form::STATE_RESET;
-	}
 
-	/**
-	 * Add an error message for the form field.
-	 *
-	 * @param	string	the error message
-	 * @return	void
-	 */
-	public function add_error_message($msg = '')
-	{
-		if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
+		// If a title is not set, use the meta description if present
+		$description = Arr::get($meta, 'description');
+		$title = Arr::get($attributes, 'title');
+		if (empty($title) AND ! empty($description))
 		{
-			$this->_errors[] = $msg;
+			$attributes['title'] = $description;
 		}
+
+		return array_intersect_key($attributes, array_flip($allowed));
 	}
 
-//	/**
-//	 * Load field-specific settings.
-//	 *
-//	 * @param	mixed	Jelly field or array containing a field specification
-//	 * @return	void
-//	 */
-//	protected function _load_field_specific_settings($field)
-//	{
-//		if ($this instanceof Jelly_Form_Field_Group)
-//		{
-//			$this->_is_group = TRUE;
-//		}
-//
-//		if ($this->_type === 'checkbox' AND ! $this->_is_group AND empty($value))
-//		{
-//			$this->value = 1;
-//		}
-//	}
+	/**
+	 * Get the HTML attributes allowed.
+	 *
+	 * @return	array
+	 */
+	protected function _get_allowed_attributes()
+	{
+		$type = Arr::get($this->_attributes, 'type');
+		if ($this->_html5)
+		{
+			return MMI_HTML5_Attributes_Input::get($type);
+		}
+		return MMI_HTML4_Attributes_Input::get($type);
+	}
 
 	/**
-	 * Finalize the rules.
+	 * Get the field id.
+	 *
+	 * @return	string
+	 */
+	protected function _get_id()
+	{
+		$id = Arr::get($this->_attributes, 'id');
+		$namespace = Arr::get($this->_meta, 'namespace');
+		return self::get_field_id($id, $namespace);
+	}
+
+	/**
+	 * Finalize validation rules.
 	 *
 	 * @return	void
 	 */
@@ -407,19 +417,8 @@ abstract class Kohana_MMI_Form_Field
 			return;
 		}
 
-//		if (array_key_exists('matches', $rules) AND count($rules['matches']) === 1)
-//		{
-//			// ensure the name of the field to match contains a model name prefix
-//			$parms = array($this->model_name.'.'.$this->rules['matches'][0]);
-//			if ($rules['matches'] !== $parms)
-//			{
-//				$rules['matches'] = $parms;
-//			}
-//		}
-
 		// Process rules that are executed even when the value is empty
-		$rule_names = array_keys($rules);
-		$found = array_intersect($rule_names, self::$_empty_rules);
+		$found = array_intersect(array_keys($rules), self::$_empty_rules);
 		if (count($found) > 0)
 		{
 			$rules['not_empty'] = NULL;
@@ -438,159 +437,59 @@ abstract class Kohana_MMI_Form_Field
 			}
 		}
 		$this->_meta['rules'] = $rules;
-
-		// Process max-length
-		if (array_key_exists('max_length', $rules))
-		{
-			$max_length = array_values($rules['max_length']);
-			$this->_attributes['maxlength'] = $max_length[0];
-		}
 	}
 
-	/**
-	 * Finalize the field name and id.
-	 *
-	 * @return  void
-	 */
-	protected function _finalize_id_and_name()
-	{
-		$name = self::get_field_id($this->model_name, $this->name);
-		$attributes = $this->_attributes;
-
-		$temp = Arr::get($attributes, 'id');
-		if (empty($temp))
-		{
-			$this->_attributes['id'] = MMI_Form::clean_id($name);
-		}
-
-		$temp = Arr::get($attributes, 'name');
-		if (empty($temp))
-		{
-			$this->_attributes['name'] = $name;
-		}
-	}
-
-	/**
-	 * Make final changes to the field's settings.
-	 *
-	 * @return  void
-	 */
-	protected function _finalize_field_settings()
-	{
-		$description = Arr::get($this->_attributes, 'description');
-		$title = Arr::get($this->_attributes, 'title');
-		if (empty($title) AND ! empty($description))
-		{
-			// If title not set, use the meta description as the title
-			$this->_attributes['title'] = $description;
-		}
-	}
+//	/**
+//	 * Generate the label HTML.
+//	 *
+//	 * @param   array   the view data
+//	 * @return  string
+//	 */
+//	protected function _label($data = array())
+//	{
+//		$file = self::_get_view_path().'label';
+//		$view = (isset(self::$_view_cache[$file])) ? (clone self::$_view_cache[$file]) : (NULL);
+//		if (empty($view))
+//		{
+//			$view = View::factory($file);
+//			self::$_view_cache[$file] = $view;
+//		}
+//		return $view->set($data)->render();
+//	}
+//
+//	/**
+//	 * Generate the error HTML.
+//	 *
+//	 * @param   array   the view data
+//	 * @return  string
+//	 */
+//	protected function _error($data = array())
+//	{
+//		$file = self::_get_view_path().'error';
+//		$view = (isset(self::$_view_cache[$file])) ? (clone self::$_view_cache[$file]) : (NULL);
+//		if (empty($view))
+//		{
+//			$view = View::factory($file);
+//			self::$_view_cache[$file] = $view;
+//		}
+//		return $view->set($data)->render();
+//	}
 
 	/**
-	 * Get the value for the form field.
+	 * Generate the field id.  Include the namespace if one is specified.
 	 *
-	 * @return  mixed
-	 */
-	protected function _get_value()
-	{
-		$value = (is_null($this->value)) ? '' : ($this->value);
-		if (empty($this->choices) AND (is_array($value) OR is_object($value)))
-		{
-			$value = serialize($value);
-		}
-		return $value;
-	}
-
-	/**
-	 * Generate the label HTML.
-	 *
-	 * @param   array   the view data
-	 * @return  string
-	 */
-	protected function _label($data = array())
-	{
-		$file = self::_get_view_path().'label';
-		$view = (isset(self::$_view_cache[$file])) ? (clone self::$_view_cache[$file]) : (NULL);
-		if (empty($view))
-		{
-			$view = View::factory($file);
-			self::$_view_cache[$file] = $view;
-		}
-		return $view->set($data)->render();
-	}
-
-	/**
-	 * Generate the error HTML.
-	 *
-	 * @param   array   the view data
-	 * @return  string
-	 */
-	protected function _error($data = array())
-	{
-		$file = self::_get_view_path().'error';
-		$view = (isset(self::$_view_cache[$file])) ? (clone self::$_view_cache[$file]) : (NULL);
-		if (empty($view))
-		{
-			$view = View::factory($file);
-			self::$_view_cache[$file] = $view;
-		}
-		return $view->set($data)->render();
-	}
-
-	/**
-	 * Get the field id.
-	 *
-	 * @return	string
-	 */
-	public function get_id()
-	{
-		$name = Arr::get($this->_attributes, 'name');
-		$namespace = Arr::get($this->_meta, 'namespace');
-		return self::get_field_id($name, $namespace);
-	}
-
-
-	/**
-	 * Get the field id used in the HTML.
-	 *
-	 * @param	string	the field name
+	 * @param	string	the field id
 	 * @param	string	the field namespace
 	 * @return	string
 	 */
-	public static function get_field_id($name, $namespace = NULL)
+	public static function get_field_id($id, $namespace = NULL)
 	{
+		$id = MMI_Form::clean_id($id);
 		if (empty($namespace))
 		{
-			return $name;
+			return $id;
 		}
-		return $namespace.'_'.$name;
-	}
-
-	/**
-	 * Get the escaped field name.
-	 *
-	 * @param	string	the field name
-	 * @return	string
-	 */
-	public static function get_field_name($field_name)
-	{
-		return preg_replace('/\s+/', '_', $field_name);
-	}
-
-	/**
-	 * Get the internal id used by the class.
-	 *
-	 * @param	string	the field name
-	 * @param	string	the field namespace
-	 * @return	string
-	 */
-	public static function get_internal_id($name, $namespace = NULL)
-	{
-		if ( ! isset($namespace))
-		{
-			$namespace = '';
-		}
-		return $namespace.'.'.$name;
+		return $namespace.'_'.$id;
 	}
 
 	/**
@@ -624,9 +523,10 @@ abstract class Kohana_MMI_Form_Field
 		if (is_array($options) AND count($options) > 0)
 		{
 			$choices = Arr::get($options, '_choices');
-			$temp = Arr::get($options, '_type', Arr::get($options, 'type'));
+			$temp = Arr::get($options, 'type');
 			if ( ! empty($temp))
 			{
+				// Use type specified in the options
 				$type = strtolower(trim($temp));
 			}
 		}
@@ -637,13 +537,18 @@ abstract class Kohana_MMI_Form_Field
 
 		// Set the class name
 		$class = 'MMI_Form_Field_';
-		if (($type === 'checkbox' OR $type === 'radio') AND ! empty($choices))
+		if ( ! empty($choices) AND ($type === 'checkbox' OR $type === 'radio'))
 		{
 			$class .= 'Group_';
 		}
+		if ( ! class_exists($class.ucfirst($type)) AND in_array($type, MMI_HTML5_Attributes_Input::types()))
+		{
+			$options['_type'] = 'input';
+			$options['type'] = $type;
+			$type = 'input';
+		}
 		$class .= ucfirst($type);
 
-		// Create the field
 		if ( ! class_exists($class))
 		{
 			$msg = $class.' field does not exist.';
