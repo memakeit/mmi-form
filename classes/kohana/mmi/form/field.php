@@ -225,16 +225,18 @@ abstract class Kohana_MMI_Form_Field
 			$options = array();
 		}
 
-		// Set the meta type
+		// Set defaults
+		if (empty($options['_default']))
+		{
+			$options['_default'] = Arr::get($options, 'value', '');
+		}
 		if (empty($options['_type']))
 		{
 			$options['_type'] = Arr::get($options, 'type', 'input');
 		}
-
-		// Set the default value
-		if (empty($options['_default']))
+		if (empty($options['type']))
 		{
-			$options['_default'] = Arr::get($options, 'value', '');
+			$options['type'] = Arr::get($options, '_type', 'text');
 		}
 
 		// Get the CSS class

@@ -119,10 +119,9 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$parms = parent::_get_view_parms();
-		$this->_process_blank_option();
 		$attributes = $parms['attributes'];
 		$meta = $this->_meta;
-		$parms['options'] = Arr::get($meta, 'choices', array());
+		$parms['options'] = $this->_options();;
 		$parms['selected'] = Arr::get($meta, 'selected', array());
 
 		$multiple = Arr::get($attributes, 'multiple', FALSE);
@@ -144,26 +143,26 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 	}
 
 	/**
-	 * Insert a blank option, if necessary.
+	 * Return the options  a blank option, if necessary.
 	 *
 	 * @return	void
 	 */
-	protected function _process_blank_option()
+	protected function _options()
 	{
 		$blank_option = Arr::get($this->_meta, 'blank_option', FALSE);
+		$choices = Arr::get($this->_meta, 'choices', array());
 		if ($blank_option !== FALSE)
 		{
 			if ($blank_option === TRUE)
 			{
 				$blank_option = '';
 			}
-			$choices = Arr::get($this->_meta, 'choices', array());
 			if ( ! in_array($blank_option, $choices))
 			{
 				Arr::unshift($choices, '', $blank_option);
-				$this->_meta['choices'] = $choices;
 			}
 		}
+		return $choices;
 	}
 
 	/**
