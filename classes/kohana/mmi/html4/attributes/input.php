@@ -158,4 +158,14 @@ class Kohana_MMI_HTML4_Attributes_Input
 		)));
 		return self::$_attributes[$type];
 	}
+
+	/**
+	 * Get the valid HTML4 input types.
+	 *
+	 * @return	array
+	 */
+	public static function types()
+	{
+		return self::$_types;
+	}
 } // End Kohana_MMI_HTML4_Attributes_Input
