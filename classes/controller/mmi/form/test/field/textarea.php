@@ -39,6 +39,6 @@ class Controller_MMI_Form_Test_Field_Textarea extends Controller
 
 		$field->text('TeXTArea \' " &amp; ???');
 		$field->double_encode(FALSE);
-		MMI_Debug::dump($field->render(), $type);
+		MMI_Debug::mdump($field->render(), $type, $field);
 	}
 } // End Controller_MMI_Form_Test_Field_Textarea

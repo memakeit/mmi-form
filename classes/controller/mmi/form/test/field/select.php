@@ -50,6 +50,6 @@ class Controller_MMI_Form_Test_Field_Select extends Controller
 		MMI_Debug::dump($field->render(), $type.' multiple');
 
 		$field->attribute('multiple', FALSE);
-		MMI_Debug::dump($field->render(), $type);
+		MMI_Debug::mdump($field->render(), $type, $field);
 	}
 } // End Controller_MMI_Form_Test_Field_Select

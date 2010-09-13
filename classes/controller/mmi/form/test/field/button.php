@@ -39,6 +39,6 @@ class Controller_MMI_Form_Test_Field_Button extends Controller
 		MMI_Debug::dump($field->render(), $type);
 
 		$field->html('<i>buTTon !!!</i>');
-		MMI_Debug::dump($field->render(), $type);
+		MMI_Debug::mdump($field->render(), $type, $field);
 	}
 } // End Controller_MMI_Form_Test_Field_Button

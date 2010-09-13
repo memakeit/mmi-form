@@ -38,7 +38,7 @@ class Controller_MMI_Form_Test_Field_HTML extends Controller
 		MMI_Debug::dump($field->render(), 'html static callback');
 
 		$field->html_callback(array($this, 'test', array('me', 'mmi')));
-		MMI_Debug::dump($field->render(), 'html callback');
+		MMI_Debug::mdump($field->render(), 'html callback', $field);
 	}
 
 	/**

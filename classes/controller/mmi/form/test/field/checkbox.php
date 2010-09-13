@@ -41,6 +41,6 @@ class Controller_MMI_Form_Test_Field_Checkbox extends Controller
 			->attribute('checked', FALSE)
 			->attribute('value', '')
 		;
-		MMI_Debug::dump($field->render(), $type. 'unchecked');
+		MMI_Debug::mdump($field->render(), $type. 'unchecked', $field);
 	}
 } // End Controller_MMI_Form_Test_Field_Checkbox
