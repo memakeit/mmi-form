@@ -37,7 +37,10 @@ class Controller_MMI_Form_Test_Field_Checkbox extends Controller
 		$field = MMI_Form_Field::factory($type, $settings);
 		MMI_Debug::dump($field->render(), $type.' checked');
 
-		$field->attribute('checked', FALSE);
+		$field
+			->attribute('checked', FALSE)
+			->attribute('value', '')
+		;
 		MMI_Debug::dump($field->render(), $type. 'unchecked');
 	}
 } // End Controller_MMI_Form_Test_Field_Checkbox
