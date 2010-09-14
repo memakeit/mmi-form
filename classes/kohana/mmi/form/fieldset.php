@@ -1,13 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * A form field.
+ * A fieldset.
  *
  * @package		MMI Form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-abstract class Kohana_MMI_Form_Field
+abstract class Kohana_MMI_Form_FieldSet
 {
 	/**
 	 * @var Kohana_Config the field configuration
@@ -15,30 +15,9 @@ abstract class Kohana_MMI_Form_Field
 	protected static $_config;
 
 	/**
-	 * @var array the validation rules that are executed even when a value is empty
-	 */
-	protected static $_empty_rules = array('matches', 'not_empty');
-
-	/**
-	 * @var array the validation rules that have a UTF8 parameter
-	 */
-	protected static $_utf8_rules = array
-	(
-		'alpha',
-		'alpha_numeric',
-		'alpha_dash',
-		'digit'
-	);
-
-	/**
 	 * @var array the HTML attributes
 	 */
 	protected $_attributes = array();
-
-	/**
-	 * @var array the validation errors
-	 */
-	protected $_errors = array();
 
 	/**
 	 * @var boolean use HTML5 markup?
@@ -49,11 +28,6 @@ abstract class Kohana_MMI_Form_Field
 	 * @var array the associated meta data
 	 */
 	protected $_meta = array();
-
-	/**
-	 * @var integer the current field state
-	 */
-	protected $_state = MMI_Form::STATE_INITIAL;
 
 	/**
 	 * Set whether to use HTML5 markup.
@@ -74,11 +48,9 @@ abstract class Kohana_MMI_Form_Field
 	 * If a key is specified, it is used to retrieve the attribute value.
 	 * If a key and value are specified, they are used to set an attribute value.
 	 *
-	 * @param	string	the name of the attribute to get or set
-	 * @param	mixed	the value of the attribute to set
 	 * @return	mixed
 	 */
-	public function attribute($name = NULL, $value = NULL)
+	public function attribute()
 	{
 		$num_args = func_num_args();
 		if ($num_args === 0)
@@ -86,51 +58,21 @@ abstract class Kohana_MMI_Form_Field
 			return $this->_attributes;
 		}
 
+		$args = func_get_args();
+		$key = $args[0];
 		if ($num_args === 1)
 		{
-			return Arr::get($this->_attributes, $name);
+			return Arr::get($this->_attributes, $key);
 		}
 
 		if ($this->_state ^ MMI_Form::STATE_FROZEN)
 		{
-			$this->_attributes[$name] = $value;
+			$this->_attributes[$key] = $args[1];
 			return $this;
 		}
 		else
 		{
-			$msg = 'Attributes can not be set after the form has been frozen.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
-			throw new Kohana_Exception($msg);
-		}
-	}
-
-	/**
-	 * Get or set an error.
-	 * If no parameters are specified, all error messages are returned.
-	 * If a message is specified, it is added to the error collection.
-	 *
-	 * @param	string	the error message
-	 * @return	mixed
-	 */
-	public function error($msg = NULL)
-	{
-		$num_args = func_num_args();
-		if ($num_args === 0)
-		{
-			return $this->_errors;
-		}
-
-		if ($this->_state ^ MMI_Form::STATE_FROZEN)
-		{
-			if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
-			{
-				$this->_errors[] = $msg;
-			}
-			return $this;
-		}
-		else
-		{
-			$msg = 'Errors can not be set after the form has been frozen.';
+			$msg = 'Attributes can only be set when the form is in its initial state.';
 			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 			throw new Kohana_Exception($msg);
 		}
@@ -142,11 +84,9 @@ abstract class Kohana_MMI_Form_Field
 	 * If a key is specified, it is used to retrieve the meta data value.
 	 * If a key and value are specified, they are used to set a meta data value.
 	 *
-	 * @param	string	the name of the meta data to get or set
-	 * @param	mixed	the value of the meta data to set
 	 * @return	mixed
 	 */
-	public function meta($name = NULL, $value = NULL)
+	public function meta()
 	{
 		$num_args = func_num_args();
 		if ($num_args === 0)
@@ -154,27 +94,21 @@ abstract class Kohana_MMI_Form_Field
 			return $this->_meta;
 		}
 
+		$args = func_get_args();
+		$key = $args[0];
 		if ($num_args === 1)
 		{
-			if (strcasecmp($name, 'error') === 0)
-			{
-				return $this->_error_meta();
-			}
-			if (strcasecmp($name, 'label') === 0)
-			{
-				return $this->_label_meta();
-			}
-			return Arr::get($this->_meta, $name);
+			return Arr::get($this->_meta, $key);
 		}
 
 		if ($this->_state ^ MMI_Form::STATE_FROZEN)
 		{
-			$this->_meta[$name] = $value;
+			$this->_meta[$key] = $args[1];
 			return $this;
 		}
 		else
 		{
-			$msg = 'Meta data can not be set after the form has been frozen.';
+			$msg = 'Meta data can only be set when the form is in its initial state.';
 			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 			throw new Kohana_Exception($msg);
 		}
@@ -188,15 +122,14 @@ abstract class Kohana_MMI_Form_Field
 	public function render()
 	{
 		$path = $this->_get_view_path();
-		$cache = MMI_Form::view_cache($path);
-		if (isset($cache))
+		if (isset(self::$_view_cache[$path]))
 		{
-			$view = clone $cache;
+			$view = clone self::$_view_cache[$path];
 		}
 		if ( ! isset($view))
 		{
 			$view = View::factory($path);
-			MMI_Form::view_cache($path, $view);
+			self::$_view_cache[$path] = $view;
 		}
 
 		$parms = $this->_get_view_parms();
@@ -204,14 +137,14 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
-	 * Freeze the form field, preventing further modifications.
+	 * Freeze the form fields, preventing further modifications.
 	 *
 	 * @return	void
 	 */
 	public function freeze()
 	{
 		$this->_finalize_rules();
-		$this->_state |= MMI_Form::STATE_FROZEN;
+		$this->_state |= Jelly_Form::STATE_FROZEN;
 	}
 
 	/**
@@ -226,70 +159,21 @@ abstract class Kohana_MMI_Form_Field
 		{
 			$this->value = Arr::get($this->_meta, 'default', '');
 		}
-		$this->_state |= MMI_Form::STATE_RESET;
+		$this->_state |= Jelly_Form::STATE_RESET;
 	}
 
 	/**
-	 * Load the post data into the models and fields.
+	 * Add an error message for the form field.
 	 *
-	 * @return  void
-	 */
-	protected function _load_post_data()
-	{
-		if ( ! $_POST)
-		{
-			return;
-		}
-
-		$post = Security::xss_clean($_POST);
-		if ( ! empty($post))
-		{
-			$original = Arr::get($this->_attributes, 'value', '');
-			$posted = Arr::get($post, $this->_get_id(), '');
-			$this->_meta['original'] = $original;
-			$this->_meta['posted'] = $posted;
-			$this->_meta['changed'] = ($original !== $posted);
-			$this->_attributes['value'] = $posted;
-		}
-		$this->_state |= MMI_Form::STATE_POSTED;
-	}
-
-	/**
-	 * Validate the form field.
-	 *
+	 * @param	string	the error message
 	 * @return	void
 	 */
-	public function valid()
+	public function add_error($msg = '')
 	{
-		if ($this->_state ^ MMI_Form::STATE_POSTED)
+		if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
 		{
-			$this->_load_post_data();
+			$this->_errors[] = $msg;
 		}
-
-		$errors = array();
-		$meta = $this->_meta;
-		$id = $this->_get_id();
-		$value = Arr::get($this->_attributes, 'value', '');
-
-		// Add validation settings
-		$validate = Validate::factory(array($id => $value));
-		$validate->label($id, Arr::get($meta, 'description'));
-		$validate->filters($id, Arr::get($meta, 'filters', array()));
-		$validate->rules($id, Arr::get($meta, 'rules', array()));
-		$validate->callbacks($id, Arr::get($meta, 'callbacks', array()));
-
-
-		if ( ! $validate->check())
-		{
-			$label = Arr::get($meta, 'description');
-MMI_Debug::dump($validate->errors());
-			foreach ($validate->errors() as $id => $error)
-			{
-				$this->_errors[$id] = MMI_Form_Messages::format_error_message($label, $error[0], $error[1]);
-			}
-		}
-MMI_Debug::dead($this);
-		$this->_state |= MMI_Form::STATE_VALIDATED;
 	}
 
 	/**
@@ -381,44 +265,6 @@ MMI_Debug::dead($this);
 	}
 
 	/**
-	 * Get the error label settings.
-	 *
-	 * @return	array
-	 */
-	protected function _error_meta()
-	{
-		$error = Arr::get($this->_meta, 'error', array());
-		$error['for'] = $this->_get_id();
-		$error['msg'] = implode('<br />', $this->_errors);
-		return $error;
-	}
-
-	/**
-	 * Get the label settings.
-	 *
-	 * @return	array
-	 */
-	protected function _label_meta()
-	{
-		$meta = $this->_meta;
-		$label = Arr::get($meta, 'label', array());
-		$label['for'] = $this->_get_id();
-		if (empty($label['_html']))
-		{
-			$label['_html'] = Arr::get($this->_attributes, 'title');
-		}
-		if (empty($label['_html']))
-		{
-			$label['_html'] = Arr::get($meta, 'description');
-		}
-		if ( ! empty($label['_html']))
-		{
-			$label['_html'] .= ':';
-		}
-		return $label;
-	}
-
-	/**
 	 * Get the view path.
 	 *
 	 * @return	string
@@ -430,7 +276,7 @@ MMI_Debug::dead($this);
 		$file = Arr::get($meta, 'view', Arr::get($meta, 'type', 'input'));
 		if ( ! Kohana::find_file('views/'.$dir, $file))
 		{
-			// Use the default view
+			// Use the default view if the type-specific view is not found
 			$file = 'input';
 		}
 		return $dir.'/'.$file;
@@ -518,13 +364,9 @@ MMI_Debug::dead($this);
 	 */
 	protected function _get_id()
 	{
-		$id = MMI_Form::clean_id(Arr::get($this->_attributes, 'id', ''));
-		$namespace = MMI_Form::clean_id(Arr::get($this->_meta, 'namespace', ''));
-		if (empty($namespace))
-		{
-			return $id;
-		}
-		return $namespace.'_'.$id;
+		$id = Arr::get($this->_attributes, 'id');
+		$namespace = Arr::get($this->_meta, 'namespace');
+		return self::get_field_id($id, $namespace);
 	}
 
 	/**
@@ -549,7 +391,7 @@ MMI_Debug::dead($this);
 
 		// Process rules that have a UTF8 parameter
 		$utf8_rules = self::$_utf8_rules;
-		if (MMI_Form::unicode())
+		if ($this->_form->unicode())
 		{
 			foreach ($rules as $name => $rule)
 			{
@@ -563,21 +405,57 @@ MMI_Debug::dead($this);
 	}
 
 //	/**
-//	 * Generate the field id.  Include the namespace if one is specified.
+//	 * Generate the label HTML.
 //	 *
-//	 * @param	string	the field id
-//	 * @param	string	the field namespace
-//	 * @return	string
+//	 * @param   array   the view data
+//	 * @return  string
 //	 */
-//	public static function get_field_id($id, $namespace = NULL)
+//	protected function _label($data = array())
 //	{
-//		$id = MMI_Form::clean_id($id);
-//		if (empty($namespace))
+//		$file = self::_get_view_path().'label';
+//		$view = (isset(self::$_view_cache[$file])) ? (clone self::$_view_cache[$file]) : (NULL);
+//		if (empty($view))
 //		{
-//			return $id;
+//			$view = View::factory($file);
+//			self::$_view_cache[$file] = $view;
 //		}
-//		return $namespace.'_'.$id;
+//		return $view->set($data)->render();
 //	}
+//
+//	/**
+//	 * Generate the error HTML.
+//	 *
+//	 * @param   array   the view data
+//	 * @return  string
+//	 */
+//	protected function _error($data = array())
+//	{
+//		$file = self::_get_view_path().'error';
+//		$view = (isset(self::$_view_cache[$file])) ? (clone self::$_view_cache[$file]) : (NULL);
+//		if (empty($view))
+//		{
+//			$view = View::factory($file);
+//			self::$_view_cache[$file] = $view;
+//		}
+//		return $view->set($data)->render();
+//	}
+
+	/**
+	 * Generate the field id.  Include the namespace if one is specified.
+	 *
+	 * @param	string	the field id
+	 * @param	string	the field namespace
+	 * @return	string
+	 */
+	public static function get_field_id($id, $namespace = NULL)
+	{
+		$id = MMI_Form::clean_id($id);
+		if (empty($namespace))
+		{
+			return $id;
+		}
+		return $namespace.'_'.$id;
+	}
 
 	/**
 	 * Get the field configuration settings.
@@ -597,7 +475,7 @@ MMI_Debug::dead($this);
 	}
 
 	/**
-	 * Create a form field instance.
+	 * Create a field instance.
 	 *
 	 * @param	string	the field type
 	 * @param	array	an associative array of field options
@@ -644,4 +522,4 @@ MMI_Debug::dead($this);
 		}
 		return new $class($options);
 	}
-} // End Kohana_MMI_Form_Field
+} // End Kohana_MMI_Form_FieldSet

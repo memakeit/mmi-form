@@ -3,7 +3,6 @@
  * Form generator.
  *
  * @package		MMI Form
- * @category	form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license	http://www.memakeit.com/license
@@ -12,9 +11,13 @@ class Kohana_MMI_Form
 {
 	// Class constants
 	const ERROR_GENERAL = '_';
+
+	// Field order constants
 	const ORDER_ERROR = 'err';
 	const ORDER_FIELD = 'fld';
 	const ORDER_LABEL = 'lbl';
+
+	// State constants
 	const STATE_INITIAL = 1;
 	const STATE_POSTED = 2;
 	const STATE_VALIDATED = 4;
@@ -24,49 +27,54 @@ class Kohana_MMI_Form
 	const STATE_RENDERED = 64;
 
 	/**
-	 * @var Kohana_Config form configuration
+	 * @var Kohana_Config the form configuration
 	 */
 	protected static $_config;
 
 	/**
-	 * @var array form errors
+	 * @var array the view cache
+	 */
+	protected static $_view_cache = array();
+
+	/**
+	 * @var array the HTML attributes
+	 */
+	protected $_attributes = array();
+
+	/**
+	 * @var array the form errors
 	 */
 	protected $_errors = array();
 
 	/**
-	 * @var array form field objects
+	 * @var array the field objects
 	 */
 	protected $_fields = array();
 
 	/**
-	 * @var string the form id
+	 * @var boolean use HTML5 markup?
 	 */
-	protected $_id;
+	protected $_html5;
 
 	/**
-	 * @var array namespaces
+	 * @var array the associated meta data
+	 */
+	protected $_meta = array();
+
+	/**
+	 * @var array the form namespaces
 	 */
 	protected $_namespaces = array();
 
 	/**
-	 * @var array options
-	 */
-	protected $_options = array();
-
-	/**
-	 * @var array form-specific options
-	 */
-	protected $_options_form = array();
-
-	/**
-	 * @var array form plugins
+	 * @var array the form plugins
 	 */
 	protected $_plugins = array();
 
-	/**
-	 * @var array post data
-	 */
-	protected $_post_data = array();
+//	/**
+//	 * @var array the post data
+//	 */
+//	protected $_post_data = array();
 
 	/**
 	 * @var boolean was form data posted?
@@ -74,29 +82,20 @@ class Kohana_MMI_Form
 	protected $_posted = FALSE;
 
 	/**
-	 * @var integer current form state
+	 * @var integer the current form state
 	 */
 	protected $_state = self::STATE_INITIAL;
 
 	/**
-	 * Create a form instance.
+	 * Set whether to use HTML5 markup.
+	 * Initialize the options.
 	 *
-	 * @param	array	an associative array of form options
-	 * @return	MMI_Form
-	 */
-	public static function factory($options = array())
-	{
-		return new MMI_Form($options);
-	}
-
-	/**
-	 * Initialize form options.
-	 *
-	 * @param	array	an associative array of form options
+	 * @param	array	an associative array of field options
 	 * @return	void
 	 */
 	public function __construct($options = array())
 	{
+		$this->_html5 = MMI_Form::html5();
 		$this->_init_options($options);
 		$this->_posted = ( ! empty($_POST));
 	}
@@ -105,9 +104,9 @@ class Kohana_MMI_Form
 	 * Add a plugin.
 	 * This method is chainable.
 	 *
-	 * @param	mixed	the plugin
+	 * @param	mixed	a MMI_Form_Plugin object or a string specifying the plugin type
 	 * @param	mixed	the plugin method prefix
-	 * @param	array	an associative array of plugin-specific options
+	 * @param	array	an associative array of plugin options
 	 * @return	MMI_Form
 	 */
 	public function add_plugin($plugin, $method_prefix, $options = array())
@@ -121,18 +120,16 @@ class Kohana_MMI_Form
 
 		if (is_string($plugin))
 		{
-			// Create the plugin
-			$plugin = MMI_Form_Plugin::factory($this, $plugin, $options);
+			// Create the plugin object
+			$plugin = MMI_Form_Plugin::factory($plugin, $options);
+			$plugin->form($this);
+			$plugin->method_prefix($method_prefix);
 		}
 		if ($plugin instanceof MMI_Form_Plugin)
 		{
 			// Add the plugin
-			$plugin_name = MMI_Form_Plugin::get_name(get_class($plugin));
-			$this->_plugins[$plugin_name] = array
-			(
-				'method_prefix'	=> $method_prefix,
-				'plugin'		=> $plugin,
-			);
+			$plugin_name = $plugin->name();
+			$this->_plugins[$plugin_name] = $plugin;
 		}
 		return $this;
 	}
@@ -141,7 +138,7 @@ class Kohana_MMI_Form
 	 * Remove a plugin.
 	 * This method is chainable.
 	 *
-	 * @param	mixed	the plugin name
+	 * @param	mixed	a MMI_Form_Plugin object or a string specifying the plugin type
 	 * @return	MMI_Form
 	 */
 	public function remove_plugin($plugin)
@@ -155,30 +152,25 @@ class Kohana_MMI_Form
 
 		if ($plugin instanceof MMI_Form_Plugin)
 		{
-			$plugin = MMI_Form_Plugin::get_name(get_class($plugin));
+			$plugin = $plugin->name();
 		}
-		if (is_string($plugin))
+		if (is_string($plugin) AND array_key_exists($plugin, $this->_plugins))
 		{
-			if (array_key_exists($plugin, $this->_plugins))
-			{
-				// Remove the plugin
-				unset($this->_plugins[$plugin]);
-			}
+			unset($this->_plugins[$plugin]);
 		}
 		return $this;
 	}
 
 	/**
-	 * Add a field to the form.
-	 * Multiple fields can be added by specifying an array of fields, models, and options.
-	 * A wildcard ('*') adds all the fields for a given model.
+	 * Add a form field.
+	 * When a MMI_Form_Field object is specified, the options array is not used.
 	 * This method is chainable.
 	 *
-	 * @param	mixed	a Jelly field, an array containing a form-only field specification, or an array of fields
-	 * @param	array	an associative array of field-specific options
+	 * @param	mixed	a MMI_Form_Field object or a string specifying the field type
+	 * @param	array	an associative array of field options
 	 * @return	MMI_Form
 	 */
-	public function add_field($field, $namespace = NULL)
+	public function add_field($field, $options = array())
 	{
 		if ($this->_state !== self::STATE_INITIAL)
 		{
@@ -187,70 +179,58 @@ class Kohana_MMI_Form
 			throw new Kohana_Exception($msg);
 		}
 
-		$field_name = $field;
-		if (is_string($field_name))
+		// Create the field object
+		if ( ! empty($field) AND is_string($field))
 		{
-			if ( ! $is_form_only_field AND (is_string($model) OR empty($model)))
-			{
-				$model = Arr::get($this->_models, $model_name);
-			}
-
-			if ( ! $is_form_only_field AND ! empty($field_name) AND is_string($field_name))
-			{
-				// Get the field from model meta information
-				$field = $model->meta()->fields($field_name);
-			}
+			$field = MMI_Form_Field::factory($field, $options);
 		}
 
-		if (is_array($field) AND count($field) > 0)
+		// Add the namespace
+		$namespace = $field->meta('namespace');
+		if ( ! empty($namespace))
 		{
-			if (Arr::is_assoc($field))
-			{
-				$name = Arr::get($field, 'name');
-				$type = Arr::get($field, 'type');
-				if (empty($name) AND $type === 'html')
-				{
-					$field['name'] = uniqid('html_');
-				}
-				$field_name = MMI_Form_Field::get_field_name($field['name']);
-				$options = $this->_parse_field_options($options);
-				$this->_fields[MMI_Form_Field::get_field_id($model_name, $field_name)] = MMI_Form_Field::factory($this, $field, $options);
-			}
-			else
-			{
-				// Process multiple fields
-				for ($i=0; $i<count($field); $i++)
-				{
-					$item_model = $model;
-					if (is_array($model) AND isset($model[$i]) AND ! empty($model[$i]))
-					{
-						if (is_string($model[$i]) OR $model[$i] instanceof Jelly_Model)
-						{
-							$item_model = $model[$i];
-						}
-					}
-
-					$item_options = $options;
-					if (is_array($options) AND isset($options[$i]) AND ! empty($options[$i]))
-					{
-						if (is_array($options[$i]))
-						{
-							$item_options = $options[$i];
-						}
-					}
-					$this->add_field($field[$i], $item_model, $item_options);
-				}
-			}
+			$id = self::clean_id($namespace);
+			$namespace = trim(strtolower($namespace));
+			$this->_namespaces[$id] = $namespace;
 		}
+
+//		// Set a reference to the form in the field
+//		$field->form($this);
+
+		// Add the field
+		$id = $this->_generate_id_from_field($field);
+		$this->_fields[$id] = $field;
 		return $this;
 	}
 
 	/**
-	 * Remove one or more fields from the form.
-	 * A wildcard ('*') removes all the form fields.
+	 * Generate an id using the id and namespace settings of a form field object.
+	 *
+	 * @param	MMI_Form	a MMI_Form_Field object
+	 * @return	string
+	 */
+	protected function _generate_id_from_field(MMI_Form_Field $field)
+	{
+		$id = self::clean_id($field->attribute('id'));
+		$namespace = self::clean_id($field->meta('namespace'));
+		return $namespace.'.'.$id;
+	}
+
+	/**
+	 * Remove one or more form fields.
 	 * This method is chainable.
 	 *
-	 * @param	mixed		an form field object or an array of form field object
+	 * To remove a single field:
+	 *	- specify a field object (namespace parameter is ignored)
+	 *	- specify a field id (namespace is used)
+	 *
+	 * To remove multiple fields:
+	 *	- '*' without a namespace removes all fields
+	 *	- '*' with a namespace removes all fields for the namespace
+	 *	- an array (of strings) removes multiple fields for a namespace
+	 *
+	 * @param	mixed	a form identifier, object, or wildcard character (*)
+	 * @param	string	the namespace
 	 * @return	MMI_Form
 	 */
 	public function remove_field($field, $namespace = NULL)
@@ -262,60 +242,78 @@ class Kohana_MMI_Form
 			throw new Kohana_Exception($msg);
 		}
 
+		// Process a form object
 		if ($field instanceof MMI_Form_Field)
 		{
-			if ($field_name === '*' AND isset($namespace))
-            {
-                // Remove all fields for a namespace
-                if (array_key_exists($namespace, $this->_namespaces))
-                {
-                	foreach ($this->_fields as $field)
-                	{
-                		if ($field->namespace === $namespace)
-                		{
-                    		$this->remove_field($field, $namespace);
-                		}
-                	}
-                }
-            }
-            elseif ($field_name === '*')
-            {
-            	foreach ($this->_fields as $field)
-                {
-                    $this->remove_field($field);
-                }
-            }
-            else
-            {
-                $field_id = Jelly_Form_Field::get_field_id($model_name, $field_name);
-                if (array_key_exists($field_id, $this->_fields))
-                {
-                    unset($this->_fields[$field_id]);
-                }
-            }
+			$id = $this->_generate_id_from_field($field);
+			if (array_key_exists($id, $this->_fields))
+			{
+				unset($this->_fields[$id]);
+			}
 		}
+
+		// Process wildcards
+		elseif ($field === '*' AND empty($namespace))
+		{
+			// Remove all fields
+			$this->_fields = array();
+		}
+		elseif ($field === '*' AND ! empty($namespace))
+		{
+			// Remove all fields for the namespace
+			$namespace = self::clean_id($namespace);
+			foreach ($this->_fields as $key => $field)
+			{
+				list($ns) = explode('.', $key);
+				if ($ns === $namespace)
+				{
+					unset($this->_fields[$key]);
+				}
+			}
+		}
+
+		// Process a field name (string)
+		elseif ( ! empty($field) AND is_string($field))
+		{
+			$id = self::clean_id($field);
+			$namespace = self::clean_id($namespace);
+			$id = $namespace.'.'.$id;
+			if (array_key_exists($id, $this->_fields))
+			{
+				unset($this->_fields[$id]);
+			}
+		}
+
+		// Process an array of field names (strings)
 		elseif (is_array($field) AND count($field) > 0)
 		{
-			// Process multiple fields
-			for ($i=0; $i<count($field); $i++)
+			$namespace = self::clean_id($namespace);
+			foreach ($field as $item)
 			{
-				if (is_array($model) AND isset($model[$i]) AND ! empty($model[$i]))
+				$id = $namespace.'.'.self::clean_id($item);
+				if (array_key_exists($id, $this->_fields))
 				{
-					if (is_string($model[$i]) OR $model[$i] instanceof Jelly_Model)
-					{
-						$item_model = $model[$i];
-					}
+					unset($this->_fields[$id]);
 				}
-				$this->remove_field($field[$i], $item_model);
 			}
 		}
 		return $this;
 	}
 
+	public static function view_cache($key, $value = NULL)
+	{
+		if (func_num_args() === 1)
+		{
+			return Arr::get(self::$_view_cache, $key);
+		}
+		self::$_view_cache[$key] = $value;
+	}
+
+
 	/**
 	 * Validate the form.
 	 *
-	 * @return  boolean
+	 * @return	boolean
 	 */
 	public function valid()
 	{
@@ -324,7 +322,11 @@ class Kohana_MMI_Form
 			$this->_load_post_data();
 		}
 
-		$this->_validate_form_only_fields();
+		foreach ($this->_fields as $field)
+		{
+			$field->valid();
+		}
+		$this->_validate();
 		$this->_state |= self::STATE_VALIDATED;
 		return (count($this->_errors) === 0);
 	}
@@ -332,39 +334,77 @@ class Kohana_MMI_Form
 	/**
 	 * Get one or more form fields.
 	 *
-	 * @param   string  the field name
-	 * @param   string  the model name
-	 * @return  array
+	 * @param	string  the field id
+	 * @param	string  the field namespace
+	 * @return	array
 	 */
-	public function fields($field_name = '', $model_name = self::FORM_ONLY_FIELD)
+	public function field($id = NULL, $namespace = NULL)
 	{
-		if (empty($field_name))
+		$fields = $this->_fields;
+		if ( ! empty($id))
 		{
-			return $this->_fields;
+			$id = self::clean_id($id);
+			$namespace = self::clean_id($namespace);
+			foreach ($fields as $key => $field)
+			{
+				list($ns, $_id) = explode('.', $key);
+				if ($ns === $namespace AND $_id === $id)
+				{
+					return $field;
+				}
+			}
 		}
-		return Arr::Get($this->_fields, MMI_Form_Field::get_field_id($model_name, $field_name));
+		elseif (empty($id) AND ! empty($namespace))
+		{
+			$namespace = self::clean_id($namespace);
+			$data = array();
+			foreach ($fields as $key => $field)
+			{
+				list($ns) = explode('.', $key);
+				if ($ns === $namespace)
+				{
+					$idx = $this->_generate_id_from_field($field);
+					$data[$idx] = $field;
+				}
+			}
+			return $data;
+		}
+		else
+		{
+			return $fields;
+		}
 	}
 
 	/**
-	 * Get validation errors.
+	 * Get or set an error.
+	 * If no parameters are specified, all error messages are returned.
+	 * If a message is specified, it is added to the error collection.
 	 *
-	 * @return  array
+	 * @param	string	the error message
+	 * @return	mixed
 	 */
-	public function errors()
+	public function error($msg = NULL)
 	{
-		return $this->_errors;
-	}
+		$num_args = func_num_args();
+		if ($num_args === 0)
+		{
+			return $this->_errors;
+		}
 
-	/**
-	 * Add a validation error.
-	 * This method is chainable.
-	 *
-	 * @return  MMI_Form
-	 */
-	public function add_error($field_name, $error)
-	{
-		$this->_errors[$field_name] = $error;
-		return $this;
+		if ($this->_state ^ MMI_Form::STATE_FROZEN)
+		{
+			if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
+			{
+				$this->_errors[] = $msg;
+			}
+			return $this;
+		}
+		else
+		{
+			$msg = 'Errors can not be set after the form has been frozen.';
+			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			throw new Kohana_Exception($msg);
+		}
 	}
 
 	/**
@@ -415,7 +455,7 @@ class Kohana_MMI_Form
 	 *
 	 * @return  string
 	 */
-	public function form()
+	public function render()
 	{
 		// Ensure post data is processed
 		if ($this->_state ^ self::STATE_POSTED)
@@ -425,63 +465,80 @@ class Kohana_MMI_Form
 
 		$this->_freeze();
 		$frm = array();
-		$options = $this->_options_form;
 
-		// Form open tag
-		$file = 'jelly/form/open';
-		$frm[] = View::factory($file, array
-		(
-			'before' => Arr::path($options, '_open._before', ''),
-			'after' => Arr::path($options, '_open._after', ''),
-			'action' => Arr::get($options, 'action', Request::instance()->uri),
-			'attributes' => self::attributes($options),
-		))->render();
-
-		// Feedback messages
-		$frm[] = $this->_get_messages();
+		$frm[] = $this->_form_open();
+//		// Feedback messages
+//		$frm[] = $this->_get_messages();
 
 		// Form fields
-		$errors = $this->_errors;
-		$models = $this->_models;
 		foreach ($this->_fields as $field)
 		{
-			foreach ($field->order() as $order_type)
+			$order = $field->meta('order');
+			foreach ($order as $order_type)
 			{
-				$field_name = $field->name;
-				$field_id = str_replace('[]', '', MMI_Form_Field::get_field_id($model_name, $field_name));
 				switch ($order_type)
 				{
 					case self::ORDER_ERROR:
-						$msg = Arr::get($errors, $field_id, '');
-						if ( ! empty($msg))
-						{
-							$field->add_error_message($msg);
-						}
-						$frm[] = $field->error();
+						$frm[] = MMI_Form_Label::factory($field->meta('error'))->render();
 						break;
 
 					case self::ORDER_FIELD:
-						$frm[] = $field->input();
+						$frm[] = $field->render();
 						break;
 
 					case self::ORDER_LABEL:
-						$frm[] = $field->label();
+						$frm[] = MMI_Form_Label::factory($field->meta('label'))->render();
 						break;
 				}
 			}
 		}
 
-		// Form close tag
-		$frm[] = ' ';
-		$file = 'jelly/form/close';
-		$frm[] = View::factory($file, array
-		(
-			'before' => Arr::path($options, '_close._before', ''),
-			'after' => Arr::path($options, '_close._after', ''),
-		))->render();
-
+		$frm[] = $this->_form_close();
 		$this->_state |= self::STATE_RENDERED;
 		return implode(PHP_EOL, $frm);
+	}
+
+	protected function _form_open()
+	{
+		$meta = $this->_meta;
+		$open = Arr::get($meta, 'open', array());
+		$dir = Arr::get($open, 'view_path', 'mmi/form');
+		$file = Arr::get($open, 'view', 'open');
+		if ( ! Kohana::find_file('views/'.$dir, $file))
+		{
+			// Use the default view
+			$file = 'open';
+		}
+		$file = $dir.'/'.$file;
+
+		$attributes = $this->_attributes;
+		return View::factory($file, array
+		(
+			'before' => Arr::get($open, '_before', ''),
+			'after' => Arr::path($open, '_after', ''),
+			'action' => Arr::get($attributes, 'action', Request::instance()->uri),
+			'attributes' => $attributes,
+		))->render();
+	}
+
+	protected function _form_close()
+	{
+		$meta = $this->_meta;
+		$close = Arr::get($meta, 'close', array());
+		$dir = Arr::get($close, 'view_path', 'mmi/form');
+		$file = Arr::get($close, 'view', 'close');
+		if ( ! Kohana::find_file('views/'.$dir, $file))
+		{
+			// Use the default view
+			$file = 'close';
+		}
+		$file = $dir.'/'.$file;
+
+		return View::factory($file, array
+		(
+			'before' => Arr::get($close, '_before', ''),
+			'after' => Arr::get($close, '_after', ''),
+		))->render();
 	}
 
 	/**
@@ -653,62 +710,9 @@ class Kohana_MMI_Form
 	 *
 	 * @return  string
 	 */
-	public function unicode()
+	public static function unicode()
 	{
-		return Arr::get($this->_options_form, '_unicode', FALSE);
-	}
-
-	/**
-	 * Get the formatted error message.
-	 *
-	 * @param   string  the field label
-	 * @param   string  the rule name
-	 * @param   array   the rule parameters
-	 * @return  string
-	 */
-	public function format_error_message($field_label, $rule_name, $rule_parms)
-	{
-		$form_options = $this->_options_form;
-		if ($message = Arr::path($form_options, '_messages._custom.'.$rule_name))
-		{
-			// Found a custom message
-		}
-		else
-		{
-			$file = $this->_get_message_file();
-			if ($message = Kohana::message($file, $rule_name))
-			{
-				// Found a default message for this error
-			}
-			else
-			{
-				// No message exists, display the path expected
-				$message = "{$file}.{$rule_name}";
-			}
-		}
-
-		$values = array(':field' => $field_label);
-		if (is_array($rule_parms) AND count($rule_parms) > 0)
-		{
-			for ($i=0; $i<count($rule_parms); $i++)
-			{
-				$parm = $rule_parms[$i];
-				$values[':param'.($i + 1)] = (is_array($parm)) ? implode(', ', $parm) : $parm;
-			}
-		}
-
-		$translate = Arr::path($form_options, '_messages._translate', FALSE);
-		if ($translate)
-		{
-			// Translate the message using the specified language
-			$message = __($message, $values, I18n::$lang);
-		}
-		else
-		{
-			// Do not translate the message, just replace the values
-			$message = strtr($message, $values);
-		}
-		return $message;
+		return self::get_config()->get('_unicode', FALSE);
 	}
 
 	/**
@@ -775,62 +779,118 @@ class Kohana_MMI_Form
 	 */
 	protected function _init_options($options)
 	{
-		$options = Arr::merge
-		(
-			self::_get_config(TRUE),
-			$options
-		);
-
-		$form_id = Arr::path($options, 'form.id');
-		if (empty($form_id))
-		{
-			$form_id = 'jelly_form';
-			$options['form']['id'] = $form_id;
-		}
-		$this->_id = self::clean_id($form_id);
-
-		$options['form']['_required_symbol'] = Arr::path($options, 'form._required_symbol', '');
-
-		$this->_options = $options;
-		$this->_options_form = Arr::get($options, 'form', array());
-	}
-
-	/**
-	 * Parse the field options.
-	 *
-	 * @param   array   the field options
-	 * @return  array
-	 */
-	protected function _parse_field_options($options)
-	{
 		if ( ! is_array($options))
 		{
-			return array();
+			$options = array();
 		}
 
-		$_error = Arr::get($options, '_error', array());
-		if (array_key_exists('_error', $options))
+		// Set defaults
+		$config = self::get_config();
+		if (empty($options['id']))
 		{
-			unset($options['_error']);
+			$options['id'] = 'mmi_frm';
 		}
-
-		$_label = Arr::get($options, '_label', array());
-		if (array_key_exists('_label', $options))
+		if (empty($options['_required_symbol']))
 		{
-			unset($options['_label']);
+			$options['_required_symbol'] = $config->get('_required_symbol', '*');
 		}
 
-		// Merge field-specific options with the form options
-		return Arr::merge
-		(
-			$this->_options,
-			array('error' => array('_field_specific' => $_error)),
-			array('field' => array('_field_specific' => $options)),
-			array('label' => array('_field_specific' => $_label))
-		);
+//		// Get the CSS class
+//		$class = $this->_combine_value($options, 'class');
+
+		// Merge the user-specified and config settings
+		$defaults = $config->get('_defaults', array());
+		$options = array_merge($defaults, $options);
+
+//		// Set the CSS class
+//		if ( ! empty($class))
+//		{
+//			$options['class'] = $class;
+//		}
+
+		// Separate the meta data from the HTML attributes
+		foreach ($options as $name => $value)
+		{
+			$name = trim($name);
+			if (substr($name, 0, 1) === '_')
+			{
+				$this->_meta[trim($name, '_')] = $value;
+			}
+			else
+			{
+				$this->_attributes[$name] = $value;
+			}
+		}
+	}
+
+
+
+	/**
+	 * Load the post data into the models and fields.
+	 *
+	 * @return  void
+	 */
+	protected function _load_post_data()
+	{
+		if ( ! $this->_posted)
+		{
+			return;
+		}
+		$this->_state |= self::STATE_POSTED;
 	}
 
 	/**
+	 * Validate the form-only fields.  Validation errors can be retrieved via the errors() method.
+	 *
+	 * @return  void
+	 */
+	protected function _validate()
+	{
+		$errors = array();
+		$validate = Validate::factory($this->_get_form_only_data());
+		foreach ($this->_fields as $name => $field)
+		{
+			if ($field->model_name === self::FORM_ONLY_FIELD)
+			{
+				// Add validation settings
+				$validate->label($name, $field->label);
+				$validate->filters($name, $field->filters);
+				$validate->rules($name, $field->rules);
+				$validate->callbacks($name, $field->callbacks);
+			}
+		}
+
+		if ( ! $validate->check())
+		{
+			foreach ($validate->errors() as $field_name => $error)
+			{
+				$field = $this->_fields[$field_name];
+				$this->_errors[$field_name] = $this->format_error_message($field->label, $error[0], $error[1]);
+			}
+		}
+	}
+
+	/**
+	 * Freeze the form (and its fields), preventing further modifications.
+	 *
+	 * @return	void
+	 */
+	protected function _freeze()
+	{
+		foreach ($this->_fields as $field)
+		{
+			$field->freeze();
+		}
+		$this->_state |= self::STATE_FROZEN;
+	}
+
+
+
+
+
+
+
+/**
 	 * Get the form messages.
 	 *
 	 * @return  string
@@ -887,177 +947,8 @@ class Kohana_MMI_Form
 		return '<div'.HTML::attributes($attributes).'>'.$msg.'</div>';
 	}
 
-	/**
-	 * Load the post data into the models and fields.
-	 *
-	 * @return  void
-	 */
-	protected function _load_post_data()
-	{
-		if ($this->_posted)
-		{
-			$post_data = $this->_xss_clean_array($_POST);
-			if ( ! empty($post_data))
-			{
-				$models = $this->_models;
-				foreach ($this->_fields as $name => $field)
-				{
-					$model_name = $field->model_name;
-					$field_name = $field->model_column;
-					$field_type = $field->type();
-					if ($model_name === MMI_Form::FORM_ONLY_FIELD AND $field_type === 'hidden')
-					{
-						continue;
-					}
-					if (in_array($field_type, array('checkbox', 'radio')) AND empty($field->choices))
-					{
-						continue;
-					}
-					$value = Arr::get($post_data, MMI_Form_Field::get_form_field_id($model_name, $field_name));
-					$field->value = $value;
-					$model = Arr::get($models, $model_name);
-					if ($model instanceof Jelly_Model)
-					{
-						$model->$field_name = $value;
-					}
-				}
-			}
-			$this->_post_data = $post_data;
-			$this->_state |= self::STATE_POSTED;
-		}
-	}
 
-	/**
-	 * Validate the form-only fields.  Validation errors can be retrieved via the errors() method.
-	 *
-	 * @return  void
-	 */
-	protected function _validate_form_only_fields()
-	{
-		$errors = array();
-		$validate = Validate::factory($this->_get_form_only_data());
-		foreach ($this->_fields as $name => $field)
-		{
-			if ($field->model_name === self::FORM_ONLY_FIELD)
-			{
-				// Add validation settings
-				$validate->label($name, $field->label);
-				$validate->filters($name, $field->filters);
-				$validate->rules($name, $field->rules);
-				$validate->callbacks($name, $field->callbacks);
-			}
-		}
 
-		if ( ! $validate->check())
-		{
-			foreach ($validate->errors() as $field_name => $error)
-			{
-				$field = $this->_fields[$field_name];
-				$this->_errors[$field_name] = $this->format_error_message($field->label, $error[0], $error[1]);
-			}
-		}
-	}
-
-	/**
-	 * Load the form-only field values into an array.
-	 *
-	 * @return  array
-	 */
-	protected function _get_form_only_data()
-	{
-		$data = array();
-		if ($this->_posted)
-		{
-			$post_data = $this->_post_data;
-			foreach ($this->_fields as $name => $field)
-			{
-				$field_name = $field->name;
-				$model_name = $field->model_name;
-				if ($model_name === self::FORM_ONLY_FIELD)
-				{
-					$form_field_id = MMI_Form_Field::get_form_field_id($model_name, $field_name);
-					$data[$name] = Arr::get($post_data, $form_field_id, '');
-				}
-			}
-		}
-		return $data;
-	}
-
-	/**
-	 * Freeze the form (and form fields), preventing further modifications.
-	 *
-	 * @return  void
-	 */
-	protected function _freeze()
-	{
-		foreach ($this->_fields as $field)
-		{
-			$model_name = $field->model_name;
-			if ($model_name !== self::FORM_ONLY_FIELD)
-			{
-				$model = $this->_models[$model_name];
-				$field->value = $model->{$field->name};
-			}
-			$field->freeze();
-		}
-		$this->_state |= self::STATE_FROZEN;
-	}
-
-	/**
-	 * Get the message file.  If a language-specific file can be located, it is used.
-	 *
-	 * @return  string
-	 */
-	protected function _get_message_file()
-	{
-		$filename = Arr::path($this->_options_form, '_messages._file', 'validate');
-		$lang = str_replace('-', DIRECTORY_SEPARATOR, I18n::$lang);
-		$file = $lang.DIRECTORY_SEPARATOR.$filename;
-
-		$path = Kohana::find_file('messages', $file);
-		if (empty($path))
-		{
-			$idx = strpos($lang, DIRECTORY_SEPARATOR);
-			if ($idx !== FALSE)
-			{
-				$lang = substr($lang, 0, $idx);
-				$file = $lang.DIRECTORY_SEPARATOR.$filename;
-				$path = Kohana::find_file('messages', $file);
-			}
-		}
-		if (empty($path))
-		{
-			$file = $filename;
-			$path = Kohana::find_file('messages', $file);
-		}
-		return $file;
-	}
-
-	/**
-	 * Remove XSS from user input.
-	 *
-	 * @param   array   array to sanitize
-	 * @return  array
-	 */
-	protected function _xss_clean_array($data)
-	{
-		if ( ! is_array($data))
-		{
-			$data = array();
-		}
-		foreach ($data as $name => $value)
-		{
-			if (is_array($value))
-			{
-				$data[$name] = $this->_xss_clean_array($value);
-			}
-			else
-			{
-				$data[$name] = Security::xss_clean($value);
-			}
-		}
-		return $data;
-	}
 
 	/**
 	 * Set a variable.
@@ -1080,11 +971,14 @@ class Kohana_MMI_Form
 		}
 	}
 
+
+
+
 	/**
-	 * Remove invalid characters from an id attribute.
+	 * Remove invalid characters from an id.
 	 *
-	 * @param   string  the original id
-	 * @return  string
+	 * @param	string	the original id
+	 * @return	string
 	 */
 	public static function clean_id($id)
 	{
@@ -1092,12 +986,12 @@ class Kohana_MMI_Form
 	}
 
 	/**
-	 * Get the configuration settings.
+	 * Get the form configuration settings.
 	 *
-	 * @param   boolean return the configuration as an array?
-	 * @return  mixed
+	 * @param	boolean	return the configuration as an array?
+	 * @return	mixed
 	 */
-	protected static function _get_config($as_array = FALSE)
+	public static function get_config($as_array = FALSE)
 	{
 		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form');
 		$config = self::$_config;
@@ -1106,5 +1000,26 @@ class Kohana_MMI_Form
 			$config = $config->as_array();
 		}
 		return $config;
+	}
+
+	/**
+	 * Retuern whether to use HTML5 markup.
+	 *
+	 * @return	boolean
+	 */
+	public static function html5()
+	{
+		return self::get_config()->get('_html5', TRUE);
+	}
+
+	/**
+	 * Create a form instance.
+	 *
+	 * @param	array	an associative array of form options
+	 * @return	MMI_Form
+	 */
+	public static function factory($options = array())
+	{
+		return new MMI_Form($options);
 	}
 } // End Kohana_MMI_Form
