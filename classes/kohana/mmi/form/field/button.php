@@ -70,4 +70,18 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 		}
 		return MMI_HTML4_Attributes_Button::get();
 	}
+
+	/**
+	 * Load the post data into the models and fields.
+	 *
+	 * @return  void
+	 */
+	protected function _load_post_data()
+	{
+		if ( ! $_POST)
+		{
+			return;
+		}
+		$this->_state |= MMI_Form::STATE_POSTED;
+	}
 } // End Kohana_MMI_Form_Field_Button

@@ -73,6 +73,7 @@ abstract class Kohana_MMI_Form_Field
 	 * If no parameters are specified, all attributes are returned.
 	 * If a key is specified, it is used to retrieve the attribute value.
 	 * If a key and value are specified, they are used to set an attribute value.
+	 * This method is chainable when setting a value.
 	 *
 	 * @param	string	the name of the attribute to get or set
 	 * @param	mixed	the value of the attribute to set
@@ -91,7 +92,7 @@ abstract class Kohana_MMI_Form_Field
 			return Arr::get($this->_attributes, $name);
 		}
 
-		if ($this->_state ^ MMI_Form::STATE_FROZEN)
+		if ($this->_state ^ MMI_Form::STATE_PRE_RENDERED)
 		{
 			$this->_attributes[$name] = $value;
 			return $this;
@@ -108,6 +109,7 @@ abstract class Kohana_MMI_Form_Field
 	 * Get or set an error.
 	 * If no parameters are specified, all error messages are returned.
 	 * If a message is specified, it is added to the error collection.
+	 * This method is chainable when setting a value.
 	 *
 	 * @param	string	the error message
 	 * @return	mixed
@@ -120,7 +122,7 @@ abstract class Kohana_MMI_Form_Field
 			return $this->_errors;
 		}
 
-		if ($this->_state ^ MMI_Form::STATE_FROZEN)
+		if ($this->_state ^ MMI_Form::STATE_PRE_RENDERED)
 		{
 			if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
 			{
@@ -141,6 +143,7 @@ abstract class Kohana_MMI_Form_Field
 	 * If no parameters are specified, all meta data is returned.
 	 * If a key is specified, it is used to retrieve the meta data value.
 	 * If a key and value are specified, they are used to set a meta data value.
+	 * This method is chainable when setting a value.
 	 *
 	 * @param	string	the name of the meta data to get or set
 	 * @param	mixed	the value of the meta data to set
@@ -167,7 +170,7 @@ abstract class Kohana_MMI_Form_Field
 			return Arr::get($this->_meta, $name);
 		}
 
-		if ($this->_state ^ MMI_Form::STATE_FROZEN)
+		if ($this->_state ^ MMI_Form::STATE_PRE_RENDERED)
 		{
 			$this->_meta[$name] = $value;
 			return $this;
@@ -187,6 +190,11 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function render()
 	{
+		if ($this->_state ^ MMI_Form::STATE_POSTED)
+		{
+			$this->_load_post_data();
+		}
+
 		$path = $this->_get_view_path();
 		$cache = MMI_Form::view_cache($path);
 		if (isset($cache))
@@ -204,17 +212,6 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
-	 * Freeze the form field, preventing further modifications.
-	 *
-	 * @return	void
-	 */
-	public function freeze()
-	{
-		$this->_finalize_rules();
-		$this->_state |= MMI_Form::STATE_FROZEN;
-	}
-
-	/**
 	 * Reset the form field.
 	 *
 	 * @return	void
@@ -227,6 +224,17 @@ abstract class Kohana_MMI_Form_Field
 			$this->value = Arr::get($this->_meta, 'default', '');
 		}
 		$this->_state |= MMI_Form::STATE_RESET;
+	}
+
+	/**
+	 * Perform any last minute the form field, preventing further modifications.
+	 *
+	 * @return	void
+	 */
+	protected function _pre_render()
+	{
+		$this->_finalize_rules();
+		$this->_state |= MMI_Form::STATE_PRE_RENDERED;
 	}
 
 	/**
@@ -266,30 +274,31 @@ abstract class Kohana_MMI_Form_Field
 			$this->_load_post_data();
 		}
 
-		$errors = array();
+		$attributes = $this->_attributes;
 		$meta = $this->_meta;
 		$id = $this->_get_id();
-		$value = Arr::get($this->_attributes, 'value', '');
+		$value = Arr::get($attributes, 'value', '');
+
+		$label = trim(Arr::get($this->meta('label'), '_html',
+					Arr::get($attributes, 'title',
+						Arr::get($meta, 'description', ''))), ':');
 
 		// Add validation settings
 		$validate = Validate::factory(array($id => $value));
-		$validate->label($id, Arr::get($meta, 'description'));
-		$validate->filters($id, Arr::get($meta, 'filters', array()));
-		$validate->rules($id, Arr::get($meta, 'rules', array()));
 		$validate->callbacks($id, Arr::get($meta, 'callbacks', array()));
-
+		$validate->filters($id, Arr::get($meta, 'filters', array()));
+		$validate->label($id, $label);
+		$validate->rules($id, Arr::get($meta, 'rules', array()));
 
 		if ( ! $validate->check())
 		{
 			$label = Arr::get($meta, 'description');
-MMI_Debug::dump($validate->errors());
-			foreach ($validate->errors() as $id => $error)
-			{
-				$this->_errors[$id] = MMI_Form_Messages::format_error_message($label, $error[0], $error[1]);
-			}
+			$file = MMI_Form_Messages::get_path();
+			$translate = MMI_Form_Messages::translate();
+			$this->_errors = $validate->errors($file, $translate);
 		}
-MMI_Debug::dead($this);
 		$this->_state |= MMI_Form::STATE_VALIDATED;
+		return (count($this->_errors) === 0);
 	}
 
 	/**
@@ -346,6 +355,17 @@ MMI_Debug::dead($this);
 			{
 				$this->_attributes[$name] = $value;
 			}
+		}
+
+		// ensure the field has an id attribute
+		$attributes = $this->_attributes;
+		if (empty($attributes['id']) AND ! empty($attributes['name']))
+		{
+			$this->_attributes['id'] = $attributes['name'];
+		}
+		else
+		{
+			$this->_attributes['id'] = time();
 		}
 	}
 

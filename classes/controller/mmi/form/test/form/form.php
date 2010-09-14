@@ -40,7 +40,7 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 		$settings = array
 		(
 			'class' => 'text',
-			'id' => 'text1',
+			'name' => 'text1',
 			'title' => 'first name',
 			'value' => 'shawn',
 
@@ -57,7 +57,8 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 			),
 			'_rules' => array
 			(
-				'min_length' => array(20),
+				'min_length' => array(6),
+				'alpha' => array(FALSE),
 			),
 		);
 		$type = 'text';
@@ -71,14 +72,11 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 				'id' => 'submit',
 				'value' => 'Submit!',
 			));
-
-//			->remove_field($btn)
-//			->remove_field(array('button1', 'text1'), 'mmi')
 		;
-//		MMI_Debug::dead($form->field('button1', NULL), 'fields');
 
 		echo $form->render();
 		MMI_Debug::dump($form->render(), 'form');
-		$form->valid();
+		MMI_Debug::dump($form->valid(), 'valid');
+		MMI_Debug::dump($form->error(), 'errors');
 	}
 } // End Controller_MMI_Form_Test_Form_Form

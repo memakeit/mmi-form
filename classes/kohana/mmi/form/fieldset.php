@@ -522,4 +522,58 @@ abstract class Kohana_MMI_Form_FieldSet
 		}
 		return new $class($options);
 	}
+
+
+
+	/**
+	 * Add an opening fieldset tag to the form.
+	 * This method is chainable.
+	 *
+	 * @param   string  the legend text
+	 * @param   array   field-specific options
+	 * @return  MMI_Form
+	 */
+	public function begin_fieldset($legend = '', $options = array())
+	{
+		if ( ! empty($legend))
+		{
+			$legend = '<legend>'.$legend.'</legend>';
+		}
+		else
+		{
+			$legend = '';
+		}
+
+		$attributes = self::attributes($options);
+		$this->add_field
+		(
+			array
+			(
+				'name'      => uniqid('fieldset_'),
+				'type'      => 'html',
+				'html'      => '<fieldset'.HTML::attributes($attributes).'>'.$legend,
+			)
+		);
+		return $this;
+	}
+
+	/**
+	 * Add a closing fieldset tag to the form.
+	 * This method is chainable.
+	 *
+	 * @return  MMI_Form
+	 */
+	public function end_fieldset()
+	{
+		$this->add_field
+		(
+			array
+			(
+				'name'      => uniqid('fieldset_'),
+				'type'      => 'html',
+				'html'      => '</fieldset>',
+			)
+		);
+		return $this;
+	}
 } // End Kohana_MMI_Form_FieldSet
