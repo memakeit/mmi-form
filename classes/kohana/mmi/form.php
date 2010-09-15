@@ -21,10 +21,9 @@ class Kohana_MMI_Form
 	const STATE_INITIAL = 1;
 	const STATE_POSTED = 2;
 	const STATE_VALIDATED = 4;
-	const STATE_SAVED = 8;
-	const STATE_RESET = 16;
-	const STATE_PRE_RENDERED = 32;
-	const STATE_RENDERED = 64;
+	const STATE_RESET = 8;
+	const STATE_PRE_RENDERED = 16;
+	const STATE_RENDERED = 32;
 
 	/**
 	 * @var Kohana_Config the form configuration
@@ -124,12 +123,12 @@ class Kohana_MMI_Form
 		if ( ! empty($namespace))
 		{
 			$id = self::clean_id($namespace);
-			$namespace = trim(strtolower($namespace));
+			$namespace = trim($namespace);
 			$this->_namespaces[$id] = $namespace;
 		}
 
 		// Add the field
-		$id = $this->_generate_id_from_field($field);
+		$id = $this->_id_from_field($field);
 		$this->_fields[$id] = $field;
 		return $this;
 	}
@@ -139,7 +138,7 @@ class Kohana_MMI_Form
 	 * This method is chainable.
 	 *
 	 * To remove a single field:
-	 *	- specify a field object (namespace parameter is ignored)
+	 *	- specify a field object (namespace is ignored)
 	 *	- specify a field id (namespace is used)
 	 *
 	 * To remove multiple fields:
@@ -147,7 +146,7 @@ class Kohana_MMI_Form
 	 *	- '*' with a namespace removes all fields for the namespace
 	 *	- an array (of strings) removes multiple fields for a namespace
 	 *
-	 * @param	mixed	a form identifier, object, or wildcard character (*)
+	 * @param	mixed	a field identifier, object, or wildcard character (*)
 	 * @param	string	the namespace
 	 * @return	MMI_Form
 	 */
@@ -163,7 +162,7 @@ class Kohana_MMI_Form
 		// Process a form object
 		if ($field instanceof MMI_Form_Field)
 		{
-			$id = $this->_generate_id_from_field($field);
+			$id = $this->_id_from_field($field);
 			if (array_key_exists($id, $this->_fields))
 			{
 				unset($this->_fields[$id]);
@@ -180,12 +179,12 @@ class Kohana_MMI_Form
 		{
 			// Remove all fields for the namespace
 			$namespace = self::clean_id($namespace);
-			foreach ($this->_fields as $key => $field)
+			foreach ($this->_fields as $id => $field)
 			{
-				list($ns) = explode('.', $key);
+				list($ns) = explode('.', $id, 1);
 				if ($ns === $namespace)
 				{
-					unset($this->_fields[$key]);
+					unset($this->_fields[$id]);
 				}
 			}
 		}
@@ -193,9 +192,7 @@ class Kohana_MMI_Form
 		// Process a field name (string)
 		elseif ( ! empty($field) AND is_string($field))
 		{
-			$id = self::clean_id($field);
-			$namespace = self::clean_id($namespace);
-			$id = $namespace.'.'.$id;
+			$id = self::clean_id($namespace).'.'.self::clean_id($field);
 			if (array_key_exists($id, $this->_fields))
 			{
 				unset($this->_fields[$id]);
@@ -240,7 +237,6 @@ class Kohana_MMI_Form
 		{
 			// Create the plugin object
 			$plugin = MMI_Form_Plugin::factory($plugin, $options);
-			$plugin->form($this);
 			$plugin->method_prefix($method_prefix);
 		}
 		if ($plugin instanceof MMI_Form_Plugin)
@@ -279,44 +275,6 @@ class Kohana_MMI_Form
 		return $this;
 	}
 
-	public static function view_cache($key, $value = NULL)
-	{
-		if (func_num_args() === 1)
-		{
-			return Arr::get(self::$_view_cache, $key);
-		}
-		self::$_view_cache[$key] = $value;
-	}
-
-	/**
-	 * Generate an id using the id and namespace settings of a form field object.
-	 *
-	 * @param	MMI_Form	a MMI_Form_Field object
-	 * @return	string
-	 */
-	protected function _generate_id_from_field(MMI_Form_Field $field)
-	{
-		$id = self::clean_id($field->attribute('id'));
-		$namespace = self::clean_id($field->meta('namespace'));
-		return $namespace.'.'.$id;
-	}
-
-	/**
-	 * Validate the form.
-	 *
-	 * @return	boolean
-	 */
-	public function valid()
-	{
-		$valid = TRUE;
-		foreach ($this->_fields as $field)
-		{
-			$valid &= $field->valid();
-		}
-		$this->_state |= self::STATE_VALIDATED;
-		return ($valid === 1);
-	}
-
 	/**
 	 * Get or set an HTML attribute.
 	 * If no parameters are specified, all attributes are returned.
@@ -348,10 +306,28 @@ class Kohana_MMI_Form
 		}
 		else
 		{
-			$msg = 'Attributes can not be set after the form has been frozen.';
+			$msg = 'Attributes can not be set after the form has been rendered.';
 			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 			throw new Kohana_Exception($msg);
 		}
+	}
+
+	/**
+ 	 * Return an list of field values that have changed.
+	 *
+	 * @return	array
+	 */
+	public function diff()
+	{
+		$diff = array();
+		foreach ($this->_fields as $id => $field)
+		{
+			if ($field->updated())
+			{
+				$diff[$id] = $field->diff();
+			}
+		}
+		return $diff;
 	}
 
 	/**
@@ -386,7 +362,7 @@ class Kohana_MMI_Form
 		}
 		else
 		{
-			$msg = 'Errors can not be set after the form has been frozen.';
+			$msg = 'Errors can not be set after the form has been rendered.';
 			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 			throw new Kohana_Exception($msg);
 		}
@@ -408,7 +384,7 @@ class Kohana_MMI_Form
 			$namespace = self::clean_id($namespace);
 			foreach ($fields as $key => $field)
 			{
-				list($ns, $_id) = explode('.', $key);
+				list($ns, $_id) = explode('.', $key, 2);
 				if ($ns === $namespace AND $_id === $id)
 				{
 					return $field;
@@ -418,17 +394,17 @@ class Kohana_MMI_Form
 		elseif (empty($id) AND ! empty($namespace))
 		{
 			$namespace = self::clean_id($namespace);
-			$data = array();
+			$found = array();
 			foreach ($fields as $key => $field)
 			{
-				list($ns) = explode('.', $key);
+				list($ns) = explode('.', $key, 1);
 				if ($ns === $namespace)
 				{
-					$idx = $this->_generate_id_from_field($field);
-					$data[$idx] = $field;
+					$idx = $this->_id_from_field($field);
+					$found[$idx] = $field;
 				}
 			}
-			return $data;
+			return $found;
 		}
 		else
 		{
@@ -467,19 +443,37 @@ class Kohana_MMI_Form
 		}
 		else
 		{
-			$msg = 'Meta data can not be set after the form has been frozen.';
+			$msg = 'Meta data can not be set after the form has been rendered.';
 			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 			throw new Kohana_Exception($msg);
 		}
 	}
 
 	/**
+ 	 * Get whether any field values have been updated.
+	 *
+	 * @return	string
+	 */
+	public function updated()
+	{
+		foreach ($this->_fields as $field)
+		{
+			if ($field->updated())
+			{
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+
+	/**
 	 * Get or set a form field value.
 	 * This method is chainable when setting a value.
 	 *
-	 * @param	string  the field id
-	 * @param	string  the field namespace
-	 * @return  MMI_Form
+	 * @param	string	the field id
+	 * @param	string	the field namespace
+	 * @param	mixed	the value to set
+	 * @return	MMI_Form
 	 */
 	public function value($id, $namespace, $value = NULL)
 	{
@@ -488,63 +482,56 @@ class Kohana_MMI_Form
 		{
 			if (func_num_args() === 2)
 			{
-				return $field->attribute('value');
+				return $field->value();
 			}
 
 			if ($this->_state ^ MMI_Form::STATE_PRE_RENDERED)
 			{
-				if ( ! is_scalar())
-				{
-					$msg = 'Only scalar values can be used to set the value of a form field.';
-					MMI_Log::log_error(__METHOD__, __LINE__, $msg);
-					throw new Kohana_Exception($msg);
-				}
-				$field->attribute('value', strval($value));
+				$field->value($value);
 				return $this;
 			}
 			else
 			{
-				$msg = 'Field values can not be set after the form has been frozen.';
+				$msg = 'Field values can not be set after the form has been rendered.';
 				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 				throw new Kohana_Exception($msg);
 			}
 		}
 	}
 
-
-
-
-
-
-
 	/**
-	 * Reset the form.
+	 * Get or set an item in the view cache.
 	 *
-	 * @return  void
+	 * @param	string	the view id
+	 * @param	View	the view object
+	 * @return	mixed
 	 */
-	public function reset()
+	public static function view_cache($id, $value = NULL)
 	{
-		foreach ($this->_fields as $field)
+		if (func_num_args() === 1)
 		{
-			$field->reset();
+			return Arr::get(self::$_view_cache, $id);
 		}
-		$this->_state |= self::STATE_RESET;
+		self::$_view_cache[$id] = $value;
 	}
 
 	/**
 	 * Generate the form HTML.
 	 *
-	 * @return  string
+	 * @return	string
 	 */
 	public function render()
 	{
 		$this->_pre_render();
-		$frm = array();
 
-		$frm[] = $this->_form_open();
+		// Form open tag
+		$frm = array($this->_form_open());
 
 		// Feedback messages
-		$frm[] = $this->_messages();
+		if (Arr::get($this->_meta, 'show_messages', TRUE))
+		{
+			$frm[] = $this->_messages();
+		}
 
 		// Form fields
 		foreach ($this->_fields as $field)
@@ -569,52 +556,40 @@ class Kohana_MMI_Form
 			}
 		}
 
+		// Form close tag
 		$frm[] = $this->_form_close();
 		$this->_state |= self::STATE_RENDERED;
 		return implode(PHP_EOL, $frm);
 	}
 
-	protected function _form_open()
+	/**
+	 * Reset the form.
+	 *
+	 * @return	void
+	 */
+	public function reset()
 	{
-		$meta = $this->_meta;
-		$open = Arr::get($meta, 'open', array());
-		$dir = Arr::get($open, 'view_path', 'mmi/form');
-		$file = Arr::get($open, 'view', 'open');
-		if ( ! Kohana::find_file('views/'.$dir, $file))
+		foreach ($this->_fields as $field)
 		{
-			// Use the default view
-			$file = 'open';
+			$field->reset();
 		}
-		$file = $dir.'/'.$file;
-
-		$attributes = $this->_attributes;
-		return View::factory($file, array
-		(
-			'before' => Arr::get($open, '_before', ''),
-			'after' => Arr::path($open, '_after', ''),
-			'action' => Arr::get($attributes, 'action', Request::instance()->uri),
-			'attributes' => $attributes,
-		))->render();
+		$this->_state |= self::STATE_RESET;
 	}
 
-	protected function _form_close()
+	/**
+	 * Check whether the form is valid.
+	 *
+	 * @return	boolean
+	 */
+	public function valid()
 	{
-		$meta = $this->_meta;
-		$close = Arr::get($meta, 'close', array());
-		$dir = Arr::get($close, 'view_path', 'mmi/form');
-		$file = Arr::get($close, 'view', 'close');
-		if ( ! Kohana::find_file('views/'.$dir, $file))
+		$valid = TRUE;
+		foreach ($this->_fields as $field)
 		{
-			// Use the default view
-			$file = 'close';
+			$valid &= $field->valid();
 		}
-		$file = $dir.'/'.$file;
-
-		return View::factory($file, array
-		(
-			'before' => Arr::get($close, '_before', ''),
-			'after' => Arr::get($close, '_after', ''),
-		))->render();
+		$this->_state |= self::STATE_VALIDATED;
+		return ($valid === 1);
 	}
 
 	/**
@@ -629,13 +604,37 @@ class Kohana_MMI_Form
 	}
 
 	/**
+	 * Add a submit button to the form.
+	 * This method is chainable.
+	 *
+	 * @param	string	the button text
+	 * @param 	array	an associative array of field options
+	 * @return	MMI_Form
+	 */
+	public function add_submit($text = 'Submit', $options = array())
+	{
+		$options['value'] = $text;
+		$this->add_field('submit', $options);
+		return $this;
+	}
+
+
+
+
+
+
+
+
+
+
+	/**
 	 * Add a CAPTCHA to the form.
 	 * This method is chainable.
 	 *
-	 * @param   string  the captcha driver
-	 * @param   array   captcha plugin options
-	 * @param   array   field options
-	 * @return  MMI_Form
+	 * @param	string	the captcha driver
+	 * @param	array	captcha plugin options
+	 * @param	array	field options
+	 * @return	MMI_Form
 	 */
 	public function add_captcha($driver = NULL, $plugin_options = NULL, $field_options = NULL)
 	{
@@ -657,11 +656,11 @@ class Kohana_MMI_Form
 		(
 			array
 			(
-				'name'      => $driver,
-				'type'      => 'html',
-				'html'      => array($captcha, 'html'),
-				'source'    => MMI_Form_Field_HTML::SOURCE_CALLBACK,
-				'callbacks' => array
+				'name'		=> $driver,
+				'type'		=> 'html',
+				'html'		=> array($captcha, 'html'),
+				'source'	=> MMI_Form_Field_HTML::SOURCE_CALLBACK,
+				'callbacks'	=> array
 				(
 					array($captcha, 'valid', NULL),
 				),
@@ -673,30 +672,12 @@ class Kohana_MMI_Form
 	}
 
 	/**
-	 * Add a submit button to the form.
-	 * This method is chainable.
-	 *
-	 * @param	string	the button text
-	 * @param 	array	an associative array of field options
-	 * @return	MMI_Form
-	 */
-	public function add_submit($text = 'Submit', $options = array())
-	{
-		$options['value'] = $text;
-		$this->add_field('submit', $options);
-		return $this;
-	}
-
-
-
-
-	/**
 	 * Process method names that do not exist.
 	 * Used to process calls to plugin methods.
 	 *
-	 * @param   string  the method name
-	 * @param   array   the method arguments
-	 * @return  mixed
+	 * @param	string	the method name
+	 * @param	array	the method arguments
+	 * @return	mixed
 	 */
 	public function __call($method, $args)
 	{
@@ -734,11 +715,24 @@ class Kohana_MMI_Form
 		throw new Kohana_Exception($msg);
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
-	 * Initialize the form options.
+	 * Merge the user-specified and config file settings.
+	 * Separate the meta data from the HTML attributes.
 	 *
-	 * @param   array   form, field, error, and label options
-	 * @return  void
+	 * @param	array	an associative array of form options
+	 * @return	void
 	 */
 	protected function _init_options($options)
 	{
@@ -747,28 +741,32 @@ class Kohana_MMI_Form
 			$options = array();
 		}
 
+		// Get the CSS class
+		$class = $this->_combine_value($options, 'class');
+
 		// Merge the user-specified and config settings
-		$options = array_merge(self::get_config(TRUE), $options);
+		$config = self::get_config();
+		$options = array_merge($config->as_array(), $options);
+
+		// Set the CSS class
+		if ( ! empty($class))
+		{
+			$options['class'] = $class;
+		}
 
 		// Set defaults
+		if (empty($options['action']))
+		{
+			$options['action'] = Request::instance()->uri;
+		}
 		if (empty($options['id']))
 		{
 			$options['id'] = 'mmi_frm';
 		}
 		if (empty($options['_required_symbol']))
 		{
-			$options['_required_symbol'] = $config->get('_required_symbol', '*');
+			$options['_required_symbol'] = self::required_symbol();
 		}
-
-//		// Get the CSS class
-//		$class = $this->_combine_value($options, 'class');
-
-
-//		// Set the CSS class
-//		if ( ! empty($class))
-//		{
-//			$options['class'] = $class;
-//		}
 
 		// Separate the meta data from the HTML attributes
 		foreach ($options as $name => $value)
@@ -785,17 +783,54 @@ class Kohana_MMI_Form
 		}
 	}
 
+	/**
+	 * Combine default values from the config file with a user-specified value.
+	 * When multiple values are found, they are appended in order from most
+	 * general (config file) to most specific (user-specified).
+	 *
+	 * @param	array	the user-specified settings
+	 * @param	string	the key of the value being combined
+	 * @return	string
+	 */
+	protected function _combine_value($options, $key)
+	{
+		$defaults = self::get_config(TRUE);
+		$value =
+			Arr::get($defaults, $key, '').' '.
+			Arr::get($options, $key, '')
+		;
+		$value = trim(preg_replace('/\s+/', ' ', $value));
 
-
+		// Remove duplicates
+		if ( ! empty($value))
+		{
+			$value = array_unique(explode(' ', $value));
+			$value = implode(' ', $value);
+		}
+		return $value;
+	}
 
 	/**
-	 * Freeze the form (and its fields), preventing further modifications.
+	 * Generate an id using the id and namespace of a form field object.
+	 *
+	 * @param	MMI_Form_Field	a form field object
+	 * @return	string
+	 */
+	protected function _id_from_field(MMI_Form_Field $field)
+	{
+		$id = self::clean_id($field->attribute('id'));
+		$namespace = self::clean_id($field->meta('namespace'));
+		return $namespace.'.'.$id;
+	}
+
+	/**
+	 * Perform any pre-rendering logic.
 	 *
 	 * @return	void
 	 */
 	protected function _pre_render()
 	{
-		if ($this->meta('auto_validate'))
+		if (Arr::get($this->_meta, 'auto_validate', FALSE))
 		{
 			// Trigger automatic validation
 			$this->valid();
@@ -803,14 +838,36 @@ class Kohana_MMI_Form
 		$this->_state |= self::STATE_PRE_RENDERED;
 	}
 
+	/**
+	 * Generate the form open tag.
+	 *
+	 * @return	string
+	 */
+	protected function _form_open()
+	{
+		$meta = $this->_meta;
+		$options = Arr::get($meta, 'open', array());
+		$dir = Arr::get($options, 'view_path', 'mmi/form');
+		$file = Arr::get($options, 'view', 'open');
+		if ( ! Kohana::find_file('views/'.$dir, $file))
+		{
+			// Use the default view
+			$file = 'open';
+		}
+		$file = $dir.'/'.$file;
 
-
-
-
-
+		$attributes = $this->_attributes;
+		return View::factory($file, array
+		(
+			'before' => Arr::get($options, '_before', ''),
+			'after' => Arr::path($options, '_after', ''),
+			'action' => Arr::get($attributes, 'action'),
+			'attributes' => $attributes,
+		))->render();
+	}
 
 	/**
-	 * Get the form messages HTML.
+	 * Generate form status messages.
 	 *
 	 * @return  string
 	 */
@@ -865,32 +922,30 @@ class Kohana_MMI_Form
 		return '<div'.HTML::attributes($attributes).'>'.$msg.'</div>';
 	}
 
-//
-//
-//
-//	/**
-//	 * Set a variable.
-//	 *
-//	 * @param   string  key
-//	 * @param   mixed   value
-//	 * @return  void
-//	 */
-//	protected function _set($key, $value)
-//	{
-//		if ($this->_state !== self::STATE_INITIAL)
-//		{
-//			$msg = 'Values can only be set when the form is in its initial state.';
-//			Kohana::$log->add(Kohana::ERROR, '['.__METHOD__.' @ line '.__LINE__.'] '.$msg)->write();
-//			throw new Kohana_Exception($msg);
-//		}
-//		else
-//		{
-//			$this->$key = $value;
-//		}
-//	}
+	/**
+	 * Generate the form close tag.
+	 *
+	 * @return	string
+	 */
+	protected function _form_close()
+	{
+		$meta = $this->_meta;
+		$options = Arr::get($meta, 'close', array());
+		$dir = Arr::get($options, 'view_path', 'mmi/form');
+		$file = Arr::get($options, 'view', 'close');
+		if ( ! Kohana::find_file('views/'.$dir, $file))
+		{
+			// Use the default view
+			$file = 'close';
+		}
+		$file = $dir.'/'.$file;
 
-
-
+		return View::factory($file, array
+		(
+			'before' => Arr::get($options, '_before', ''),
+			'after' => Arr::get($options, '_after', ''),
+		))->render();
+	}
 
 	/**
 	 * Remove invalid characters from an id.

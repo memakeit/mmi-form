@@ -51,6 +51,11 @@ abstract class Kohana_MMI_Form_Field
 	protected $_meta = array();
 
 	/**
+	 * @var boolean was form data posted?
+	 */
+	protected $_posted = FALSE;
+
+	/**
 	 * @var integer the current field state
 	 */
 	protected $_state = MMI_Form::STATE_INITIAL;
@@ -58,6 +63,7 @@ abstract class Kohana_MMI_Form_Field
 	/**
 	 * Set whether to use HTML5 markup.
 	 * Initialize the options.
+	 * Load post data.
 	 *
 	 * @param	array	an associative array of field options
 	 * @return	void
@@ -66,6 +72,7 @@ abstract class Kohana_MMI_Form_Field
 	{
 		$this->_html5 = MMI_Form::html5();
 		$this->_init_options($options);
+		$this->_load_post_data();
 	}
 
 	/**
@@ -89,20 +96,41 @@ abstract class Kohana_MMI_Form_Field
 
 		if ($num_args === 1)
 		{
+			if (strcasecmp($name, 'value') === 0)
+			{
+				return strval(Arr::get($this->_attributes, 'value', ''));
+			}
 			return Arr::get($this->_attributes, $name);
 		}
 
-		if ($this->_state ^ MMI_Form::STATE_PRE_RENDERED)
+		if (strcasecmp($name, 'value') === 0)
 		{
-			$this->_attributes[$name] = $value;
-			return $this;
+			if ( ! is_scalar($value))
+			{
+				$msg = 'Only scalar values can be used to set the value of a form field.';
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+				throw new Kohana_Exception($msg);
+			}
+			$original = Arr::get($this->_meta, 'original');
+			$value = strval($value);
+			$this->_meta['updated'] = ($original !== $value);
 		}
-		else
-		{
-			$msg = 'Attributes can not be set after the form has been frozen.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
-			throw new Kohana_Exception($msg);
-		}
+		$this->_attributes[$name] = $value;
+		return $this;
+	}
+
+	/**
+ 	 * Return the current and original value.
+	 *
+	 * @return	array
+	 */
+	public function diff()
+	{
+		return array
+		(
+			'original'	=> Arr::get($this->_meta, 'original'),
+			'value'		=> $this->value(),
+		);
 	}
 
 	/**
@@ -122,20 +150,27 @@ abstract class Kohana_MMI_Form_Field
 			return $this->_errors;
 		}
 
-		if ($this->_state ^ MMI_Form::STATE_PRE_RENDERED)
+		if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
 		{
-			if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
-			{
-				$this->_errors[] = $msg;
-			}
-			return $this;
+			$this->_errors[] = $msg;
 		}
-		else
+		return $this;
+	}
+
+	/**
+	 * Get the field id.
+	 *
+	 * @return	string
+	 */
+	public function id()
+	{
+		$id = MMI_Form::clean_id(Arr::get($this->_attributes, 'id', ''));
+		$namespace = MMI_Form::clean_id(Arr::get($this->_meta, 'namespace', ''));
+		if (empty($namespace))
 		{
-			$msg = 'Errors can not be set after the form has been frozen.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
-			throw new Kohana_Exception($msg);
+			return $id;
 		}
+		return $namespace.'_'.$id;
 	}
 
 	/**
@@ -170,17 +205,35 @@ abstract class Kohana_MMI_Form_Field
 			return Arr::get($this->_meta, $name);
 		}
 
-		if ($this->_state ^ MMI_Form::STATE_PRE_RENDERED)
+		$this->_meta[$name] = $value;
+		return $this;
+	}
+
+	/**
+ 	 * Get whether the field value has been updated.
+	 *
+	 * @return	string
+	 */
+	public function updated()
+	{
+		return Arr::get($this->_meta, 'updated', FALSE);
+	}
+
+	/**
+ 	 * Get or set a field value.
+	 * If no value is specified, the current value is returned.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	mixed	the value to set
+	 * @return	string
+	 */
+	public function value($value = NULL)
+	{
+		if (func_num_args() === 0)
 		{
-			$this->_meta[$name] = $value;
-			return $this;
+			return Arr::get($this->_attributes, 'value', '');
 		}
-		else
-		{
-			$msg = 'Meta data can not be set after the form has been frozen.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
-			throw new Kohana_Exception($msg);
-		}
+		return $this->attribute('value', $value);
 	}
 
 	/**
@@ -190,11 +243,7 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function render()
 	{
-		if ($this->_state ^ MMI_Form::STATE_POSTED)
-		{
-			$this->_load_post_data();
-		}
-
+		$this->_pre_render();
 		$path = $this->_get_view_path();
 		$cache = MMI_Form::view_cache($path);
 		if (isset($cache))
@@ -206,8 +255,8 @@ abstract class Kohana_MMI_Form_Field
 			$view = View::factory($path);
 			MMI_Form::view_cache($path, $view);
 		}
-
 		$parms = $this->_get_view_parms();
+		$this->_state |= MMI_Form::STATE_RENDERED;
 		return $view->set($parms)->render();
 	}
 
@@ -218,70 +267,29 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function reset()
 	{
-		$type = Arr::get($this->_attributes, 'type', 'text');
-		if ( ! in_array($type, array('checkbox', 'radio')))
-		{
-			$this->value = Arr::get($this->_meta, 'default', '');
-		}
+		$this->value(Arr::get($this->_meta, 'default', ''));
 		$this->_state |= MMI_Form::STATE_RESET;
 	}
 
 	/**
-	 * Perform any last minute the form field, preventing further modifications.
-	 *
-	 * @return	void
-	 */
-	protected function _pre_render()
-	{
-		$this->_finalize_rules();
-		$this->_state |= MMI_Form::STATE_PRE_RENDERED;
-	}
-
-	/**
-	 * Load the post data into the models and fields.
-	 *
-	 * @return  void
-	 */
-	protected function _load_post_data()
-	{
-		if ( ! $_POST)
-		{
-			return;
-		}
-
-		$post = Security::xss_clean($_POST);
-		if ( ! empty($post))
-		{
-			$original = Arr::get($this->_attributes, 'value', '');
-			$posted = Arr::get($post, $this->_get_id(), '');
-			$this->_meta['original'] = $original;
-			$this->_meta['posted'] = $posted;
-			$this->_meta['changed'] = ($original !== $posted);
-			$this->_attributes['value'] = $posted;
-		}
-		$this->_state |= MMI_Form::STATE_POSTED;
-	}
-
-	/**
-	 * Validate the form field.
+	 * Check whether the form field is valid.
 	 *
 	 * @return	void
 	 */
 	public function valid()
 	{
-		if ($this->_state ^ MMI_Form::STATE_POSTED)
-		{
-			$this->_load_post_data();
-		}
-
 		$attributes = $this->_attributes;
 		$meta = $this->_meta;
-		$id = $this->_get_id();
+		$id = $this->id();
 		$value = Arr::get($attributes, 'value', '');
 
-		$label = trim(Arr::get($this->meta('label'), '_html',
-					Arr::get($attributes, 'title',
-						Arr::get($meta, 'description', ''))), ':');
+		$label = trim
+		(
+			Arr::get($this->meta('label'), '_html',
+			Arr::get($attributes, 'title',
+			Arr::get($attributes, 'placeholder',
+			Arr::get($meta, 'description', ''
+		)))), ':');
 
 		// Add validation settings
 		$validate = Validate::factory(array($id => $value));
@@ -292,7 +300,6 @@ abstract class Kohana_MMI_Form_Field
 
 		if ( ! $validate->check())
 		{
-			$label = Arr::get($meta, 'description');
 			$file = MMI_Form_Messages::get_path();
 			$translate = MMI_Form_Messages::translate();
 			$this->_errors = $validate->errors($file, $translate);
@@ -305,6 +312,7 @@ abstract class Kohana_MMI_Form_Field
 	 * Merge the user-specified and config file settings.
 	 * Separate the meta data from the HTML attributes.
 	 *
+	 * @param	array	an associative array of field options
 	 * @return	void
 	 */
 	protected function _init_options($options)
@@ -314,11 +322,7 @@ abstract class Kohana_MMI_Form_Field
 			$options = array();
 		}
 
-		// Set defaults
-		if (empty($options['_default']))
-		{
-			$options['_default'] = Arr::get($options, 'value', '');
-		}
+		// Ensure the type settings
 		if (empty($options['_type']))
 		{
 			$options['_type'] = Arr::get($options, 'type', 'input');
@@ -343,6 +347,27 @@ abstract class Kohana_MMI_Form_Field
 			$options['class'] = $class;
 		}
 
+		// Set defaults
+		$value = strval(Arr::get($options, 'value', ''));
+		if (empty($options['_default']))
+		{
+			$options['_default'] = $value;
+		}
+		$options['_original'] = $value;
+		$options['_updated'] = FALSE;
+		$options['value'] = $value;
+
+		// Ensure the field has an id attribute
+		$id = Arr::get($options, 'id');
+		if (empty($id) AND ! empty($options['name']))
+		{
+			$options['id'] = $options['name'];
+		}
+		elseif (empty($id))
+		{
+			$options['id'] = strval(time());
+		}
+
 		// Separate the meta data from the HTML attributes
 		foreach ($options as $name => $value)
 		{
@@ -355,17 +380,6 @@ abstract class Kohana_MMI_Form_Field
 			{
 				$this->_attributes[$name] = $value;
 			}
-		}
-
-		// ensure the field has an id attribute
-		$attributes = $this->_attributes;
-		if (empty($attributes['id']) AND ! empty($attributes['name']))
-		{
-			$this->_attributes['id'] = $attributes['name'];
-		}
-		else
-		{
-			$this->_attributes['id'] = time();
 		}
 	}
 
@@ -387,7 +401,7 @@ abstract class Kohana_MMI_Form_Field
 		$value =
 			Arr::get($defaults, $key, '').' '.
 			Arr::get($type_specific, $key, '').' '.
-			Arr::get($options, $key, '').' '
+			Arr::get($options, $key, '')
 		;
 		$value = trim(preg_replace('/\s+/', ' ', $value));
 
@@ -401,6 +415,42 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
+	 * Load the post data into the models and fields.
+	 *
+	 * @return  void
+	 */
+	protected function _load_post_data()
+	{
+		if ( ! $_POST)
+		{
+			return;
+		}
+
+		$post = Security::xss_clean($_POST);
+		if ( ! empty($post))
+		{
+			$original = Arr::get($this->_meta, 'original');
+			$posted = strval(Arr::get($post, $this->id(), ''));
+			$this->_meta['posted'] = $posted;
+			$this->_meta['updated'] = ($original !== $posted);
+			$this->_attributes['value'] = $posted;
+		}
+		$this->_posted = TRUE;
+		$this->_state |= MMI_Form::STATE_POSTED;
+	}
+
+	/**
+	 * Perform any pre-rendering logic.
+	 *
+	 * @return	void
+	 */
+	protected function _pre_render()
+	{
+		$this->_finalize_rules();
+		$this->_state |= MMI_Form::STATE_PRE_RENDERED;
+	}
+
+	/**
 	 * Get the error label settings.
 	 *
 	 * @return	array
@@ -408,8 +458,8 @@ abstract class Kohana_MMI_Form_Field
 	protected function _error_meta()
 	{
 		$error = Arr::get($this->_meta, 'error', array());
-		$error['for'] = $this->_get_id();
-		$error['msg'] = implode('<br />', $this->_errors);
+		$error['for'] = $this->id();
+		$error['_html'] = implode('<br />', $this->_errors);
 		return $error;
 	}
 
@@ -420,21 +470,28 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _label_meta()
 	{
+		$attributes = $this->_attributes;
 		$meta = $this->_meta;
 		$label = Arr::get($meta, 'label', array());
-		$label['for'] = $this->_get_id();
-		if (empty($label['_html']))
+		$label['for'] = $this->id();
+		$html = Arr::get($label, '_html');
+		if (empty($html))
 		{
-			$label['_html'] = Arr::get($this->_attributes, 'title');
+			$html = Arr::get($attributes, 'title');
 		}
-		if (empty($label['_html']))
+		if (empty($html))
 		{
-			$label['_html'] = Arr::get($meta, 'description');
+			$html = Arr::get($attributes, 'placeholder');
 		}
-		if ( ! empty($label['_html']))
+		if (empty($html))
 		{
-			$label['_html'] .= ':';
+			$html = Arr::get($meta, 'description');
 		}
+		if ( ! empty($html) AND substr($html, -1) !== ':')
+		{
+			$html .= ':';
+		}
+		$label['_html'] = $html;
 		return $label;
 	}
 
@@ -464,12 +521,12 @@ abstract class Kohana_MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$attributes = $this->_get_view_attributes();
-		$id = $this->_get_id();
+		$id = $this->id();
 		$attributes['id'] = $id;
 		$attributes['name'] = $id;
 
 		$value = Arr::get($attributes, 'value');
-		if (is_null($value))
+		if (is_null($value) OR ! is_scalar($value))
 		{
 			$attributes['value'] = '';
 		}
@@ -495,7 +552,7 @@ abstract class Kohana_MMI_Form_Field
 		$meta = $this->_meta;
 
 		// If a rule for max-length exists, use it to set the attribute
-		if (in_array('max_length', $allowed))
+		if (in_array('maxlength', $allowed))
 		{
 			$rules = Arr::get($meta, 'rules', array());
 			if (array_key_exists('max_length', $rules))
@@ -512,7 +569,6 @@ abstract class Kohana_MMI_Form_Field
 		{
 			$attributes['title'] = $description;
 		}
-
 		return array_intersect_key($attributes, array_flip($allowed));
 	}
 
@@ -529,22 +585,6 @@ abstract class Kohana_MMI_Form_Field
 			return MMI_HTML5_Attributes_Input::get($type);
 		}
 		return MMI_HTML4_Attributes_Input::get($type);
-	}
-
-	/**
-	 * Get the field id.
-	 *
-	 * @return	string
-	 */
-	protected function _get_id()
-	{
-		$id = MMI_Form::clean_id(Arr::get($this->_attributes, 'id', ''));
-		$namespace = MMI_Form::clean_id(Arr::get($this->_meta, 'namespace', ''));
-		if (empty($namespace))
-		{
-			return $id;
-		}
-		return $namespace.'_'.$id;
 	}
 
 	/**
@@ -571,9 +611,9 @@ abstract class Kohana_MMI_Form_Field
 		$utf8_rules = self::$_utf8_rules;
 		if (MMI_Form::unicode())
 		{
-			foreach ($rules as $name => $rule)
+			foreach ($rules as $name => $parms)
 			{
-				if (empty($rule) AND in_array($name, $utf8_rules))
+				if (empty($parms) AND in_array($name, $utf8_rules))
 				{
 					$rules[$name] = array(TRUE);
 				}
@@ -581,23 +621,6 @@ abstract class Kohana_MMI_Form_Field
 		}
 		$this->_meta['rules'] = $rules;
 	}
-
-//	/**
-//	 * Generate the field id.  Include the namespace if one is specified.
-//	 *
-//	 * @param	string	the field id
-//	 * @param	string	the field namespace
-//	 * @return	string
-//	 */
-//	public static function get_field_id($id, $namespace = NULL)
-//	{
-//		$id = MMI_Form::clean_id($id);
-//		if (empty($namespace))
-//		{
-//			return $id;
-//		}
-//		return $namespace.'_'.$id;
-//	}
 
 	/**
 	 * Get the field configuration settings.

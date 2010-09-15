@@ -27,6 +27,16 @@ class Kohana_MMI_Form_Field_Radio extends MMI_Form_Field
 	}
 
 	/**
+	 * Reset the form field.
+	 *
+	 * @return	void
+	 */
+	public function reset()
+	{
+		$this->_state |= MMI_Form::STATE_RESET;
+	}
+
+	/**
 	 * Get the view parameters.
 	 *
 	 * @return	array

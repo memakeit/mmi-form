@@ -50,6 +50,7 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 			'_label' => array
 			(
 				'class' => 'lbl',
+				'_html' => 'lbl #1:'
 			),
 			'_error' => array
 			(
@@ -78,5 +79,8 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 		MMI_Debug::dump($form->render(), 'form');
 		MMI_Debug::dump($form->valid(), 'valid');
 		MMI_Debug::dump($form->error(), 'errors');
+		MMI_Debug::dump($form->updated(), 'updated');
+		MMI_Debug::dump($form->diff(), 'diff');
+		MMI_Debug::dump($form, 'form');
 	}
 } // End Controller_MMI_Form_Test_Form_Form
