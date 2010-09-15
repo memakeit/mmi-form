@@ -164,13 +164,9 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function id()
 	{
-		$id = MMI_Form::clean_id(Arr::get($this->_attributes, 'id', ''));
-		$namespace = MMI_Form::clean_id(Arr::get($this->_meta, 'namespace', ''));
-		if (empty($namespace))
-		{
-			return $id;
-		}
-		return $namespace.'_'.$id;
+		$id = Arr::get($this->_attributes, 'id', '');
+		$namespace = Arr::get($this->_meta, 'namespace', '');
+		return self::field_id($id, $namespace);
 	}
 
 	/**
@@ -686,5 +682,23 @@ abstract class Kohana_MMI_Form_Field
 			throw new Kohana_Exception($msg);
 		}
 		return new $class($options);
+	}
+
+	/**
+	 * Get the field id.
+	 *
+	 * @param	string	the field id
+	 * @param	string	the field namespace
+	 * @return	string
+	 */
+	public static function field_id($id, $namespace = NULL)
+	{
+		$id = MMI_Form::clean_id($id);
+		$namespace = MMI_Form::clean_id($namespace);
+		if (empty($namespace))
+		{
+			return $id;
+		}
+		return $namespace.'_'.$id;
 	}
 } // End Kohana_MMI_Form_Field

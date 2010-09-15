@@ -26,6 +26,11 @@ class Kohana_MMI_Form
 	const STATE_RENDERED = 32;
 
 	/**
+	 * @var MMI_Form the form instance
+	 */
+	public static $instance;
+
+	/**
 	 * @var Kohana_Config the form configuration
 	 */
 	protected static $_config;
@@ -115,6 +120,7 @@ class Kohana_MMI_Form
 		// Create the field object
 		if ( ! empty($field) AND is_string($field))
 		{
+			$options['type'] = $field;
 			$field = MMI_Form_Field::factory($field, $options);
 		}
 
@@ -237,11 +243,13 @@ class Kohana_MMI_Form
 		{
 			// Create the plugin object
 			$plugin = MMI_Form_Plugin::factory($plugin, $options);
-			$plugin->method_prefix($method_prefix);
+//			$plugin->method_prefix($method_prefix);
 		}
 		if ($plugin instanceof MMI_Form_Plugin)
 		{
+//			MMI_Debug::dead($plugin, 'plugin 2');
 			// Add the plugin
+//			$plugin->form($this);
 			$plugin_name = $plugin->name();
 			$this->_plugins[$plugin_name] = $plugin;
 		}
@@ -596,11 +604,26 @@ class Kohana_MMI_Form
 	 * Add CSRF validation to the form.
 	 * This method is chainable.
 	 *
+	 * param	string	the form field id
 	 * @return	MMI_Form
 	 */
-	public function add_csrf()
+	public function add_csrf($id = NULL)
 	{
-		return $this->add_plugin('csrf', 'csrf_');
+		if (empty($id))
+		{
+			$id = 'mmi_csrf';
+		}
+		$this->add_field('hidden', array
+		(
+			'id' => $id,
+			'_rules' => array
+			(
+				'not_empty'			=> NULL,
+				'Security::check'	=> NULL,
+			),
+			'value' => Security::token(TRUE),
+		));
+		return $this;
 	}
 
 	/**
@@ -682,6 +705,7 @@ class Kohana_MMI_Form
 	public function __call($method, $args)
 	{
 		$plugin_name = '';
+MMI_Debug::dead($this->_plugins);
 		foreach ($this->_plugins as $name => $plugin)
 		{
 			$prefix = $plugin['method_prefix'];
@@ -746,7 +770,7 @@ class Kohana_MMI_Form
 
 		// Merge the user-specified and config settings
 		$config = self::get_config();
-		$options = array_merge($config->as_array(), $options);
+		$options = Arr::merge($config->as_array(), $options);
 
 		// Set the CSS class
 		if ( ! empty($class))
@@ -830,7 +854,7 @@ class Kohana_MMI_Form
 	 */
 	protected function _pre_render()
 	{
-		if (Arr::get($this->_meta, 'auto_validate', FALSE))
+		if ($this->_posted AND Arr::get($this->_meta, 'auto_validate', FALSE))
 		{
 			// Trigger automatic validation
 			$this->valid();
@@ -1013,6 +1037,20 @@ class Kohana_MMI_Form
 	 */
 	public static function factory($options = array())
 	{
-		return new MMI_Form($options);
+		if ( ! self::$instance)
+		{
+			self::$instance = new MMI_Form($options);
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Return the singleton instance.
+	 *
+	 * @return	MMI_Form
+	 */
+	public static function instance()
+	{
+		return self::$instance;
 	}
 } // End Kohana_MMI_Form

@@ -82,6 +82,7 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 		{
 			return;
 		}
+		$this->_posted = TRUE;
 		$this->_state |= MMI_Form::STATE_POSTED;
 	}
 } // End Kohana_MMI_Form_Field_Button

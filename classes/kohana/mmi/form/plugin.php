@@ -1,23 +1,23 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Jelly form plugin.
+ * Form plugin.
  *
- * @package     Jelly Form
- * @author      Me Make It
- * @copyright   (c) 2010 Me Make It
- * @license     http://www.memakeit.com/license
+ * @package		MMI Form
+ * @author		Me Make It
+ * @copyright	(c) 2010 Me Make It
+ * @license		http://www.memakeit.com/license
  */
-abstract class Kohana_Jelly_Form_Plugin
+abstract class Kohana_MMI_Form_Plugin
 {
 	/**
-	 * @var Jelly_Form the Jelly form instance
+	 * @var MMI_Form the form instance
 	 */
 	protected $_form;
 
 	/**
-	 * @var string the plugin name
+	 * @var string the plugin namespace
 	 */
-	protected $_name;
+	protected $_namespace;
 
 	/**
 	 * @var array plugin-specific options
@@ -25,50 +25,72 @@ abstract class Kohana_Jelly_Form_Plugin
 	protected $_options = array();
 
 	/**
+	 * Initialize the plugin.
+	 *
+	 * @param	array	an associative array of plugin options
+	 * @return	void
+	 */
+	public function __construct($options = array())
+	{
+		$this->_options = $options;
+//		$this->_namespace = $namespace;
+//		$this->_name = $this->name();
+	}
+
+	public function name()
+	{
+		return get_class($this);
+	}
+
+	public function form($form = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			$form = $this->_form;
+			if ( ! $form instanceof MMI_Form)
+			{
+				$form = MMI_Form::instance();
+			}
+			return $form;
+		}
+		if ($form instanceof MMI_Form)
+		{
+			$this->_form = $form;
+		}
+		return $this;
+	}
+
+//	/**
+//	 * Get the plugin name.
+//	 *
+//	 * @return  string
+//	 */
+//	public static function get_name($plugin)
+//	{
+//		$name = get_class($plugin);
+//
+//		$search = 'plugin_';
+//		$idx = strripos($name, $search);
+//		$name = substr($name, $idx + strlen($search));
+//		return strtolower($name);
+//	}
+
+	/**
 	 * Create a plugin instance.
 	 *
-	 * @param   Jelly_Form  the Jelly form instance
-	 * @param   string      the plugin name
-	 * @param   array       the plugin options
-	 * @return  Jelly_Plugin
+	 * @param	string      the plugin name
+	 * @param	array       the plugin options
+	 * @return	Jelly_Plugin
 	 */
-	public static function factory(Jelly_Form $form, $plugin_name, $options = array())
+	public static function factory($type, $options = array())
 	{
-		$class = 'Jelly_Form_Plugin_'.ucfirst($plugin_name);
+		$class = 'MMI_Form_Plugin_'.ucfirst($type);
 		if ( ! class_exists($class))
 		{
 			$msg = $class.' plugin does not exist.';
-			Kohana::$log->add(Kohana::ERROR, '['.__METHOD__.' @ line '.__LINE__.'] '.$msg)->write();
+			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 			throw new Kohana_Exception($msg);
 		}
-		return new $class($form, $options);
+		return new $class($options);
 	}
-
-	/**
-	 * Initialize the plugin.
-	 *
-	 * @param   Jelly_Form  the Jelly form instance
-	 * @param   array       the plugin options
-	 * @return  void
-	 */
-	public function __construct(Jelly_Form $form, $options = array())
-	{
-		$this->_form = $form;
-		$this->_name = self::get_name(get_class($this));
-	}
-
-	/**
-	 * Get the plugin name.
-	 *
-	 * @return  string
-	 */
-	public static function get_name($plugin)
-	{
-		$name = get_class($plugin);
-
-		$search = 'plugin_';
-		$idx = strripos($name, $search);
-		$name = substr($name, $idx + strlen($search));
-		return strtolower($name);
-	}
-} // End Kohana_Jelly_Form_Plugin
+} // End Kohana_MMI_Form_Plugin

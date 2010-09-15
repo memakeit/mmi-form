@@ -1,13 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Reset button.
+ * Hidden field.
  *
  * @package		MMI Form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Kohana_MMI_Form_Field_Reset extends MMI_Form_Field
+class Kohana_MMI_Form_Field_Hidden extends MMI_Form_Field
 {
 	/**
 	 * Set default options.
@@ -21,8 +21,8 @@ class Kohana_MMI_Form_Field_Reset extends MMI_Form_Field
 		{
 			$options = array();
 		}
-		$options['_type'] = 'input';
-		$options['type'] = 'reset';
+		$options['_type'] = 'hidden';
+		$options['type'] = 'hidden';
 		parent::__construct($options);
 	}
 

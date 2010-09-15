@@ -75,12 +75,13 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 			));
 		;
 
+		$form->add_plugin('csrf', 'csrf', array('id' => 'mmit'));
 		echo $form->render();
 		MMI_Debug::dump($form->render(), 'form');
 		MMI_Debug::dump($form->valid(), 'valid');
 		MMI_Debug::dump($form->error(), 'errors');
 		MMI_Debug::dump($form->updated(), 'updated');
 		MMI_Debug::dump($form->diff(), 'diff');
-		MMI_Debug::dump($form, 'form');
+		MMI_Debug::dump(MMI_Form::instance(), 'form');
 	}
 } // End Controller_MMI_Form_Test_Form_Form
