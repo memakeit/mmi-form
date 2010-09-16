@@ -9,9 +9,6 @@
  */
 class Kohana_MMI_Form
 {
-	// Class constants
-	const ERROR_GENERAL = '_';
-
 	// Field order constants
 	const ORDER_ERROR = 'err';
 	const ORDER_FIELD = 'fld';
@@ -187,7 +184,7 @@ class Kohana_MMI_Form
 			$namespace = self::clean_id($namespace);
 			foreach ($this->_fields as $id => $field)
 			{
-				list($ns) = explode('.', $id, 1);
+				list($ns) = explode('.', $id);
 				if ($ns === $namespace)
 				{
 					unset($this->_fields[$id]);
@@ -226,11 +223,11 @@ class Kohana_MMI_Form
 	 * This method is chainable.
 	 *
 	 * @param	mixed	a MMI_Form_Plugin object or a string specifying the plugin type
-	 * @param	mixed	the plugin method prefix
+	 * @param	string	the plugin method prefix
 	 * @param	array	an associative array of plugin options
 	 * @return	MMI_Form
 	 */
-	public function add_plugin($plugin, $method_prefix, $options = array())
+	public function add_plugin($plugin, $method_prefix = NULL, $options = array())
 	{
 		if ($this->_state !== self::STATE_INITIAL)
 		{
@@ -243,15 +240,21 @@ class Kohana_MMI_Form
 		{
 			// Create the plugin object
 			$plugin = MMI_Form_Plugin::factory($plugin, $options);
-//			$plugin->method_prefix($method_prefix);
+			if ( ! empty($method_prefix))
+			{
+				$plugin->method_prefix($method_prefix);
+			}
 		}
 		if ($plugin instanceof MMI_Form_Plugin)
 		{
-//			MMI_Debug::dead($plugin, 'plugin 2');
 			// Add the plugin
-//			$plugin->form($this);
-			$plugin_name = $plugin->name();
-			$this->_plugins[$plugin_name] = $plugin;
+			$id = $plugin->name();
+			$method_prefix = $plugin->method_prefix();
+			if (empty($method_prefix))
+			{
+				$plugin->method_prefix($id);
+			}
+			$this->_plugins[$id] = $plugin;
 		}
 		return $this;
 	}
@@ -364,7 +367,7 @@ class Kohana_MMI_Form
 		{
 			if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
 			{
-				$this->_errors[self::ERROR_GENERAL] = $msg;
+				$this->_errors[] = $msg;
 			}
 			return $this;
 		}
@@ -392,7 +395,7 @@ class Kohana_MMI_Form
 			$namespace = self::clean_id($namespace);
 			foreach ($fields as $key => $field)
 			{
-				list($ns, $_id) = explode('.', $key, 2);
+				list($ns, $_id) = explode('.', $key);
 				if ($ns === $namespace AND $_id === $id)
 				{
 					return $field;
@@ -405,7 +408,7 @@ class Kohana_MMI_Form
 			$found = array();
 			foreach ($fields as $key => $field)
 			{
-				list($ns) = explode('.', $key, 1);
+				list($ns) = explode('.', $key);
 				if ($ns === $namespace)
 				{
 					$idx = $this->_id_from_field($field);
@@ -591,6 +594,11 @@ class Kohana_MMI_Form
 	 */
 	public function valid()
 	{
+		if ( ! $this->_posted)
+		{
+			return TRUE;
+		}
+
 		$valid = TRUE;
 		foreach ($this->_fields as $field)
 		{
@@ -641,58 +649,41 @@ class Kohana_MMI_Form
 		return $this;
 	}
 
-
-
-
-
-
-
-
-
-
 	/**
 	 * Add a CAPTCHA to the form.
 	 * This method is chainable.
 	 *
 	 * @param	string	the captcha driver
-	 * @param	array	captcha plugin options
-	 * @param	array	field options
+	 * @param	array	an associative array of plugin  options
 	 * @return	MMI_Form
 	 */
-	public function add_captcha($driver = NULL, $plugin_options = NULL, $field_options = NULL)
+	public function add_captcha($driver = 'recaptcha', $options = array())
 	{
-		if (empty($driver))
-		{
-			$driver = 'recaptcha';
-		}
-		if (empty($plugin_options))
-		{
-			$plugin_options = array();
-		}
-		if (empty($field_options))
-		{
-			$field_options = array();
-		}
+		// Create the plugin
+		$captcha = MMI_Form_Plugin::factory($driver, $options);
 
-		$captcha = MMI_Form_Plugin::factory($this, $driver, $plugin_options);
-		$this->add_field
+		// Configure the and add the form field
+		$options = array_merge($options, array
 		(
-			array
+			'type'			=> 'html',
+			'_html'			=> array($captcha, 'html'),
+			'_source'		=> MMI_Form_Field_HTML::SRC_CALLBACK,
+			'_callbacks'	=> array
 			(
-				'name'		=> $driver,
-				'type'		=> 'html',
-				'html'		=> array($captcha, 'html'),
-				'source'	=> MMI_Form_Field_HTML::SOURCE_CALLBACK,
-				'callbacks'	=> array
-				(
-					array($captcha, 'valid', NULL),
-				),
+				array($captcha, 'valid', NULL),
 			),
-			self::FORM_ONLY_FIELD,
-			$field_options
-		);
+		));
+		$this->add_field('html', $options);
 		return $this;
 	}
+
+
+
+
+
+
+
+
 
 	/**
 	 * Process method names that do not exist.
@@ -705,14 +696,15 @@ class Kohana_MMI_Form
 	public function __call($method, $args)
 	{
 		$plugin_name = '';
-MMI_Debug::dead($this->_plugins);
+MMI_Debug::dump($this->_plugins);
 		foreach ($this->_plugins as $name => $plugin)
 		{
-			$prefix = $plugin['method_prefix'];
+			$prefix = $plugin->method_prefix();
 			if (stripos($method, $prefix) === 0)
 			{
 				$plugin_name = $name;
 				$method = str_replace($prefix, '', $method);
+MMI_Debug::mdump($plugin_name, 'name', $method, 'method');
 				break;
 			}
 		}
@@ -770,7 +762,7 @@ MMI_Debug::dead($this->_plugins);
 
 		// Merge the user-specified and config settings
 		$config = self::get_config();
-		$options = Arr::merge($config->as_array(), $options);
+		$options = array_merge($config->as_array(), $options);
 
 		// Set the CSS class
 		if ( ! empty($class))
@@ -902,16 +894,17 @@ MMI_Debug::dead($this->_plugins);
 			return;
 		}
 
-		$errors = $this->error();
-		if (count($errors) > 0)
+		$count_all = count($this->error());
+		$count_general = count( $this->_errors);
+		if ($count_all > 0)
 		{
-			if (array_key_exists(self::ERROR_GENERAL, $errors))
+			if ($count_general === $count_all)
 			{
 				$msg = MMI_Form_Messages::msg_failure();
 			}
 			else
 			{
-				$count = count($errors);
+				$count = $count_all - $count_general;
 				if ($count === 1)
 				{
 					$msg = MMI_Form_Messages::msg_failure_single();

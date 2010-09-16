@@ -16,7 +16,7 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 	protected $_token;
 
 	/**
-	 * Initialize the plugin.
+	 * Initialize the options.
 	 *
 	 * @param	array	an associative array of plugin options
 	 * @return	void
@@ -27,8 +27,8 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 		{
 			return;
 		}
-
 		parent::__construct($options);
+
 		if (empty($this->_options['id']))
 		{
 			$this->_options['id'] = 'mmi_token';
@@ -40,14 +40,16 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 	/**
 	 * Is the CSRF token valid?  If not, set an error in the form.
 	 *
-	 * @return	void
+	 * @return	boolean
 	 */
 	public function valid()
 	{
-		if ($this->_token !== $_POST[$this->_id()])
+		$valid = ($this->_token === $_POST[$this->_id()]);
+		if ( ! $valid)
 		{
 			$this->form()->error('invalid csrf');
 		}
+		return $valid;
 	}
 
 	/**

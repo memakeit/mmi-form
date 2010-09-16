@@ -15,17 +15,17 @@ abstract class Kohana_MMI_Form_Plugin
 	protected $_form;
 
 	/**
-	 * @var string the plugin namespace
+	 * @var string the prefix used to call plugin methods from the form.
 	 */
-	protected $_namespace;
+	protected $_method_prefix;
 
 	/**
-	 * @var array plugin-specific options
+	 * @var array an associative array of plugin options
 	 */
 	protected $_options = array();
 
 	/**
-	 * Initialize the plugin.
+	 * Initialize the options.
 	 *
 	 * @param	array	an associative array of plugin options
 	 * @return	void
@@ -33,16 +33,16 @@ abstract class Kohana_MMI_Form_Plugin
 	public function __construct($options = array())
 	{
 		$this->_options = $options;
-//		$this->_namespace = $namespace;
-//		$this->_name = $this->name();
 	}
 
-	public function name()
-	{
-		return get_class($this);
-	}
-
-	public function form($form = NULL)
+	/**
+	 * Get or set the form.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	MMI_From	a form object
+	 * @return	mixed
+	 */
+	public function form($value = NULL)
 	{
 		if (func_num_args() === 0)
 		{
@@ -53,34 +53,58 @@ abstract class Kohana_MMI_Form_Plugin
 			}
 			return $form;
 		}
-		if ($form instanceof MMI_Form)
+		if ($value instanceof MMI_Form)
 		{
-			$this->_form = $form;
+			$this->_form = $value;
 		}
 		return $this;
 	}
 
-//	/**
-//	 * Get the plugin name.
-//	 *
-//	 * @return  string
-//	 */
-//	public static function get_name($plugin)
-//	{
-//		$name = get_class($plugin);
-//
-//		$search = 'plugin_';
-//		$idx = strripos($name, $search);
-//		$name = substr($name, $idx + strlen($search));
-//		return strtolower($name);
-//	}
+	/**
+	 * Check whether the plugin implements a method.
+	 *
+	 * @param	string	the method name
+	 * @return	boolean
+	 */
+	public function method_exists($method)
+	{
+		return method_exists($this, $method);
+	}
+
+	/**
+	 * Get or set the prefix used to call plugin methods from the form.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	string	the method prefix
+	 * @return	mixed
+	 */
+	public function method_prefix($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			return $this->_method_prefix;
+		}
+		$this->_method_prefix = $value;
+		return $this;
+	}
+
+	/**
+	 * Get the plugin name.
+	 *
+	 * @param	array	an associative array of plugin options
+	 * @return	string
+	 */
+	public function name()
+	{
+		return strtolower(str_replace('MMI_Form_Plugin_', '', get_class($this)));
+	}
 
 	/**
 	 * Create a plugin instance.
 	 *
-	 * @param	string      the plugin name
-	 * @param	array       the plugin options
-	 * @return	Jelly_Plugin
+	 * @param	string	the plugin type
+	 * @param	array	an associative array of plugin options
+	 * @return	MMI_Form_Plugin
 	 */
 	public static function factory($type, $options = array())
 	{

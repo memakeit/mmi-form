@@ -26,12 +26,14 @@ class Kohana_MMI_Form_Field_HTML extends MMI_Form_Field
 			$options = array();
 		}
 
-		$options['_source'] = self::SRC_STRING;
 		$options['type'] = 'html';
-		$order = Arr::get($options, '_order');
-		if (empty($order))
+		if (empty($options['_order'] ))
 		{
 			$options['_order'] = array(MMI_Form::ORDER_FIELD);
+		}
+		if (empty($options['_source']))
+		{
+			$options['_source'] = self::SRC_STRING;
 		}
 		parent::__construct($options);
 	}

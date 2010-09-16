@@ -274,6 +274,11 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function valid()
 	{
+		if ( ! $this->_posted)
+		{
+			return TRUE;
+		}
+
 		$attributes = $this->_attributes;
 		$meta = $this->_meta;
 		$id = $this->id();
