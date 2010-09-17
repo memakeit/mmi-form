@@ -11,13 +11,13 @@ function _get_jquery_options()
 	(
 		'debug'				=> $debug,
 		'errorClass'		=> $error_class,
-		'errorPlacement'	=> MMI_Form_Plugin_JQuery::get_default_error_placement(),
+		'errorPlacement'	=> MMI_Form_Plugin_JQuery_Validation::get_default_error_placement(),
 		'validClass'		=> $valid_class,
-		'success'			=> MMI_Form_Plugin_JQuery::get_default_success(),
-		'highlight'			=> MMI_Form_Plugin_JQuery::get_default_highlight(),
-		'unhighlight'		=> MMI_Form_Plugin_JQuery::get_default_unhighlight(),
-		'invalidHandler'	=> MMI_Form_Plugin_JQuery::get_default_invalid_handler(),
-		'submitHandler'		=> MMI_Form_Plugin_JQuery::get_default_submit_handler(),
+		'success'			=> MMI_Form_Plugin_JQuery_Validation::get_default_success(),
+		'highlight'			=> MMI_Form_Plugin_JQuery_Validation::get_default_highlight(),
+		'unhighlight'		=> MMI_Form_Plugin_JQuery_Validation::get_default_unhighlight(),
+		'invalidHandler'	=> MMI_Form_Plugin_JQuery_Validation::get_default_invalid_handler(),
+		'submitHandler'		=> MMI_Form_Plugin_JQuery_Validation::get_default_submit_handler(),
 	);
 }
 

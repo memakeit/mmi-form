@@ -242,6 +242,10 @@ class Kohana_MMI_Form
 			$plugin = MMI_Form_Plugin::factory($plugin, $options);
 			if ( ! empty($method_prefix))
 			{
+				if (substr($method_prefix, -1) !== '_')
+				{
+					$method_prefix .= '_';
+				}
 				$plugin->method_prefix($method_prefix);
 			}
 		}

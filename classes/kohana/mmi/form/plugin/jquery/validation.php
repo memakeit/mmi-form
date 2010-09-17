@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * jQuery form plugin.
+ * jQuery form validation plugin.
  *
  * @package		MMI Form
  * @category	plugin
@@ -8,7 +8,7 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Kohana_MMI_Form_Plugin_JQuery extends MMI_Form_Plugin
+class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 {
 	/**
 	 * @var Kohana_Config the plugin configuration
@@ -847,7 +847,7 @@ EOJS;
 	 */
 	public static function get_config($as_array = FALSE)
 	{
-		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form-plugin-jquery');
+		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form-plugin-jquery-validation');
 		$config = self::$_config;
 		if ($as_array)
 		{
@@ -867,7 +867,7 @@ EOJS;
 		(self::$_unicode_ranges === NULL) AND self::$_unicode_ranges = Arr::get($config, 'unicode', self::$_default_unicode_ranges);
 		return self::$_unicode_ranges;
 	}
-} // End Kohana_MMI_Form_Plugin_JQuery
+} // End Kohana_MMI_Form_Plugin_JQuery_Validation
 
 //
 // Kohana validation functions not implemeted:
