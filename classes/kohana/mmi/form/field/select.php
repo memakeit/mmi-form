@@ -121,7 +121,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 		$parms = parent::_get_view_parms();
 		$attributes = $parms['attributes'];
 		$meta = $this->_meta;
-		$parms['options'] = $this->_options();;
+		$parms['options'] = $this->_options();
 		$parms['selected'] = Arr::get($meta, 'selected', array());
 
 		$multiple = Arr::get($attributes, 'multiple', FALSE);
@@ -143,7 +143,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 	}
 
 	/**
-	 * Return the options  a blank option, if necessary.
+	 * Get the options, adding a blank option if necessary.
 	 *
 	 * @return	void
 	 */

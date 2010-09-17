@@ -29,7 +29,7 @@ class Kohana_MMI_Form_Field_Submit extends MMI_Form_Field
 	/**
 	 * Load the post data into the models and fields.
 	 *
-	 * @return  void
+	 * @return	void
 	 */
 	protected function _load_post_data()
 	{

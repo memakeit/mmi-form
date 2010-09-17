@@ -83,7 +83,7 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 //MMI_Debug::dead($form, 'form');
 		echo $form->render();
 		MMI_Debug::dump($form->render(), 'form');
-//		MMI_Debug::dump($form->valid(), 'valid');
+		MMI_Debug::dump($form->valid(), 'valid');
 //		MMI_Debug::dump($form->error(), 'errors');
 //		MMI_Debug::dump($form->updated(), 'updated');
 //		MMI_Debug::dump($form->diff(), 'diff');

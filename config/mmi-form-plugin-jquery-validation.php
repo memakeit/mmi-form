@@ -24,7 +24,7 @@ function _get_jquery_options()
 return array
 (
 	'options' => _get_jquery_options(),
-	'unicode'  => array
+	'unicode' => array
 	(
 		'dashes'		=> '\u002d\u00ad',
 		'letters'		=> '\u0041-\u005a\u0061-\u007a\u00aa\u00b5\u00ba\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u024f',

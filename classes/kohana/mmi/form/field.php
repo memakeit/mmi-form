@@ -282,15 +282,8 @@ abstract class Kohana_MMI_Form_Field
 		$attributes = $this->_attributes;
 		$meta = $this->_meta;
 		$id = $this->id();
+		$label = trim(Arr::get($this->_label_meta(), 'html'), ':');
 		$value = Arr::get($attributes, 'value', '');
-
-		$label = trim
-		(
-			Arr::get($this->meta('label'), '_html',
-			Arr::get($attributes, 'title',
-			Arr::get($attributes, 'placeholder',
-			Arr::get($meta, 'description', ''
-		)))), ':');
 
 		// Add validation settings
 		$validate = Validate::factory(array($id => $value));
@@ -418,7 +411,7 @@ abstract class Kohana_MMI_Form_Field
 	/**
 	 * Load the post data into the models and fields.
 	 *
-	 * @return  void
+	 * @return	void
 	 */
 	protected function _load_post_data()
 	{
@@ -482,17 +475,17 @@ abstract class Kohana_MMI_Form_Field
 		}
 		if (empty($html))
 		{
-			$html = Arr::get($attributes, 'placeholder');
+			$html = Arr::get($meta, 'description');
 		}
 		if (empty($html))
 		{
-			$html = Arr::get($meta, 'description');
+			$html = Arr::get($attributes, 'placeholder');
 		}
 		if ( ! empty($html) AND substr($html, -1) !== ':')
 		{
 			$html .= ':';
 		}
-		$label['_html'] = $html;
+		$label['html'] = $html;
 		return $label;
 	}
 

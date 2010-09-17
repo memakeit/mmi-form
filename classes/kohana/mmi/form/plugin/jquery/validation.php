@@ -28,7 +28,7 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 	);
 
 	/**
-	 * @var array a map of Kohana validate methods and their jQuery equivalents
+	 * @var array a map of Kohana validation methods and their jQuery equivalents
 	 */
 	protected static $_rule_map = array
 	(
@@ -46,7 +46,7 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 	protected static $_unicode_ranges;
 
 	/**
-	 * @var array an array of extra jQuery validation methods that need to be included
+	 * @var array an array of additional jQuery validation methods that need to be included
 	 */
 	protected $_extra_methods = array();
 
@@ -69,7 +69,7 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		}
 		parent::__construct($options);
 
-		$config = Arr::merge
+		$options = Arr::merge
 		(
 			self::get_config(TRUE),
 			$options
@@ -78,7 +78,7 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		$this->_unicode = $this->form()->unicode();
 		$this->_options = array_intersect_key
 		(
-			Arr::get($config, 'options', array()),
+			Arr::get($options, 'options', array()),
 			$this->_get_valid_options()
 		);
 	}
@@ -90,7 +90,7 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 	 */
 	public function get_validation_js()
 	{
-		return 'get_validation_js';
+//		return 'get_validation_js';
 
 		$this->_generate_rules();
 		$options = array_diff_assoc($this->_options, $this->_get_default_options());
@@ -98,10 +98,10 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		$options = implode(','.PHP_EOL, $options);
 
 		$extra_methods = $this->_get_extra_methods();
-		$form_id = '#'.$this->_form->id();
+		$form_id = '#'.$this->form()->attribute('id');
 		return<<<EOJS
 var validator;
-$(document).ready(function(){
+$(window).load(function(){
 	validator = $('$form_id').validate({
 $options
 	});
@@ -118,8 +118,7 @@ EOJS;
 	 */
 	protected function _parse_options($options)
 	{
-		$add_quotes;
-		$js;
+		$js = array();
 		foreach ($options as $name => $value)
 		{
 			$add_quotes = TRUE;
@@ -161,20 +160,19 @@ EOJS;
 	}
 
 	/**
-	 * Replace runs of multiple whitespace characters with a single space.
+	 * Replace multiple whitespace characters with a single space.
 	 *
 	 * @param	string	the string to normalize
 	 * @return	string
 	 */
 	protected function _normalize_spaces($value)
 	{
-		$normalized = $value;
-		if ( ! empty($normalized))
+		if ( ! empty($value))
 		{
-			$normalized = preg_replace('/[\s\n\r\t]+/', ' ', $normalized);
-			$normalized = UTF8::trim($normalized);
+			$value = preg_replace('/[\s\n\r\t]+/', ' ', $value);
+			$value = UTF8::trim($value);
 		}
-		return $normalized;
+		return $value;
 	}
 
 	/**
@@ -184,28 +182,35 @@ EOJS;
 	 */
 	protected function _generate_rules()
 	{
-		$form = $this->_form;
-		$fields = $form->fields();
-		$ignore_types = array('button', 'hidden', 'submit');
+		$form = $this->form();
+		$fields = $form->field();
+		$ignore_types = array('button', 'hidden', 'image', 'reset', 'submit');
 		foreach ($fields as $field)
 		{
-			$field_name = Jelly_Form_Field::get_form_field_id($field->model_name, $field->name);
+			$field_name = MMI_Form_Field::field_id($field->attribute('id'), $field->meta('namespace'));
 			if (strpos($field_name, '[]') !== FALSE)
 			{
 				$field_name = "'".$field_name."'";
 			}
-			$type = $field->type();
+			$type = $field->attribute('type');
 			if ( ! in_array($type, $ignore_types))
 			{
-				foreach ($field->rules as $rule_name => $rule_parms)
+				$rules = $field->meta('rules');
+				if ( ! is_array($rules))
 				{
+					$rules = array();
+				}
+
+				foreach ($rules as $rule_name => $rule_parms)
+				{
+					$label = trim(Arr::get($field->meta('label'), 'html'), ':');
 					$jquery_rule = $this->_get_jquery_rule_name($rule_name);
-					$msg = $form->format_error_message($field->label, $rule_name, $rule_parms);
+					$msg = MMI_Form_Messages::format_error_msg($label, $rule_name, $rule_parms);
 					$parms = $this->_parse_rule_parms($rule_name, $rule_parms);
 
 					switch($rule_name)
 					{
-						// Built-in jQuery validation methods
+						// Built-in validation methods
 						case 'date':
 						case 'email':
 						case 'matches':
@@ -218,7 +223,7 @@ EOJS;
 							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
 							break;
 
-						// Custom jQuery validation methods
+						// Custom validation methods
 						case 'alpha':
 						case 'alpha_dash':
 						case 'alpha_numeric':
@@ -274,7 +279,6 @@ EOJS;
 	 */
 	protected function _parse_rule_parms($rule_name, $rule_parms)
 	{
-		$parms;
 		if (is_array($rule_parms) AND count($rule_parms) === 1)
 		{
 			$parms = $rule_parms[0];
@@ -288,10 +292,10 @@ EOJS;
 			$parms = $this->_get_default_rule_parms($rule_name);
 		}
 
-		if ($rule_name === 'matches')
-		{
-			$parms = '#'.str_replace('.', '_', $parms);
-		}
+//		if ($rule_name === 'matches')
+//		{
+//			$parms = '#'.str_replace('.', '_', $parms);
+//		}
 		return $parms;
 	}
 
@@ -314,7 +318,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the extra methods needed to perform validation.
+	 * Generate the JavaScript for the additional validation methods needed.
 	 *
 	 * @return	string
 	 */
@@ -629,8 +633,7 @@ EOJS;
 	 */
 	protected function _get_jquery_msg($rule_name)
 	{
-		$msg = $this->_form->format_error_message(NULL, $rule_name, NULL);
-
+		$msg = MMI_Form_Messages::format_error_msg(NULL, $rule_name, NULL);
 		// Replace Kohana validation parms with jQuery parms (:parm1 becomes {0})
 		if (preg_match_all('/\:param[\d]+/', $msg, $matches) > 0)
 		{
@@ -688,35 +691,8 @@ EOJS;
 	 */
 	protected function _get_valid_options()
 	{
-		return array_flip(array
-		(
-			'debug',
-			'errorClass',
-			'errorContainer',
-			'errorElement',
-			'errorLabelContainer',
-			'errorPlacement',
-			'focusCleanup',
-			'focusInvalid',
-			'groups',
-			'highlight',
-			'ignore',
-			'ignoreTitle',
-			'invalidHandler',
-			'messages',
-			'meta',
-			'onclick',
-			'onfocusout',
-			'onkeyup',
-			'onsubmit',
-			'rules',
-			'showErrors',
-			'submitHandler',
-			'success',
-			'unhighlight',
-			'validClass',
-			'wrapper',
-		));
+		$keys = array_keys($this->_get_default_options());
+		return array_combine($keys, $keys);
 	}
 
 	/**
@@ -871,5 +847,5 @@ EOJS;
 
 //
 // Kohana validation functions not implemeted:
-//    email_domain
+//	email_domain
 //

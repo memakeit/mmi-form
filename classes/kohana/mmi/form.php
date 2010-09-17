@@ -658,7 +658,7 @@ class Kohana_MMI_Form
 	 * This method is chainable.
 	 *
 	 * @param	string	the captcha driver
-	 * @param	array	an associative array of plugin  options
+	 * @param	array	an associative array of plugin options
 	 * @return	MMI_Form
 	 */
 	public function add_captcha($driver = 'recaptcha', $options = array())
@@ -865,7 +865,7 @@ class Kohana_MMI_Form
 	/**
 	 * Generate form status messages.
 	 *
-	 * @return  string
+	 * @return	string
 	 */
 	protected function _messages()
 	{
@@ -904,7 +904,7 @@ class Kohana_MMI_Form
 
 		if ($this->_html5)
 		{
-			$allowed =  MMI_HTML5_Attributes::get();
+			$allowed = MMI_HTML5_Attributes::get();
 		}
 		else
 		{

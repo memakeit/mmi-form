@@ -9,17 +9,17 @@
  */
 interface Kohana_MMI_Form_CAPTCHA
 {
-    /**
-     * Generate the CAPTCHA HTML.
-     *
-     * @return	string
-     */
-    public function html();
+	/**
+	 * Generate the CAPTCHA HTML.
+	 *
+	 * @return	string
+	 */
+	public function html();
 
-    /**
-     * Is the CAPTCHA response valid?
-     *
-     * @return	boolean
-     */
-    public function valid();
+	/**
+	 * Is the CAPTCHA response valid?
+	 *
+	 * @return	boolean
+	 */
+	public function valid();
 } // End Kohana_MMI_Form_Captcha

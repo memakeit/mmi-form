@@ -58,7 +58,7 @@ class Kohana_MMI_Form_Field_Radio extends MMI_Form_Field
 	/**
 	 * Determine if a checkbox is checked.
 	 *
-	 * @return  boolean
+	 * @return	boolean
 	 */
 	protected function _checked()
 	{

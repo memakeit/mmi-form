@@ -129,11 +129,11 @@ class Kohana_MMI_Form_Plugin_reCAPTCHA extends MMI_Form_Plugin implements MMI_Fo
 		}
 		if (empty($options['_private_key']))
 		{
-			$options['_private_key'] =  Arr::get($config, 'private_key');;
+			$options['_private_key'] =  Arr::get($config, 'private_key');
 		}
 		if (empty($options['_public_key']))
 		{
-			$options['_public_key'] =  Arr::get($config, 'public_key');;
+			$options['_public_key'] =  Arr::get($config, 'public_key');
 		}
 		if (empty($options['_theme']))
 		{

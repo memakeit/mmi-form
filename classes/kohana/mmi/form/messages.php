@@ -37,6 +37,58 @@ class Kohana_MMI_Form_Messages
 	}
 
 	/**
+	 * Get the formatted error message.
+	 *
+	 * @param	string	the field label
+	 * @param	string	the rule name
+	 * @param	array	the rule parameters
+	 * @return	string
+	 */
+	public static function format_error_msg($field_label, $rule_name, $rule_parms)
+	{
+		$file = MMI_Form_Messages::get_path();
+		if ($message = Kohana::message($file, $rule_name))
+		{
+			// Found a default message for this error
+		}
+		else
+		{
+			// No message exists, display the path expected
+			$message = "{$file}.{$rule_name}";
+		}
+
+		// Start the translation values list
+		$values = array(':field' => $field_label);
+		if (is_array($rule_parms) AND count($rule_parms) > 0)
+		{
+			foreach ($rule_parms as $key => $value)
+			{
+				if (is_array($value))
+				{
+					// All values must be strings
+					$value = implode(', ', Arr::flatten($value));
+				}
+
+				// Add each parameter as a numbered value, starting from 1
+				$values[':param'.($key + 1)] = $value;
+			}
+		}
+
+		$translate = self::translate();
+		if ($translate)
+		{
+			// Translate the message using the default language
+			$message = __($message, $values);
+		}
+		else
+		{
+			// Do not translate, just replace the values
+			$message = strtr($message, $values);
+		}
+		return $message;
+	}
+
+	/**
 	 * Get the message file path.
 	 * If a language-specific file can be located, it is used.
 	 *
