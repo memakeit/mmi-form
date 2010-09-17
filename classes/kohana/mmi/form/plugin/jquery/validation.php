@@ -356,7 +356,8 @@ EOJS;
 		}
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	return this.optional(element) || $regex.test(value);
 }, '$msg');
 EOJS;
@@ -381,7 +382,8 @@ EOJS;
 		}
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	return this.optional(element) || $regex.test(value);
 }, '$msg');
 EOJS;
@@ -406,7 +408,8 @@ EOJS;
 		}
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	return this.optional(element) || $regex.test(value);
 }, '$msg');
 EOJS;
@@ -423,7 +426,8 @@ EOJS;
 		$msg = $this->_get_jquery_msg($method);
 		$regex = '/^#?[0-9a-f]{3}([0-9a-f]{3})?$/i';
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	return this.optional(element) || $regex.test(value);
 }, '$msg');
 EOJS;
@@ -474,7 +478,8 @@ EOJS;
 		$js2 = implode(PHP_EOL.'    ', $js2);
 
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	if (/[^0-9-]+/.test(value)) {
 		return false;
 	}
@@ -501,10 +506,12 @@ EOJS;
 		$locale = localeconv();
 		$decimal_point = preg_quote($locale['decimal_point']);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	var digits = '+';
 	var places;
-	if (jQuery.isArray(parms)) {
+	if (jQuery.isArray(parms))
+	{
 		digits = parseInt(parms[1]);
 		digits = ( ! isNaN(digits) && digits > 0) ? '{' + digits + '}' : '+';
 		places = '{' + parseInt(parms[0]) + '}';
@@ -532,7 +539,8 @@ EOJS;
 		$unicode_ranges = self::_get_unicode_ranges();
 		$regex = '/^['.$unicode_ranges['numbers'].']+$/';
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	return this.optional(element) || $regex.test(value);
 }, '$msg');
 EOJS;
@@ -548,7 +556,8 @@ EOJS;
 		$method = 'exact_length';
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	value = jQuery.trim(value);
 	return this.optional(element) || parseInt(value.length) === parms;
 }, jQuery.validator.format('$msg'));
@@ -567,7 +576,8 @@ EOJS;
 		$ipv4 = '/^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})$/';
 		$ipv6 = '/^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/';
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	return this.optional(element) || $ipv4.test(value) || $ipv6.test(value);
 }, '$msg');
 EOJS;
@@ -585,7 +595,8 @@ EOJS;
 		$locale = localeconv();
 		$decimal_point = preg_quote($locale['decimal_point']);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	return this.optional(element) || /^-?[\d$decimal_point]+$/.test(value);
 }, '$msg');
 EOJS;
@@ -601,7 +612,8 @@ EOJS;
 		$method = 'phone';
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	value = value.replace(/\D/g, '');
 	return this.optional(element) || jQuery.inArray(value.length, parms) > -1;
 }, '$msg');
@@ -618,7 +630,8 @@ EOJS;
 		$method = 'regex';
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms) {
+jQuery.validator.addMethod('$method', function(value, element, parms)
+{
 	var regex = new RegExp(parms, 'i');
 	return this.optional(element) || regex.test(value);
 }, '$msg');
@@ -695,34 +708,48 @@ EOJS;
 		return array_combine($keys, $keys);
 	}
 
+
 	/**
-	 * Get the default success handler JavaScript.
+	 * Get the default JavaScript configuration.
 	 *
-	 * @return	string
+	 * @param	boolean	enable debugging?
+	 * @param	string	the CSS class for error messages
+	 * @param	string	the CSS class for valid messages
+	 * @return	array
 	 */
-	public static function get_default_success()
+	public static function get_default_config($debug = FALSE, $error_class = 'error', $valid_class = 'success')
 	{
-return<<<EOJS
-function(label) {
-	$(label).addClass(validator.settings.validClass);
-}
-EOJS;
+		return array
+		(
+			'debug'				=> $debug,
+			'errorClass'		=> $error_class,
+			'errorPlacement'	=> MMI_Form_Plugin_JQuery_Validation::get_default_error_placement(),
+			'highlight'			=> MMI_Form_Plugin_JQuery_Validation::get_default_highlight(),
+			'invalidHandler'	=> MMI_Form_Plugin_JQuery_Validation::get_default_invalid_handler(),
+			'submitHandler'		=> MMI_Form_Plugin_JQuery_Validation::get_default_submit_handler(),
+			'success'			=> MMI_Form_Plugin_JQuery_Validation::get_default_success(),
+			'unhighlight'		=> MMI_Form_Plugin_JQuery_Validation::get_default_unhighlight(),
+			'validClass'		=> $valid_class,
+		);
 	}
 
 	/**
-	 * Get the default error placement handler JavaScript.
+	 * Get the default error placement JavaScript.
 	 *
 	 * @return	string
 	 */
 	public static function get_default_error_placement()
 	{
 return<<<EOJS
-function(error, element) {
+function(error, element)
+{
 	var class = element.attr('class');
-	if (class === 'group' || class.indexOf(' group') !== -1) {
+	if (class === 'group' || class.indexOf(' group') !== -1)
+	{
 		error.insertAfter(element.parent().prev().children()[0]);
 	}
-	else {
+	else
+	{
 		error.insertAfter(element);
 	}
 }
@@ -730,17 +757,19 @@ EOJS;
 	}
 
 	/**
-	 * Get the default highlight handler JavaScript.
+	 * Get the default highlight JavaScript.
 	 *
 	 * @return	string
 	 */
 	public static function get_default_highlight()
 	{
 return<<<EOJS
-function(element, errorClass, validClass) {
+function(element, errorClass, validClass)
+{
 	var element = $(element);
 	var class = element.attr('class');
-	if (class === 'group' || class.indexOf(' group') !== -1) {
+	if (class === 'group' || class.indexOf(' group') !== -1)
+	{
 		element.parent().removeClass(validClass).addClass(errorClass);
 	}
 	else
@@ -752,45 +781,27 @@ EOJS;
 	}
 
 	/**
-	 * Get the default unhighlight handler JavaScript.
-	 *
-	 * @return	string
-	 */
-	public static function get_default_unhighlight()
-	{
-return<<<EOJS
-function(element, errorClass, validClass) {
-	var element = $(element);
-	var class = element.attr('class');
-	if (class === 'group' || class.indexOf(' group') !== -1) {
-		element.parent().removeClass(errorClass).addClass(validClass);
-	}
-	else {
-		element.removeClass(errorClass).addClass(validClass);
-	}
-}
-EOJS;
-	}
-
-	/**
 	 * Get the default invalid handler JavaScript.
 	 *
 	 * @param	string	the id of the status element
 	 * @return	string
 	 */
-	public static function get_default_invalid_handler($status_id = 'div#frm_status')
+	public static function get_default_invalid_handler($status_id = '#frm_status')
 	{
 return<<<EOJS
-function(frm, validator) {
+function(frm, validator)
+{
 	var num_errors = validator.numberOfInvalids();
 	var settings = validator.settings;
-	if(num_errors) {
+	if(num_errors)
+	{
 		var message = (parseInt(num_errors) === 1)
 			? '1 field is invalid. It has been highlighted.'
 			: num_errors + ' fields are invalid. They have been highlighted.';
 		$('$status_id').removeClass(settings.validClass).addClass(settings.errorClass).html(message).show();
 	}
-	else {
+	else
+	{
 		$('$status_id').removeClass(settings.errorClass).hide();
 	}
 }
@@ -804,13 +815,53 @@ EOJS;
 	 * @param	string	the id of the buttons container
 	 * @return	string
 	 */
-	public static function get_default_submit_handler($message = 'Submitting ...', $status_id = 'div#frm_status', $buttons_id = 'form.frm p.btn')
+	public static function get_default_submit_handler($message = 'Submitting ...', $status_id = '#frm_status', $buttons_id = 'form.frm p.btn')
 	{
 return<<<EOJS
-function(frm) {
+function(frm)
+{
 	$('$status_id').removeClass(validator.settings.errorClass).hide();
 	$('$buttons_id').replaceWith('<div class="submit">$message</div>');
 	frm.submit();
+}
+EOJS;
+	}
+
+	/**
+	 * Get the default success JavaScript.
+	 *
+	 * @return	string
+	 */
+	public static function get_default_success()
+	{
+return<<<EOJS
+function(label)
+{
+	$(label).addClass(validator.settings.validClass);
+}
+EOJS;
+	}
+
+	/**
+	 * Get the default unhighlight JavaScript.
+	 *
+	 * @return	string
+	 */
+	public static function get_default_unhighlight()
+	{
+return<<<EOJS
+function(element, errorClass, validClass)
+{
+	var element = $(element);
+	var class = element.attr('class');
+	if (class === 'group' || class.indexOf(' group') !== -1)
+	{
+		element.parent().removeClass(errorClass).addClass(validClass);
+	}
+	else
+	{
+		element.removeClass(errorClass).addClass(validClass);
+	}
 }
 EOJS;
 	}

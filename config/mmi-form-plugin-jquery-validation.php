@@ -1,29 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-// jQuery validation plugin settings
-function _get_jquery_options()
-{
-	$debug = TRUE;
-	$error_class = 'error';
-	$valid_class = 'success';
-
-	return array
-	(
-		'debug'				=> $debug,
-		'errorClass'		=> $error_class,
-		'errorPlacement'	=> MMI_Form_Plugin_JQuery_Validation::get_default_error_placement(),
-		'validClass'		=> $valid_class,
-		'success'			=> MMI_Form_Plugin_JQuery_Validation::get_default_success(),
-		'highlight'			=> MMI_Form_Plugin_JQuery_Validation::get_default_highlight(),
-		'unhighlight'		=> MMI_Form_Plugin_JQuery_Validation::get_default_unhighlight(),
-		'invalidHandler'	=> MMI_Form_Plugin_JQuery_Validation::get_default_invalid_handler(),
-		'submitHandler'		=> MMI_Form_Plugin_JQuery_Validation::get_default_submit_handler(),
-	);
-}
-
+// jQuery validation plugin configuration
 return array
 (
-	'options' => _get_jquery_options(),
+	'options' => MMI_Form_Plugin_JQuery_Validation::get_default_config(TRUE, 'error', 'success'),
 	'unicode' => array
 	(
 		'dashes'		=> '\u002d\u00ad',
