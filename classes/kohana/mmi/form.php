@@ -252,7 +252,7 @@ class Kohana_MMI_Form
 			$method_prefix = $plugin->method_prefix();
 			if (empty($method_prefix))
 			{
-				$plugin->method_prefix($id);
+				$plugin->method_prefix($id.'_');
 			}
 			$this->_plugins[$id] = $plugin;
 		}
@@ -677,17 +677,9 @@ class Kohana_MMI_Form
 		return $this;
 	}
 
-
-
-
-
-
-
-
-
 	/**
 	 * Process method names that do not exist.
-	 * Used to process calls to plugin methods.
+	 * Used to call plugin methods.
 	 *
 	 * @param	string	the method name
 	 * @param	array	the method arguments
@@ -695,53 +687,37 @@ class Kohana_MMI_Form
 	 */
 	public function __call($method, $args)
 	{
-		$plugin_name = '';
-MMI_Debug::dump($this->_plugins);
+		// Find the plugin
 		foreach ($this->_plugins as $name => $plugin)
 		{
 			$prefix = $plugin->method_prefix();
 			if (stripos($method, $prefix) === 0)
 			{
-				$plugin_name = $name;
 				$method = str_replace($prefix, '', $method);
-MMI_Debug::mdump($plugin_name, 'name', $method, 'method');
 				break;
 			}
 		}
 
-		if ( ! empty($plugin_name))
+		// Use reflection to invoke the plugin method
+		if ( ! empty($name) AND $plugin->method_exists($method))
 		{
-			// Use reflection to invoke the plugin method
 			if ( ! is_array($args))
 			{
 				$args = array();
 			}
-			$plugin = $this->_plugins[$plugin_name]['plugin'];
 			$method = new ReflectionMethod($plugin, $method);
 			return $method->invokeArgs($plugin, $args);
 		}
 
 		// Plugin method not found
 		$msg = 'Plugin method not found: '.$method.'.';
-		if ( ! empty($plugin_name))
+		if ( ! empty($name))
 		{
-			$msg .= 'Plugin name: '.$plugin_name.'.';
+			$msg .= ' Plugin name: '.$name;
 		}
-		Kohana::$log->add(Kohana::ERROR, '['.__METHOD__.' @ line '.__LINE__.'] '.$msg)->write();
+		MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 		throw new Kohana_Exception($msg);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 
 	/**
 	 * Merge the user-specified and config file settings.

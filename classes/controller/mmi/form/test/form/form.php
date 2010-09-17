@@ -78,6 +78,8 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 		$form->add_plugin('csrf', 'csrf', array('id' => 'mmit'));
 		$form->add_captcha('recaptcha');
 		$form->add_plugin('jquery');
+		$jquery = $form->jquery_get_validation_js();
+		MMI_Debug::dead($jquery, 'jquery_get_validation_js');
 //MMI_Debug::dead($form, 'form');
 		echo $form->render();
 		MMI_Debug::dump($form->render(), 'form');
