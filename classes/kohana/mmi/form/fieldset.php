@@ -14,8 +14,6 @@ class Kohana_MMI_Form_FieldSet extends MMI_Form_Element
 	 */
 	protected static $_config;
 
-
-
 	/**
 	 * Merge the user-specified and config file settings.
 	 * Separate the meta data from the HTML attributes.
