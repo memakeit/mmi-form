@@ -46,9 +46,9 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 	protected static $_unicode_ranges;
 
 	/**
-	 * @var array an array of additional jQuery validation methods that need to be included
+	 * @var array an array of additional validation methods that need to be included
 	 */
-	protected $_extra_methods = array();
+	protected $_methods = array();
 
 	/**
 	 * @var boolean accept unicode input?
@@ -69,13 +69,8 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		}
 		parent::__construct($options);
 
-		$options = Arr::merge
-		(
-			self::get_config(TRUE),
-			$options
-		);
-
 		$this->_unicode = $this->form()->unicode();
+		$options = Arr::merge(self::get_config(TRUE), $options);
 		$this->_options = array_intersect_key
 		(
 			Arr::get($options, 'options', array()),
@@ -90,14 +85,11 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 	 */
 	public function get_validation_js()
 	{
-//		return 'get_validation_js';
-
 		$this->_generate_rules();
 		$options = array_diff_assoc($this->_options, $this->_get_default_options());
 		$options = $this->_parse_options($options);
 		$options = implode(','.PHP_EOL, $options);
 
-		$extra_methods = $this->_get_extra_methods();
 		$form_id = '#'.$this->form()->attribute('id');
 		return<<<EOJS
 var validator;
@@ -105,15 +97,15 @@ $(window).load(function(){
 	validator = $('$form_id').validate({
 $options
 	});
-$extra_methods
+{$this->_get_methods()}
 });
 EOJS;
 	}
 
 	/**
-	 * Parse and format the jQuery validation option values.
+	 * Parse and format the jQuery validation options.
 	 *
-	 * @param	array	the validation options
+	 * @param	array	an associative array of validation options
 	 * @return	array
 	 */
 	protected function _parse_options($options)
@@ -154,7 +146,7 @@ EOJS;
 			{
 				$value = "'$value'";
 			}
-			$js[] = sprintf('%s: %s', $name, $value);
+			$js[] = $name.': '.$value;
 		}
 		return $js;
 	}
@@ -169,8 +161,7 @@ EOJS;
 	{
 		if ( ! empty($value))
 		{
-			$value = preg_replace('/[\s\n\r\t]+/', ' ', $value);
-			$value = UTF8::trim($value);
+			$value = UTF8::trim(preg_replace('/[\s\n\r\t]+/', ' ', $value));
 		}
 		return $value;
 	}
@@ -182,9 +173,8 @@ EOJS;
 	 */
 	protected function _generate_rules()
 	{
-		$form = $this->form();
-		$fields = $form->field();
-		$ignore_types = array('button', 'hidden', 'image', 'reset', 'submit');
+		$fields = $this->form()->field();
+		$ignore = array('button', 'hidden', 'image', 'reset', 'submit');
 		foreach ($fields as $field)
 		{
 			$field_name = MMI_Form_Field::field_id($field->attribute('id'), $field->meta('namespace'));
@@ -192,15 +182,13 @@ EOJS;
 			{
 				$field_name = "'".$field_name."'";
 			}
-			$type = $field->attribute('type');
-			if ( ! in_array($type, $ignore_types))
+			if ( ! in_array($field->attribute('type'), $ignore))
 			{
 				$rules = $field->meta('rules');
 				if ( ! is_array($rules))
 				{
 					$rules = array();
 				}
-
 				foreach ($rules as $rule_name => $rule_parms)
 				{
 					$label = trim(Arr::get($field->meta('label'), 'html'), ':');
@@ -234,13 +222,13 @@ EOJS;
 						case 'numeric':
 						case 'phone':
 						case 'regex':
-							$this->_extra_methods[] = $jquery_rule;
+							$this->_methods[] = $jquery_rule;
 							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
 							break;
 
 						case 'credit_card':
 							$extra_rule = 'credit_card_type';
-							$this->_extra_methods[] = $extra_rule;
+							$this->_methods[] = $extra_rule;
 							$this->_options['rules'][$field_name][$extra_rule] = (count($rule_parms) === 1) ? $rule_parms[0] : 'default';
 							$this->_options['rules'][$field_name][$jquery_rule] = TRUE;
 							break;
@@ -249,7 +237,7 @@ EOJS;
 							if ($this->_unicode)
 							{
 								$jquery_rule = 'digits_unicode';
-								$this->_extra_methods[] = $jquery_rule;
+								$this->_methods[] = $jquery_rule;
 							}
 							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
 							break;
@@ -265,9 +253,9 @@ EOJS;
 	 * @param	string	the Kohana validation rule name
 	 * @return	string
 	 */
-	protected function _get_jquery_rule_name($rule)
+	protected function _get_jquery_rule_name($name)
 	{
-		return Arr::get(self::$_rule_map, $rule, $rule);
+		return Arr::get(self::$_rule_map, $name, $name);
 	}
 
 	/**
@@ -277,22 +265,21 @@ EOJS;
 	 * @param	mixed	the rule parameters
 	 * @return	mixed
 	 */
-	protected function _parse_rule_parms($rule_name, $rule_parms)
+	protected function _parse_rule_parms($name, $parms)
 	{
-		if (is_array($rule_parms) AND count($rule_parms) === 1)
+		if (is_array($parms) AND count($parms) === 1)
 		{
-			$parms = $rule_parms[0];
+			$parms = $parms[0];
 		}
-		elseif (is_array($rule_parms) AND count($rule_parms) > 1)
+		elseif (is_array($parms) AND count($parms) > 1)
 		{
-			$parms = '['.implode(', ', $rule_parms).']';
+			$parms = '['.implode(', ', $parms).']';
 		}
 		else
 		{
-			$parms = $this->_get_default_rule_parms($rule_name);
+			$parms = $this->_get_default_rule_parms($parms);
 		}
-
-//		if ($rule_name === 'matches')
+//		if ($name === 'matches')
 //		{
 //			$parms = '#'.str_replace('.', '_', $parms);
 //		}
@@ -305,10 +292,11 @@ EOJS;
 	 * @param	string	the rule name
 	 * @return	mixed
 	 */
-	protected function _get_default_rule_parms($rule_name)
+	protected function _get_default_rule_parms($name)
 	{
 		$default = TRUE;
-		switch ($rule_name)
+		$name = strtolower(trim($name));
+		switch ($name)
 		{
 			case 'phone':
 				$default = '[7, 10, 11]';
@@ -318,27 +306,27 @@ EOJS;
 	}
 
 	/**
-	 * Generate the JavaScript for the additional validation methods needed.
+	 * Generate the JavaScript for the additional validation methods.
 	 *
 	 * @return	string
 	 */
-	protected function _get_extra_methods()
+	protected function _get_methods()
 	{
-		$extra_methods = array();
-		$methods = array_unique($this->_extra_methods);
-		if (count($methods) > 0)
+		$methods = array();
+		$temp = array_unique($this->_methods);
+		if (count($temp) > 0)
 		{
-			foreach ($methods as $method)
+			foreach ($temp as $method)
 			{
-				$method_name = '_get_'.$method.'_method';
-				$extra_methods[] = $this->_normalize_spaces($this->$method_name());
+				$name = '_get_'.$method.'_method';
+				$methods[] = $this->_normalize_spaces($this->$name());
 			}
 		}
-		return implode(PHP_EOL, $extra_methods);
+		return implode(PHP_EOL, $methods);
 	}
 
 	/**
-	 * Get the JavaScript of the alpha validation method.
+	 * Get the alpha validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -364,7 +352,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the alpha_dash validation method.
+	 * Get the alpha-dash validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -378,7 +366,7 @@ EOJS;
 		}
 		else
 		{
-			$regex = '/^[-a-z0-9_]+$/i';
+			$regex = '/^[\-a-z0-9_]+$/i';
 		}
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
@@ -390,7 +378,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the alpha_numeric validation method.
+	 * Get the alpha-numeric validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -416,7 +404,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the color validation method.
+	 * Get the color validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -434,7 +422,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the credit_card_type validation method.
+	 * Get the credit card type validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -459,7 +447,7 @@ EOJS;
 				$length = (count($length) === 1)
 					? ('value.length === '.$length[0])
 					: ('jQuery.inArray(value.length, ['.implode(', ', $length).']) > -1');
-				$prefix = Arr::Get($settings, 'prefix', array());
+				$prefix = Arr::get($settings, 'prefix', array());
 				$js1[] = "if (parms === '$name') { validTypes |= ".$num.'; }';
 				if (strcasecmp($name, 'unknown') === 0)
 				{
@@ -474,8 +462,8 @@ EOJS;
 		}
 		$js1[] = "if (parms === 'default') { validTypes = ".trim($default, ' |').'; }';
 
-		$js1 = implode(PHP_EOL.'    ', $js1);
-		$js2 = implode(PHP_EOL.'    ', $js2);
+		$js1 = implode(PHP_EOL."\t", $js1);
+		$js2 = implode(PHP_EOL."\t", $js2);
 
 		return<<<EOJS
 jQuery.validator.addMethod('$method', function(value, element, parms)
@@ -495,7 +483,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the decimal validation method.
+	 * Get the decimal validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -528,7 +516,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the digits_unicode validation method.
+	 * Get the digits unicode validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -547,7 +535,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the exact_length validation method.
+	 * Get the exact length validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -565,7 +553,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the IP validation method.
+	 * Get the IP validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -584,7 +572,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the numeric validation method.
+	 * Get the numeric validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -603,7 +591,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the phone validation method.
+	 * Get the phone validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -621,7 +609,7 @@ EOJS;
 	}
 
 	/**
-	 * Get the JavaScript of the regex validation method.
+	 * Get the regex validation JavaScript.
 	 *
 	 * @return	string
 	 */
@@ -644,16 +632,16 @@ EOJS;
 	 * @param	string	the rule name
 	 * @return	string
 	 */
-	protected function _get_jquery_msg($rule_name)
+	protected function _get_jquery_msg($name)
 	{
-		$msg = MMI_Form_Messages::format_error_msg(NULL, $rule_name, NULL);
 		// Replace Kohana validation parms with jQuery parms (:parm1 becomes {0})
+		$msg = MMI_Form_Messages::format_error_msg(NULL, $name, NULL);
 		if (preg_match_all('/\:param[\d]+/', $msg, $matches) > 0)
 		{
 			$i = 0;
 			foreach ($matches[0] as $name => $value)
 			{
-				$msg = str_ireplace($value, '{'.$i++.'}', $msg);
+				$msg = str_replace($value, '{'.$i++.'}', $msg);
 			}
 		}
 		return $msg;
@@ -723,12 +711,12 @@ EOJS;
 		(
 			'debug'				=> $debug,
 			'errorClass'		=> $error_class,
-			'errorPlacement'	=> MMI_Form_Plugin_JQuery_Validation::get_default_error_placement(),
-			'highlight'			=> MMI_Form_Plugin_JQuery_Validation::get_default_highlight(),
-			'invalidHandler'	=> MMI_Form_Plugin_JQuery_Validation::get_default_invalid_handler(),
-			'submitHandler'		=> MMI_Form_Plugin_JQuery_Validation::get_default_submit_handler(),
-			'success'			=> MMI_Form_Plugin_JQuery_Validation::get_default_success(),
-			'unhighlight'		=> MMI_Form_Plugin_JQuery_Validation::get_default_unhighlight(),
+			'errorPlacement'	=> self::get_default_error_placement(),
+			'highlight'			=> self::get_default_highlight(),
+			'invalidHandler'	=> self::get_default_invalid_handler(),
+			'submitHandler'		=> self::get_default_submit_handler(),
+			'success'			=> self::get_default_success(),
+			'unhighlight'		=> self::get_default_unhighlight(),
 			'validClass'		=> $valid_class,
 		);
 	}
@@ -793,7 +781,7 @@ function(frm, validator)
 {
 	var num_errors = validator.numberOfInvalids();
 	var settings = validator.settings;
-	if(num_errors)
+	if (num_errors)
 	{
 		var message = (parseInt(num_errors) === 1)
 			? '1 field is invalid. It has been highlighted.'
@@ -900,3 +888,104 @@ EOJS;
 // Kohana validation functions not implemeted:
 //	email_domain
 //
+//	/**
+//	 * @var array HTML5 input types
+//	 */
+//	protected static $_types = array
+//	(
+//		'color',
+//		'date',
+//		'datetime',
+//		'datetime-local',
+//		'email',
+//		'month',
+//		'number',
+//		'range',
+//		'tel',
+//		'time',
+//		'url',
+//		'week',
+//	);
+//
+//	/**
+//	 * @var array HTML5 inputs that support the max attribute
+//	 */
+//	protected static $_attr_max = array
+//	(
+//		'date', 'datetime', 'datetime-local', 'month', 'time', 'week',
+//		'number',
+//		'range',
+//	);
+//
+//	/**
+//	 * @var array HTML5 inputs that support the min attribute
+//	 */
+//	protected static $_attr_min = array
+//	(
+//		'date', 'datetime', 'datetime-local', 'month', 'time', 'week',
+//		'number',
+//		'range',
+//	);
+//
+//	/**
+//	 * @var array HTML5 inputs that support the multiple attribute
+//	 */
+//	protected static $_attr_multiple = array
+//	(
+//		'email',
+//		'file',
+//	);
+//
+//	/**
+//	 * @var array HTML5 inputs that support the pattern attribute
+//	 */
+//	protected static $_attr_pattern = array
+//	(
+//		'email',
+//		'password',
+//		'search',
+//		'tel',
+//		'text',
+//		'url',
+//	);
+//
+//	/**
+//	 * @var array HTML5 inputs that support the placeholder attribute
+//	 */
+//	protected static $_attr_placeholder = array
+//	(
+//		'email',
+//		'password',
+//		'search',
+//		'tel',
+//		'text',
+//		'url',
+//	);
+//
+//	/**
+//	 * @var array HTML5 inputs that support the required attribute
+//	 */
+//	protected static $_attr_required = array
+//	(
+//		'checkbox',
+//		'date', 'datetime', 'datetime-local', 'month', 'time', 'week',
+//		'email',
+//		'file',
+//		'number',
+//		'password',
+//		'radio',
+//		'search',
+//		'tel',
+//		'text',
+//		'url',
+//	);
+//
+//	/**
+//	 * @var array HTML5 inputs that support the step attribute
+//	 */
+//	protected static $_attr_step = array
+//	(
+//		'date', 'datetime', 'datetime-local', 'month', 'time', 'week',
+//		'number',
+//		'range',
+//	);

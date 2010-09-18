@@ -76,14 +76,14 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 		;
 
 		$form->add_plugin('csrf', 'csrf', array('id' => 'mmit'));
-		$form->add_captcha('recaptcha');
-		$form->add_plugin('jquery_validation', 'jval');
-		$jquery = $form->jval_get_validation_js();
-		MMI_Debug::dead($jquery, 'jquery_get_validation_js');
+//		$form->add_captcha('recaptcha');
+//		$form->add_plugin('jquery_validation', 'jval');
+//		$jquery = $form->jval_get_validation_js();
+//		MMI_Debug::dead($jquery, 'jquery_get_validation_js');
 //MMI_Debug::dead($form, 'form');
 		echo $form->render();
 		MMI_Debug::dump($form->render(), 'form');
-		MMI_Debug::dump($form->valid(), 'valid');
+//		MMI_Debug::dump($form->valid(), 'valid');
 //		MMI_Debug::dump($form->error(), 'errors');
 //		MMI_Debug::dump($form->updated(), 'updated');
 //		MMI_Debug::dump($form->diff(), 'diff');

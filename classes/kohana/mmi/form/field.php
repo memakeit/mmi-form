@@ -7,7 +7,7 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-abstract class Kohana_MMI_Form_Field
+abstract class Kohana_MMI_Form_Field extends MMI_Form_Element
 {
 	/**
 	 * @var Kohana_Config the field configuration
@@ -31,24 +31,9 @@ abstract class Kohana_MMI_Form_Field
 	);
 
 	/**
-	 * @var array the HTML attributes
-	 */
-	protected $_attributes = array();
-
-	/**
 	 * @var array the validation errors
 	 */
 	protected $_errors = array();
-
-	/**
-	 * @var boolean use HTML5 markup?
-	 */
-	protected $_html5;
-
-	/**
-	 * @var array the associated meta data
-	 */
-	protected $_meta = array();
 
 	/**
 	 * @var boolean was form data posted?
@@ -70,8 +55,7 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function __construct($options = array())
 	{
-		$this->_html5 = MMI_Form::html5();
-		$this->_init_options($options);
+		parent::__construct($options);
 		$this->_load_post_data();
 	}
 
@@ -230,30 +214,6 @@ abstract class Kohana_MMI_Form_Field
 			return Arr::get($this->_attributes, 'value', '');
 		}
 		return $this->attribute('value', $value);
-	}
-
-	/**
-	 * Generate the HTML.
-	 *
-	 * @return	string
-	 */
-	public function render()
-	{
-		$this->_pre_render();
-		$path = $this->_get_view_path();
-		$cache = MMI_Form::view_cache($path);
-		if (isset($cache))
-		{
-			$view = clone $cache;
-		}
-		if ( ! isset($view))
-		{
-			$view = View::factory($path);
-			MMI_Form::view_cache($path, $view);
-		}
-		$parms = $this->_get_view_parms();
-		$this->_state |= MMI_Form::STATE_RENDERED;
-		return $view->set($parms)->render();
 	}
 
 	/**
