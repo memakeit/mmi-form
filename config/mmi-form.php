@@ -13,8 +13,9 @@ return array
 	),
 	'_open' => array
 	(
-		'_before' => '',
+		'_before' => 'BEFORE FORM',
 		'_after' => '',
+		'class' => 'frm',
 	),
 	'_close' => array
 	(
