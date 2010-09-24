@@ -210,11 +210,16 @@ class Kohana_MMI_Form_Label
 	 */
 	protected function _get_view_parms()
 	{
+		$attributes = $this->_get_view_attributes();
 		$meta = $this->_meta;
+		$id = Arr::get($attributes, 'id');
+		$namespace = Arr::get($meta, 'namespace');
+		$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
+
 		return array
 		(
 			'after'			=> Arr::get($meta, 'after', ''),
-			'attributes'	=> $this->_get_view_attributes(),
+			'attributes'	=> $attributes,
 			'before'		=> Arr::get($meta, 'before', ''),
 			'html'			=> Arr::get($meta, 'html'),
 		);

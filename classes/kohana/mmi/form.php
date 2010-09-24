@@ -882,25 +882,19 @@ class Kohana_MMI_Form
 	 */
 	protected function _form_open()
 	{
-		$meta = $this->_meta;
-		$options = Arr::get($meta, 'open', array());
-		$dir = Arr::get($options, 'view_path', 'mmi/form');
-		$file = Arr::get($options, 'view', 'open');
-		if ( ! Kohana::find_file('views/'.$dir, $file))
+		$path = $this->_get_view_path('open');
+		$cache = MMI_Form::view_cache($path);
+		if (isset($cache))
 		{
-			// Use the default view
-			$file = 'open';
+			$view = clone $cache;
 		}
-		$file = $dir.'/'.$file;
-
-		$attributes = $this->_attributes;
-		return View::factory($file, array
-		(
-			'before' => Arr::get($options, '_before', ''),
-			'after' => Arr::path($options, '_after', ''),
-			'action' => Arr::get($attributes, 'action'),
-			'attributes' => $attributes,
-		))->render();
+		if ( ! isset($view))
+		{
+			$view = View::factory($path);
+			MMI_Form::view_cache($path, $view);
+		}
+		$parms = $this->_get_view_parms_open();
+		return $view->set($parms)->render();
 	}
 
 	/**
@@ -967,22 +961,100 @@ class Kohana_MMI_Form
 	 */
 	protected function _form_close()
 	{
+		$path = $this->_get_view_path('close');
+		$cache = MMI_Form::view_cache($path);
+		if (isset($cache))
+		{
+			$view = clone $cache;
+		}
+		if ( ! isset($view))
+		{
+			$view = View::factory($path);
+			MMI_Form::view_cache($path, $view);
+		}
+		$parms = $this->_get_view_parms_close();
+		return $view->set($parms)->render();
+	}
+
+	/**
+	 * Get the view path.
+	 *
+	 * @param	string	the view name
+	 * @return	string
+	 */
+	protected function _get_view_path($view_name = 'open')
+	{
 		$meta = $this->_meta;
-		$options = Arr::get($meta, 'close', array());
-		$dir = Arr::get($options, 'view_path', 'mmi/form');
-		$file = Arr::get($options, 'view', 'close');
+		$dir = Arr::get($meta, 'view_path', 'mmi/form');
+		$file = Arr::get($meta, 'view', $view_name);
 		if ( ! Kohana::find_file('views/'.$dir, $file))
 		{
 			// Use the default view
-			$file = 'close';
+			$file = $view_name;
 		}
-		$file = $dir.'/'.$file;
+		return $dir.'/'.$file;
+	}
 
-		return View::factory($file, array
+	/**
+	 * Get the view parameters for the closing tag.
+	 *
+	 * @return	array
+	 */
+	protected function _get_view_parms_close()
+	{
+		$meta = $this->_meta;
+		return array
 		(
-			'before' => Arr::get($options, '_before', ''),
-			'after' => Arr::get($options, '_after', ''),
-		))->render();
+			'after'		=> Arr::get($meta, 'after', ''),
+			'before'	=> Arr::get($meta, 'before', ''),
+		);
+	}
+
+	/**
+	 * Get the view parameters for the opening tag.
+	 *
+	 * @return	array
+	 */
+	protected function _get_view_parms_open()
+	{
+		$attributes = $this->_get_view_attributes();
+		$meta = $this->_meta;
+		$id = Arr::get($attributes, 'id');
+		$namespace = Arr::get($meta, 'namespace');
+		$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
+
+		return array
+		(
+			'action'		=> Arr::get($attributes, 'action'),
+			'after'			=> Arr::get($meta, 'after', ''),
+			'attributes'	=> $attributes,
+			'before'		=> Arr::get($meta, 'before', ''),
+		);
+	}
+
+	/**
+	 * Remove invalid attributes and return an array of valid attributes.
+	 *
+	 * @return	array
+	 */
+	protected function _get_view_attributes()
+	{
+		$allowed = $this->_get_allowed_attributes();
+		return array_intersect_key($this->_attributes, array_flip($allowed));
+	}
+
+	/**
+	 * Get the HTML attributes allowed.
+	 *
+	 * @return	array
+	 */
+	protected function _get_allowed_attributes()
+	{
+		if ($this->_html5)
+		{
+			return MMI_HTML5_Attributes_Form::get();
+		}
+		return MMI_HTML4_Attributes_Form::get();
 	}
 
 	/**
