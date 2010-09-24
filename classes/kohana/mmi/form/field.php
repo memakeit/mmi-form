@@ -359,7 +359,7 @@ abstract class Kohana_MMI_Form_Field
 		}
 		elseif (empty($id))
 		{
-			$options['id'] = strval(time());
+			$options['id'] = str_replace('.', '', microtime(TRUE));
 		}
 
 		// Separate the meta data from the HTML attributes
@@ -517,7 +517,10 @@ abstract class Kohana_MMI_Form_Field
 		$attributes = $this->_get_view_attributes();
 		$id = $this->id();
 		$attributes['id'] = $id;
-		$attributes['name'] = $id;
+		if (empty($attributes['name']))
+		{
+			$attributes['name'] = $id;
+		}
 
 		$value = Arr::get($attributes, 'value');
 		if (is_null($value) OR ! is_scalar($value))

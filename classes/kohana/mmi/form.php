@@ -613,6 +613,33 @@ class Kohana_MMI_Form
 	}
 
 	/**
+	 * Add a CAPTCHA to the form.
+	 * This method is chainable.
+	 *
+	 * @param	string	the captcha driver
+	 * @param	array	an associative array of plugin options
+	 * @return	MMI_Form
+	 */
+	public function add_captcha($driver = 'recaptcha', $options = array())
+	{
+		// Create the plugin
+		$captcha = MMI_Form_Plugin::factory($driver, $options);
+
+		// Configure the and add the form field
+		$options = array_merge($options, array
+		(
+			'_html'			=> array($captcha, 'html'),
+			'_source'		=> MMI_Form_Field_HTML::SRC_CALLBACK,
+			'_callbacks'	=> array
+			(
+				array($captcha, 'valid', NULL),
+			),
+		));
+		$this->add_field('html', $options);
+		return $this;
+	}
+
+	/**
 	 * Add CSRF validation to the form.
 	 * This method is chainable.
 	 *
@@ -654,30 +681,44 @@ class Kohana_MMI_Form
 	}
 
 	/**
-	 * Add a CAPTCHA to the form.
+	 * Add a closing fieldset tag to the form.
 	 * This method is chainable.
 	 *
-	 * @param	string	the captcha driver
-	 * @param	array	an associative array of plugin options
+	 * @param	array	an associative array of fieldset closing tag options
 	 * @return	MMI_Form
 	 */
-	public function add_captcha($driver = 'recaptcha', $options = array())
+	public function fieldset_close($options = array())
 	{
-		// Create the plugin
-		$captcha = MMI_Form_Plugin::factory($driver, $options);
-
-		// Configure the and add the form field
-		$options = array_merge($options, array
+		if ( ! is_array($options))
+		{
+			$options = array();
+		}
+		$this->add_field('html', array
 		(
-			'type'			=> 'html',
-			'_html'			=> array($captcha, 'html'),
-			'_source'		=> MMI_Form_Field_HTML::SRC_CALLBACK,
-			'_callbacks'	=> array
-			(
-				array($captcha, 'valid', NULL),
-			),
+			'_html'		=> MMI_Form_FieldSet::factory($options)->close(),
+			'_source'	=> MMI_Form_Field_HTML::SRC_STRING,
 		));
-		$this->add_field('html', $options);
+		return $this;
+	}
+
+	/**
+	 * Add an opening fieldset tag to the form.
+	 * This method is chainable.
+	 *
+	 * @param	array	an associative array of fieldset opening tag options
+	 * @return	MMI_Form
+	 */
+	public function fieldset_open($options = array())
+	{
+		if ( ! is_array($options))
+		{
+			$options = array();
+		}
+		$this->add_field('html', array
+		(
+			'_html'		=> MMI_Form_FieldSet::factory($options)->open(),
+			'_source'	=> MMI_Form_Field_HTML::SRC_STRING,
+		));
 		return $this;
 	}
 

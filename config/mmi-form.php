@@ -3,8 +3,13 @@
 // Form configuration
 return array
 (
+	'_fieldset' => array
+	(
+		'class' => 'fs',
+	),
 	'_label' => array
 	(
+		'class' => 'lbl',
 	),
 	'_open' => array
 	(

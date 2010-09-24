@@ -10,6 +10,11 @@
 class Kohana_MMI_Form_Label
 {
 	/**
+	 * @var Kohana_Config the label configuration
+	 */
+	protected static $_config;
+
+	/**
 	 * @var array the HTML attributes
 	 */
 	protected $_attributes = array();
@@ -98,7 +103,6 @@ class Kohana_MMI_Form_Label
 	 */
 	public function render()
 	{
-		$this->_pre_render();
 		$path = $this->_get_view_path();
 		$cache = MMI_Form::view_cache($path);
 		if (isset($cache))
@@ -111,10 +115,8 @@ class Kohana_MMI_Form_Label
 			MMI_Form::view_cache($path, $view);
 		}
 		$parms = $this->_get_view_parms();
-		$this->_state |= MMI_Form::STATE_RENDERED;
 		return $view->set($parms)->render();
 	}
-
 
 	/**
 	 * Merge the user-specified and config file settings.
@@ -134,8 +136,7 @@ class Kohana_MMI_Form_Label
 		$class = $this->_combine_value($options, 'class');
 
 		// Merge the user-specified and config settings
-		$defaults = MMI_Form::get_config()->get('_label', array());
-		$options = array_merge($defaults, $options);
+		$options = array_merge(self::get_config(), $options);
 
 		// Set the CSS class
 		if ( ! empty($class))
@@ -169,9 +170,8 @@ class Kohana_MMI_Form_Label
 	 */
 	protected function _combine_value($options, $key)
 	{
-		$defaults = MMI_Form::get_config()->get('_label', array());
 		$value =
-			Arr::get($defaults, $key, '').' '.
+			Arr::get(self::get_config(), $key, '').' '.
 			Arr::get($options, $key, '').' '
 		;
 		$value = trim(preg_replace('/\s+/', ' ', $value));
@@ -183,16 +183,6 @@ class Kohana_MMI_Form_Label
 			$value = implode(' ', $value);
 		}
 		return $value;
-	}
-
-	/**
-	 * Perform any pre-rendering logic.
-	 *
-	 * @return	void
-	 */
-	protected function _pre_render()
-	{
-		$this->_state |= MMI_Form::STATE_PRE_RENDERED;
 	}
 
 	/**
@@ -263,6 +253,17 @@ class Kohana_MMI_Form_Label
 			return MMI_HTML5_Attributes_Label::get();
 		}
 		return MMI_HTML4_Attributes_Label::get();
+	}
+
+	/**
+	 * Get the label configuration settings.
+	 *
+	 * @return	array
+	 */
+	public static function get_config()
+	{
+		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form')->get('_label', array());
+		return self::$_config;
 	}
 
 	/**

@@ -7,17 +7,100 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Kohana_MMI_Form_FieldSet extends MMI_Form_Element
+class Kohana_MMI_Form_FieldSet
 {
 	/**
-	 * @var Kohana_Config the field configuration
+	 * @var Kohana_Config the fieldset configuration
 	 */
 	protected static $_config;
+
+	/**
+	 * @var array the HTML attributes
+	 */
+	protected $_attributes = array();
+
+	/**
+	 * @var boolean use HTML5 markup?
+	 */
+	protected $_html5;
+
+	/**
+	 * @var array the associated meta data
+	 */
+	protected $_meta = array();
+
+	/**
+	 * Set whether to use HTML5 markup.
+	 * Initialize the options.
+	 *
+	 * @param	array	an associative array of label options
+	 * @return	void
+	 */
+	public function __construct($options = array())
+	{
+		$this->_html5 = MMI_Form::html5();
+		$this->_init_options($options);
+	}
+
+	/**
+	 * Get or set an HTML attribute.
+	 * If no parameters are specified, all attributes are returned.
+	 * If a key is specified, it is used to retrieve the attribute value.
+	 * If a key and value are specified, they are used to set an attribute value.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	string	the name of the attribute to get or set
+	 * @param	mixed	the value of the attribute to set
+	 * @return	mixed
+	 */
+	public function attribute($name = NULL, $value = NULL)
+	{
+		$num_args = func_num_args();
+		if ($num_args === 0)
+		{
+			return $this->_attributes;
+		}
+
+		if ($num_args === 1)
+		{
+			return Arr::get($this->_attributes, $name);
+		}
+		$this->_attributes[$name] = $value;
+		return $this;
+	}
+
+	/**
+ 	 * Get or set field meta data.
+	 * If no parameters are specified, all meta data is returned.
+	 * If a key is specified, it is used to retrieve the meta data value.
+	 * If a key and value are specified, they are used to set a meta data value.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	string	the name of the meta data to get or set
+	 * @param	mixed	the value of the meta data to set
+	 * @return	mixed
+	 */
+	public function meta($name = NULL, $value = NULL)
+	{
+		$num_args = func_num_args();
+		if ($num_args === 0)
+		{
+			return $this->_meta;
+		}
+
+		if ($num_args === 1)
+		{
+			return Arr::get($this->_meta, $name);
+		}
+		$this->_meta[$name] = $value;
+		return $this;
+	}
 
 	/**
 	 * Merge the user-specified and config file settings.
 	 * Separate the meta data from the HTML attributes.
 	 *
+	 * @param	array	an associative array of label options
 	 * @return	void
 	 */
 	protected function _init_options($options)
@@ -27,28 +110,11 @@ class Kohana_MMI_Form_FieldSet extends MMI_Form_Element
 			$options = array();
 		}
 
-		// Set defaults
-		if (empty($options['_default']))
-		{
-			$options['_default'] = Arr::get($options, 'value', '');
-		}
-		if (empty($options['_type']))
-		{
-			$options['_type'] = Arr::get($options, 'type', 'input');
-		}
-		if (empty($options['type']))
-		{
-			$options['type'] = Arr::get($options, '_type', 'text');
-		}
-
 		// Get the CSS class
 		$class = $this->_combine_value($options, 'class');
 
 		// Merge the user-specified and config settings
-		$config = self::get_config();
-		$defaults = $config->get('_defaults', array());
-		$type_specific = $config->get($options['type'], array());
-		$options = array_merge($defaults, $type_specific, $options);
+		$options = array_merge(self::get_config(), $options);
 
 		// Set the CSS class
 		if ( ! empty($class))
@@ -82,13 +148,8 @@ class Kohana_MMI_Form_FieldSet extends MMI_Form_Element
 	 */
 	protected function _combine_value($options, $key)
 	{
-		$config = self::get_config();
-		$defaults = $config->get('_defaults', array());
-		$type = Arr::get($options, 'type', 'text');
-		$type_specific = $config->get($type, array());
 		$value =
-			Arr::get($defaults, $key, '').' '.
-			Arr::get($type_specific, $key, '').' '.
+			Arr::get(self::get_config(), $key, '').' '.
 			Arr::get($options, $key, '').' '
 		;
 		$value = trim(preg_replace('/\s+/', ' ', $value));
@@ -103,47 +164,114 @@ class Kohana_MMI_Form_FieldSet extends MMI_Form_Element
 	}
 
 	/**
+	 * Add a closing fieldset tag to the form.
+	 * This method is chainable.
+	 *
+	 * @return  MMI_Form
+	 */
+	public function close()
+	{
+		$path = $this->_get_view_path('close');
+		$cache = MMI_Form::view_cache($path);
+		if (isset($cache))
+		{
+			$view = clone $cache;
+		}
+		if ( ! isset($view))
+		{
+			$view = View::factory($path);
+			MMI_Form::view_cache($path, $view);
+		}
+		$parms = $this->_get_view_parms_close();
+		return $view->set($parms)->render();
+	}
+
+	/**
+	 * Add an opening fieldset tag to the form.
+	 * This method is chainable.
+	 *
+	 * @return  MMI_Form
+	 */
+	public function open()
+	{
+		$path = $this->_get_view_path('open');
+		$cache = MMI_Form::view_cache($path);
+		if (isset($cache))
+		{
+			$view = clone $cache;
+		}
+		if ( ! isset($view))
+		{
+			$view = View::factory($path);
+			MMI_Form::view_cache($path, $view);
+		}
+		$parms = $this->_get_view_parms_open();
+		return $view->set($parms)->render();
+	}
+
+	/**
 	 * Get the view path.
 	 *
+	 * @param	string	the view name
 	 * @return	string
 	 */
-	protected function _get_view_path()
+	protected function _get_view_path($view_name = 'open')
 	{
 		$meta = $this->_meta;
-		$dir = Arr::get($meta, 'view_path', 'mmi/form/field');
-		$file = Arr::get($meta, 'view', Arr::get($meta, 'type', 'input'));
+		$dir = Arr::get($meta, 'view_path', 'mmi/form/fieldset');
+		$file = Arr::get($meta, 'view', $view_name);
 		if ( ! Kohana::find_file('views/'.$dir, $file))
 		{
-			// Use the default view if the type-specific view is not found
-			$file = 'input';
+			// Use the default view
+			$file = $view_name;
 		}
 		return $dir.'/'.$file;
 	}
 
 	/**
-	 * Get the view parameters.
+	 * Get the view parameters for the closing tag.
 	 *
 	 * @return	array
 	 */
-	protected function _get_view_parms()
+	protected function _get_view_parms_close()
 	{
-		$attributes = $this->_get_view_attributes();
-		$id = $this->_get_id();
-		$attributes['id'] = $id;
-		$attributes['name'] = $id;
+		$meta = $this->_meta;
+		return array
+		(
+			'after'		=> Arr::get($meta, 'after', ''),
+			'before'	=> Arr::get($meta, 'before', ''),
+		);
+	}
 
-		$value = Arr::get($attributes, 'value');
-		if (is_null($value))
+	/**
+	 * Get the view parameters for the opening tag.
+	 *
+	 * @return	array
+	 */
+	protected function _get_view_parms_open()
+	{
+		$meta = $this->_meta;
+		$legend = Arr::get($meta, 'legend');
+		if (empty($legend))
 		{
-			$attributes['value'] = '';
+			$legend = '';
+		}
+		else
+		{
+			$legend = '<legend>'.$legend.'</legend>';
 		}
 
-		$meta = $this->_meta;
+		$attributes = $this->_get_view_attributes();
+		$id = Arr::get($attributes, 'id');
+		$namespace = Arr::get($meta, 'namespace');
+		$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
+
 		return array
 		(
 			'after'			=> Arr::get($meta, 'after', ''),
 			'attributes'	=> $attributes,
 			'before'		=> Arr::get($meta, 'before', ''),
+			'legend'		=> $legend,
 		);
 	}
 
@@ -155,29 +283,7 @@ class Kohana_MMI_Form_FieldSet extends MMI_Form_Element
 	protected function _get_view_attributes()
 	{
 		$allowed = $this->_get_allowed_attributes();
-		$attributes = $this->_attributes;
-		$meta = $this->_meta;
-
-		// If a rule for max-length exists, use it to set the attribute
-		if (in_array('max_length', $allowed))
-		{
-			$rules = Arr::get($meta, 'rules', array());
-			if (array_key_exists('max_length', $rules))
-			{
-				$max_length = array_values($rules['max_length']);
-				$attributes['maxlength'] = $max_length[0];
-			}
-		}
-
-		// If a title is not set, use the meta description if present
-		$description = Arr::get($meta, 'description');
-		$title = Arr::get($attributes, 'title');
-		if (empty($title) AND ! empty($description))
-		{
-			$attributes['title'] = $description;
-		}
-
-		return array_intersect_key($attributes, array_flip($allowed));
+		return array_intersect_key($this->_attributes, array_flip($allowed));
 	}
 
 	/**
@@ -187,231 +293,32 @@ class Kohana_MMI_Form_FieldSet extends MMI_Form_Element
 	 */
 	protected function _get_allowed_attributes()
 	{
-		$type = Arr::get($this->_attributes, 'type');
 		if ($this->_html5)
 		{
-			return MMI_HTML5_Attributes_Input::get($type);
+			return MMI_HTML5_Attributes_Fieldset::get();
 		}
-		return MMI_HTML4_Attributes_Input::get($type);
+		return MMI_HTML4_Attributes_Fieldset::get();
 	}
 
 	/**
-	 * Get the field id.
+	 * Get the fieldset configuration settings.
 	 *
-	 * @return	string
+	 * @return	array
 	 */
-	protected function _get_id()
+	public static function get_config()
 	{
-		$id = Arr::get($this->_attributes, 'id');
-		$namespace = Arr::get($this->_meta, 'namespace');
-		return self::get_field_id($id, $namespace);
+		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form')->get('_fieldset', array());
+		return self::$_config;
 	}
 
 	/**
-	 * Finalize validation rules.
+	 * Create a fieldset instance.
 	 *
-	 * @return	void
+	 * @param	array	an associative array of fieldset options
+	 * @return	MMI_Form_Label
 	 */
-	protected function _finalize_rules()
+	public static function factory($options = array())
 	{
-		$rules = Arr::get($this->_meta, 'rules');
-		if ( ! (is_array($rules) AND count($rules) > 0))
-		{
-			return;
-		}
-
-		// Process rules that are executed even when the value is empty
-		$found = array_intersect(array_keys($rules), self::$_empty_rules);
-		if (count($found) > 0)
-		{
-			$rules['not_empty'] = NULL;
-		}
-
-		// Process rules that have a UTF8 parameter
-		$utf8_rules = self::$_utf8_rules;
-		if ($this->_form->unicode())
-		{
-			foreach ($rules as $name => $rule)
-			{
-				if (empty($rule) AND in_array($name, $utf8_rules))
-				{
-					$rules[$name] = array(TRUE);
-				}
-			}
-		}
-		$this->_meta['rules'] = $rules;
-	}
-
-//	/**
-//	 * Generate the label HTML.
-//	 *
-//	 * @param   array   the view data
-//	 * @return  string
-//	 */
-//	protected function _label($data = array())
-//	{
-//		$file = self::_get_view_path().'label';
-//		$view = (isset(self::$_view_cache[$file])) ? (clone self::$_view_cache[$file]) : (NULL);
-//		if (empty($view))
-//		{
-//			$view = View::factory($file);
-//			self::$_view_cache[$file] = $view;
-//		}
-//		return $view->set($data)->render();
-//	}
-//
-//	/**
-//	 * Generate the error HTML.
-//	 *
-//	 * @param   array   the view data
-//	 * @return  string
-//	 */
-//	protected function _error($data = array())
-//	{
-//		$file = self::_get_view_path().'error';
-//		$view = (isset(self::$_view_cache[$file])) ? (clone self::$_view_cache[$file]) : (NULL);
-//		if (empty($view))
-//		{
-//			$view = View::factory($file);
-//			self::$_view_cache[$file] = $view;
-//		}
-//		return $view->set($data)->render();
-//	}
-
-	/**
-	 * Generate the field id.  Include the namespace if one is specified.
-	 *
-	 * @param	string	the field id
-	 * @param	string	the field namespace
-	 * @return	string
-	 */
-	public static function get_field_id($id, $namespace = NULL)
-	{
-		$id = MMI_Form::clean_id($id);
-		if (empty($namespace))
-		{
-			return $id;
-		}
-		return $namespace.'_'.$id;
-	}
-
-	/**
-	 * Get the field configuration settings.
-	 *
-	 * @param	boolean	return the configuration as an array?
-	 * @return	mixed
-	 */
-	public static function get_config($as_array = FALSE)
-	{
-		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form-field');
-		$config = self::$_config;
-		if ($as_array)
-		{
-			$config = $config->as_array();
-		}
-		return $config;
-	}
-
-	/**
-	 * Create a field instance.
-	 *
-	 * @param	string	the field type
-	 * @param	array	an associative array of field options
-	 * @return	MMI_Form_Field
-	 */
-	public static function factory($type, $options = array())
-	{
-		// Get the choices and field type
-		$choices = NULL;
-		if (is_array($options) AND count($options) > 0)
-		{
-			$choices = Arr::get($options, '_choices');
-			$temp = Arr::get($options, 'type');
-			if ( ! empty($temp))
-			{
-				// Use type specified in the options
-				$type = strtolower(trim($temp));
-			}
-		}
-		if (empty($type))
-		{
-			$type = 'text';
-		}
-
-		// Set the class name
-		$class = 'MMI_Form_Field_';
-		if ( ! empty($choices) AND ($type === 'checkbox' OR $type === 'radio'))
-		{
-			$class .= 'Group_';
-		}
-		if ( ! class_exists($class.ucfirst($type)) AND in_array($type, MMI_HTML5_Attributes_Input::types()))
-		{
-			$options['_type'] = 'input';
-			$options['type'] = $type;
-			$type = 'input';
-		}
-		$class .= ucfirst($type);
-
-		if ( ! class_exists($class))
-		{
-			$msg = $class.' field does not exist.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
-			throw new Kohana_Exception($msg);
-		}
-		return new $class($options);
-	}
-
-
-
-	/**
-	 * Add an opening fieldset tag to the form.
-	 * This method is chainable.
-	 *
-	 * @param   string  the legend text
-	 * @param   array   field-specific options
-	 * @return  MMI_Form
-	 */
-	public function begin_fieldset($legend = '', $options = array())
-	{
-		if ( ! empty($legend))
-		{
-			$legend = '<legend>'.$legend.'</legend>';
-		}
-		else
-		{
-			$legend = '';
-		}
-
-		$attributes = self::attributes($options);
-		$this->add_field
-		(
-			array
-			(
-				'name'      => uniqid('fieldset_'),
-				'type'      => 'html',
-				'html'      => '<fieldset'.HTML::attributes($attributes).'>'.$legend,
-			)
-		);
-		return $this;
-	}
-
-	/**
-	 * Add a closing fieldset tag to the form.
-	 * This method is chainable.
-	 *
-	 * @return  MMI_Form
-	 */
-	public function end_fieldset()
-	{
-		$this->add_field
-		(
-			array
-			(
-				'name'      => uniqid('fieldset_'),
-				'type'      => 'html',
-				'html'      => '</fieldset>',
-			)
-		);
-		return $this;
+		return new MMI_Form_FieldSet($options);
 	}
 } // End Kohana_MMI_Form_FieldSet

@@ -68,15 +68,19 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 		$form = MMI_Form::factory();
 		$form
 			->add_field($txt)
+			->fieldset_open(array('_legend' => 'submit ...', 'id' => 'fs1', '_namespace' => 'mmi'))
 			->add_field('submit', array
 			(
 				'id' => 'submit',
 				'value' => 'Submit!',
-			));
+			))
+			->fieldset_close()
 		;
 
 		$form->add_plugin('csrf', 'csrf', array('id' => 'mmit'));
+//		$form->fieldset_open(array('_legend' => 'captcha!'));
 //		$form->add_captcha('recaptcha');
+//		$form->fieldset_close();
 //		$form->add_plugin('jquery_validation', 'jval');
 //		$jquery = $form->jval_get_validation_js();
 //		MMI_Debug::dead($jquery, 'jquery_get_validation_js');
