@@ -38,6 +38,6 @@ class Controller_MMI_Form_Test_Field_Radio extends Controller
 		MMI_Debug::dump($field->render(), $type.' checked');
 
 		$field->attribute('checked', FALSE);
-		MMI_Debug::mdump($field->render(), $type. 'unchecked', $field);
+		MMI_Debug::mdump($field->render(), $type.' unchecked', $field);
 	}
 } // End Controller_MMI_Form_Test_Field_Radio

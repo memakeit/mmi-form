@@ -105,14 +105,15 @@ abstract class Kohana_MMI_Form_Field
 
 		if (strcasecmp($name, 'value') === 0)
 		{
-			if ( ! is_scalar($value))
+			$is_group = ($this instanceof MMI_Form_Field_Group);
+			if ( ! $is_group AND ! is_scalar($value))
 			{
 				$msg = 'Only scalar values can be used to set the value of a form field.';
 				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 				throw new Kohana_Exception($msg);
 			}
 			$original = Arr::get($this->_meta, 'original');
-			$value = strval($value);
+			$value = $is_group ? $value : strval($value);
 			$this->_meta['updated'] = ($original !== $value);
 		}
 		$this->_attributes[$name] = $value;
@@ -699,6 +700,10 @@ abstract class Kohana_MMI_Form_Field
 		if (empty($namespace))
 		{
 			return $id;
+		}
+		if (substr($namespace, -1) === '_')
+		{
+			return $namespace.$id;
 		}
 		return $namespace.'_'.$id;
 	}

@@ -214,7 +214,11 @@ class Kohana_MMI_Form_Label
 		$meta = $this->_meta;
 		$id = Arr::get($attributes, 'id');
 		$namespace = Arr::get($meta, 'namespace');
-		$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
+		$id = MMI_Form_Field::field_id($id, $namespace);
+		if ( ! empty($id))
+		{
+			$attributes['id'] = $id;
+		}
 
 		return array
 		(
