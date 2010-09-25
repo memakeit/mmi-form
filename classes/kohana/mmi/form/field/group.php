@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Grouped form field (checkboxes or radio buttons).
+ * Grouped form fields (checkboxes or radio buttons).
  *
  * @package		MMI Form
  * @author		Me Make It

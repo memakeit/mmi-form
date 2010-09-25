@@ -361,6 +361,7 @@ abstract class Kohana_MMI_Form_Field
 		elseif (empty($id))
 		{
 			$options['id'] = str_replace('.', '', microtime(TRUE));
+			$options['_id_generated'] = TRUE;
 		}
 
 		// Separate the meta data from the HTML attributes
@@ -410,7 +411,7 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
-	 * Load the post data into the models and fields.
+	 * Load the post data.
 	 *
 	 * @return	void
 	 */
@@ -468,6 +469,10 @@ abstract class Kohana_MMI_Form_Field
 		$attributes = $this->_attributes;
 		$meta = $this->_meta;
 		$label = Arr::get($meta, 'label', array());
+		if ( ! is_array($label))
+		{
+			$label = array('_html' => $label);
+		}
 		$label['for'] = $this->id();
 		$html = Arr::get($label, '_html');
 		if (empty($html))
@@ -486,7 +491,7 @@ abstract class Kohana_MMI_Form_Field
 		{
 			$html .= ':';
 		}
-		$label['html'] = $html;
+		$label['_html'] = $html;
 		return $label;
 	}
 
@@ -516,15 +521,14 @@ abstract class Kohana_MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$attributes = $this->_get_view_attributes();
-		$id = $this->id();
-		$attributes['id'] = $id;
-		if (empty($attributes['name']))
+		if (empty($attributes['name']) AND ! empty($attributes['id']))
 		{
-			$attributes['name'] = $id;
+			$attributes['name'] = $attributes['id'];
 		}
 
+		$is_group = ($this instanceof MMI_Form_Field_Group);
 		$value = Arr::get($attributes, 'value');
-		if (is_null($value) OR ! is_scalar($value))
+		if (is_null($value) OR ( ! $is_group AND ! is_scalar($value)))
 		{
 			$attributes['value'] = '';
 		}
@@ -548,6 +552,13 @@ abstract class Kohana_MMI_Form_Field
 		$allowed = $this->_get_allowed_attributes();
 		$attributes = $this->_attributes;
 		$meta = $this->_meta;
+
+		// Do not include generated id's in the HTML output
+		$id_generated = Arr::get($meta, 'id_generated', FALSE);
+		if ($id_generated)
+		{
+			unset($attributes['id']);
+		}
 
 		// If a rule for max-length exists, use it to set the attribute
 		if (in_array('maxlength', $allowed))
@@ -651,6 +662,9 @@ abstract class Kohana_MMI_Form_Field
 		if (is_array($options) AND count($options) > 0)
 		{
 			$choices = Arr::get($options, '_choices');
+		}
+		if (empty($type))
+		{
 			$temp = Arr::get($options, 'type');
 			if ( ! empty($temp))
 			{

@@ -72,7 +72,7 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 	}
 
 	/**
-	 * Load the post data into the models and fields.
+	 * Load the post data.
 	 *
 	 * @return	void
 	 */
