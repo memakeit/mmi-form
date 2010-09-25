@@ -559,6 +559,10 @@ abstract class Kohana_MMI_Form_Field
 		{
 			unset($attributes['id']);
 		}
+		else
+		{
+			$attributes['id'] = $this->id();
+		}
 
 		// If a rule for max-length exists, use it to set the attribute
 		if (in_array('maxlength', $allowed))
