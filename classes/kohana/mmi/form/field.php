@@ -271,7 +271,7 @@ abstract class Kohana_MMI_Form_Field
 	{
 		$this->value(Arr::get($this->_meta, 'default', ''));
 		$this->_post_data_loaded = FALSE;
-		$this->_state |= MMI_Form::STATE_RESET;
+		$this->_state = MMI_Form::STATE_INITIAL |MMI_Form::STATE_RESET;
 	}
 
 	/**

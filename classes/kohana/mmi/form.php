@@ -18,9 +18,9 @@ class Kohana_MMI_Form
 	const STATE_INITIAL = 1;
 	const STATE_POSTED = 2;
 	const STATE_VALIDATED = 4;
-	const STATE_RESET = 8;
-	const STATE_PRE_RENDERED = 16;
-	const STATE_RENDERED = 32;
+	const STATE_PRE_RENDERED = 8;
+	const STATE_RENDERED = 16;
+	const STATE_RESET = 32;
 
 	/**
 	 * @var MMI_Form the form instance
@@ -596,7 +596,7 @@ class Kohana_MMI_Form
 		{
 			$field->reset();
 		}
-		$this->_state |= self::STATE_RESET;
+		$this->_state = self::STATE_INITIAL | self::STATE_RESET;
 	}
 
 	/**
