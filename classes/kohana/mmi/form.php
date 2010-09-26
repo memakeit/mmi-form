@@ -1013,12 +1013,13 @@ class Kohana_MMI_Form
 	 */
 	protected function _get_view_parms_open()
 	{
+		$attributes = $this->_get_view_attributes();
 		$meta = $this->_meta;
 		return array
 		(
 			'action'		=> Arr::get($attributes, 'action'),
 			'after'			=> Arr::get($meta, 'after', ''),
-			'attributes'	=> $this->_get_view_attributes(),
+			'attributes'	=> $attributes,
 			'before'		=> Arr::get($meta, 'before', ''),
 		);
 	}
