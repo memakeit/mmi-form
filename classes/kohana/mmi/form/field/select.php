@@ -21,6 +21,12 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 		{
 			$options = array();
 		}
+
+		$value = Arr::get($options, 'value');
+		if ( ! array_key_exists('_selected', $options) AND isset($value))
+		{
+			$options['_selected'] = $value;
+		}
 		$options['_type'] = 'select';
 		parent::__construct($options);
 	}
@@ -109,6 +115,55 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 			return $this->meta('selected');
 		}
 		return $this->meta('selected', $value);
+	}
+
+	/**
+	 * Merge the user-specified and config file settings.
+	 * Separate the meta data from the HTML attributes.
+	 *
+	 * @param	array	an associative array of field options
+	 * @return	void
+	 */
+	protected function _init_options($options)
+	{
+		// Set default and original values
+		$selected = Arr::get($options, '_selected', '');
+		if ( ! isset($options['_default']))
+		{
+			$options['_default'] = $selected;
+		}
+		if ( ! isset($options['_original']))
+		{
+			$options['_original'] = $selected;
+		}
+
+		parent::_init_options($options);
+	}
+
+	/**
+	 * Load the post data.
+	 *
+	 * @return	void
+	 */
+	protected function _load_post_data()
+	{
+		if ( ! $this->_posted)
+		{
+			return;
+		}
+
+		$post = Security::xss_clean($_POST);
+		if ( ! empty($post))
+		{
+			$original = Arr::get($this->_meta, 'original');
+			$posted = Arr::get($post, $this->id(), '');
+			$this->_meta['posted'] = $posted;
+			$this->_meta['selected'] = $posted;
+			$this->_meta['updated'] = ($original !== $posted);
+			$this->_attributes['value'] = $posted;
+		}
+		$this->_post_data_loaded = TRUE;
+		$this->_state |= MMI_Form::STATE_POSTED;
 	}
 
 	/**
