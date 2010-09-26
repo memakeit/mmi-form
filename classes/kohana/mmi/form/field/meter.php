@@ -47,12 +47,11 @@ class Kohana_MMI_Form_Field_Meter extends MMI_Form_Field
 	 */
 	protected function _get_view_parms()
 	{
-		$attributes = $this->_get_view_attributes();
 		$meta = $this->_meta;
 		return array
 		(
 			'after'			=> Arr::get($meta, 'after', ''),
-			'attributes'	=> $attributes,
+			'attributes'	=> $this->_get_view_attributes(),
 			'before'		=> Arr::get($meta, 'before', ''),
 			'html'			=> Arr::get($meta, 'html', ''),
 		);

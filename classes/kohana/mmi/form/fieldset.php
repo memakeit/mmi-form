@@ -250,6 +250,7 @@ class Kohana_MMI_Form_FieldSet
 	 */
 	protected function _get_view_parms_open()
 	{
+		// Process the legend
 		$meta = $this->_meta;
 		$legend = Arr::get($meta, 'legend');
 		if (empty($legend))
@@ -261,15 +262,10 @@ class Kohana_MMI_Form_FieldSet
 			$legend = '<legend>'.$legend.'</legend>';
 		}
 
-		$attributes = $this->_get_view_attributes();
-		$id = Arr::get($attributes, 'id');
-		$namespace = Arr::get($meta, 'namespace');
-		$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
-
 		return array
 		(
 			'after'			=> Arr::get($meta, 'after', ''),
-			'attributes'	=> $attributes,
+			'attributes'	=> $this->_get_view_attributes(),
 			'before'		=> Arr::get($meta, 'before', ''),
 			'legend'		=> $legend,
 		);
@@ -283,7 +279,25 @@ class Kohana_MMI_Form_FieldSet
 	protected function _get_view_attributes()
 	{
 		$allowed = $this->_get_allowed_attributes();
-		return array_intersect_key($this->_attributes, array_flip($allowed));
+		$attributes = $this->_attributes;
+		$meta = $this->_meta;
+
+		// Process the id and namespace
+		$id = Arr::get($attributes, 'id');
+		if ( ! empty($id))
+		{
+			$namespace = Arr::get($meta, 'namespace');
+			$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
+		}
+
+		// If a title is not set, use the description if present
+		$description = Arr::get($meta, 'description');
+		$title = Arr::get($attributes, 'title');
+		if (empty($title) AND ! empty($description))
+		{
+			$attributes['title'] = $description;
+		}
+		return array_intersect_key($attributes, array_flip($allowed));
 	}
 
 	/**

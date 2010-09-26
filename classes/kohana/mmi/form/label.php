@@ -210,20 +210,11 @@ class Kohana_MMI_Form_Label
 	 */
 	protected function _get_view_parms()
 	{
-		$attributes = $this->_get_view_attributes();
 		$meta = $this->_meta;
-		$id = Arr::get($attributes, 'id');
-		$namespace = Arr::get($meta, 'namespace');
-		$id = MMI_Form_Field::field_id($id, $namespace);
-		if ( ! empty($id))
-		{
-			$attributes['id'] = $id;
-		}
-
 		return array
 		(
 			'after'			=> Arr::get($meta, 'after', ''),
-			'attributes'	=> $attributes,
+			'attributes'	=> $this->_get_view_attributes(),
 			'before'		=> Arr::get($meta, 'before', ''),
 			'html'			=> Arr::get($meta, 'html'),
 		);
@@ -240,7 +231,15 @@ class Kohana_MMI_Form_Label
 		$attributes = $this->_attributes;
 		$meta = $this->_meta;
 
-		// If a title is not set, use the meta description if present
+		// Process the id and namespace
+		$id = Arr::get($attributes, 'id');
+		if ( ! empty($id))
+		{
+			$namespace = Arr::get($meta, 'namespace');
+			$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
+		}
+
+		// If a title is not set, use the description if present
 		$description = Arr::get($meta, 'description');
 		$title = Arr::get($attributes, 'title');
 		if (empty($title) AND ! empty($description))

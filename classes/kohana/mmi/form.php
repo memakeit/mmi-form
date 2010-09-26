@@ -796,10 +796,6 @@ class Kohana_MMI_Form
 		{
 			$options['action'] = Request::instance()->uri;
 		}
-		if (empty($options['id']))
-		{
-			$options['id'] = 'mmi_frm';
-		}
 		if (empty($options['_required_symbol']))
 		{
 			$options['_required_symbol'] = self::required_symbol();
@@ -1017,17 +1013,12 @@ class Kohana_MMI_Form
 	 */
 	protected function _get_view_parms_open()
 	{
-		$attributes = $this->_get_view_attributes();
 		$meta = $this->_meta;
-		$id = Arr::get($attributes, 'id');
-		$namespace = Arr::get($meta, 'namespace');
-		$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
-
 		return array
 		(
 			'action'		=> Arr::get($attributes, 'action'),
 			'after'			=> Arr::get($meta, 'after', ''),
-			'attributes'	=> $attributes,
+			'attributes'	=> $this->_get_view_attributes(),
 			'before'		=> Arr::get($meta, 'before', ''),
 		);
 	}
@@ -1040,7 +1031,16 @@ class Kohana_MMI_Form
 	protected function _get_view_attributes()
 	{
 		$allowed = $this->_get_allowed_attributes();
-		return array_intersect_key($this->_attributes, array_flip($allowed));
+		$attributes = $this->_attributes;
+
+		// Process the id and namespace
+		$id = Arr::get($attributes, 'id');
+		if ( ! empty($id))
+		{
+			$namespace = Arr::get($this->_meta, 'namespace');
+			$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
+		}
+		return array_intersect_key($attributes, array_flip($allowed));
 	}
 
 	/**

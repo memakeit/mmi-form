@@ -526,13 +526,6 @@ abstract class Kohana_MMI_Form_Field
 			$attributes['name'] = $attributes['id'];
 		}
 
-		$is_group = ($this instanceof MMI_Form_Field_Group);
-		$value = Arr::get($attributes, 'value');
-		if (is_null($value) OR ( ! $is_group AND ! is_scalar($value)))
-		{
-			$attributes['value'] = '';
-		}
-
 		$meta = $this->_meta;
 		return array
 		(
@@ -564,6 +557,14 @@ abstract class Kohana_MMI_Form_Field
 			$attributes['id'] = $this->id();
 		}
 
+		// Process the value
+		$is_group = ($this instanceof MMI_Form_Field_Group);
+		$value = Arr::get($attributes, 'value');
+		if (is_null($value) OR ( ! $is_group AND ! is_scalar($value)))
+		{
+			$attributes['value'] = '';
+		}
+
 		// If a rule for max-length exists, use it to set the attribute
 		if (in_array('maxlength', $allowed))
 		{
@@ -575,7 +576,7 @@ abstract class Kohana_MMI_Form_Field
 			}
 		}
 
-		// If a title is not set, use the meta description if present
+		// If a title is not set, use the description if present
 		$description = Arr::get($meta, 'description');
 		$title = Arr::get($attributes, 'title');
 		if (empty($title) AND ! empty($description))
