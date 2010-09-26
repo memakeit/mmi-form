@@ -78,11 +78,11 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 	 */
 	protected function _load_post_data()
 	{
-		if ( ! $_POST)
+		if ( ! $this->_posted)
 		{
 			return;
 		}
-		$this->_posted = TRUE;
+		$this->_post_data_loaded = TRUE;
 		$this->_state |= MMI_Form::STATE_POSTED;
 	}
 } // End Kohana_MMI_Form_Field_Button

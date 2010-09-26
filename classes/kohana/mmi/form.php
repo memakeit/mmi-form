@@ -117,6 +117,14 @@ class Kohana_MMI_Form
 		// Create the field object
 		if ( ! empty($field) AND is_string($field))
 		{
+			if ( ! empty($options) AND is_scalar($options))
+			{
+				$options = array('_scalar' => $options);
+			}
+			if ( ! is_array($options))
+			{
+				$options = array();
+			}
 			$options['type'] = $field;
 			$field = MMI_Form_Field::factory($field, $options);
 		}

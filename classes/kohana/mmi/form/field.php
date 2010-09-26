@@ -51,6 +51,11 @@ abstract class Kohana_MMI_Form_Field
 	protected $_meta = array();
 
 	/**
+	 * @var boolean was the form data loaded?
+	 */
+	protected $_post_data_loaded = FALSE;
+
+	/**
 	 * @var boolean was form data posted?
 	 */
 	protected $_posted = FALSE;
@@ -72,7 +77,7 @@ abstract class Kohana_MMI_Form_Field
 	{
 		$this->_html5 = MMI_Form::html5();
 		$this->_init_options($options);
-		$this->_load_post_data();
+		$this->_posted = ( ! empty($_POST));
 	}
 
 	/**
@@ -265,6 +270,7 @@ abstract class Kohana_MMI_Form_Field
 	public function reset()
 	{
 		$this->value(Arr::get($this->_meta, 'default', ''));
+		$this->_post_data_loaded = FALSE;
 		$this->_state |= MMI_Form::STATE_RESET;
 	}
 
@@ -278,6 +284,10 @@ abstract class Kohana_MMI_Form_Field
 		if ( ! $this->_posted)
 		{
 			return TRUE;
+		}
+		elseif ( ! $this->_post_data_loaded)
+		{
+			$this->_load_post_data();
 		}
 
 		$attributes = $this->_attributes;
@@ -315,6 +325,10 @@ abstract class Kohana_MMI_Form_Field
 		if ( ! is_array($options))
 		{
 			$options = array();
+		}
+		if (array_key_exists('_scalar', $options))
+		{
+			unset($options['_scalar']);
 		}
 
 		// Ensure the type settings
@@ -417,7 +431,7 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _load_post_data()
 	{
-		if ( ! $_POST)
+		if ( ! $this->_posted)
 		{
 			return;
 		}
@@ -431,7 +445,7 @@ abstract class Kohana_MMI_Form_Field
 			$this->_meta['updated'] = ($original !== $posted);
 			$this->_attributes['value'] = $posted;
 		}
-		$this->_posted = TRUE;
+		$this->_post_data_loaded = TRUE;
 		$this->_state |= MMI_Form::STATE_POSTED;
 	}
 
@@ -442,6 +456,10 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _pre_render()
 	{
+		if ($this->_posted AND ! $this->_post_data_loaded)
+		{
+			$this->_load_post_data();
+		}
 		$this->_finalize_rules();
 		$this->_state |= MMI_Form::STATE_PRE_RENDERED;
 	}
@@ -475,18 +493,6 @@ abstract class Kohana_MMI_Form_Field
 		}
 		$label['for'] = $this->id();
 		$html = Arr::get($label, '_html');
-		if (empty($html))
-		{
-			$html = Arr::get($attributes, 'title');
-		}
-		if (empty($html))
-		{
-			$html = Arr::get($meta, 'description');
-		}
-		if (empty($html))
-		{
-			$html = Arr::get($attributes, 'placeholder');
-		}
 		if ( ! empty($html) AND substr($html, -1) !== ':')
 		{
 			$html .= ':';

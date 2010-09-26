@@ -26,6 +26,15 @@ class Kohana_MMI_Form_Field_HTML extends MMI_Form_Field
 			$options = array();
 		}
 
+		// Process HTML when a string is initially specified
+		$scalar = Arr::get($options, '_scalar');
+		if ( ! empty($scalar))
+		{
+			$options['id'] = str_replace('.', '', microtime(TRUE));
+			$options['_html'] = $scalar;
+			$options['_id_generated']= TRUE;
+		}
+
 		$options['type'] = 'html';
 		if (empty($options['_order'] ))
 		{

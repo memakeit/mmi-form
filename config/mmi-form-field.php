@@ -30,7 +30,7 @@ return array
 			'_label' => array
 			(
 				'_before' => '',
-				'_after' => '<br/>',
+				'_after' => '<br />',
 			),
 		)
 	),
@@ -56,7 +56,7 @@ return array
 			'_label' => array
 			(
 				'_before' => '',
-				'_after' => '<br/>',
+				'_after' => '<br />',
 			)
 		)
 	),

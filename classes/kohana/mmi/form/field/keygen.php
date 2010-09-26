@@ -1,13 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Reset button.
+ * Keygen element.
  *
  * @package		MMI Form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Kohana_MMI_Form_Field_Reset extends MMI_Form_Field
+class Kohana_MMI_Form_Field_Keygen extends MMI_Form_Field
 {
 	/**
 	 * Set default options.
@@ -21,8 +21,7 @@ class Kohana_MMI_Form_Field_Reset extends MMI_Form_Field
 		{
 			$options = array();
 		}
-		$options['_type'] = 'input';
-		$options['type'] = 'reset';
+		$options['_type'] = 'keygen';
 		parent::__construct($options);
 	}
 
@@ -40,4 +39,34 @@ class Kohana_MMI_Form_Field_Reset extends MMI_Form_Field
 		$this->_post_data_loaded = TRUE;
 		$this->_state |= MMI_Form::STATE_POSTED;
 	}
-} // End Kohana_MMI_Form_Field_Reset
+
+	/**
+	 * Get the view parameters.
+	 *
+	 * @return	array
+	 */
+	protected function _get_view_parms()
+	{
+		$meta = $this->_meta;
+		return array
+		(
+			'after'			=> Arr::get($meta, 'after', ''),
+			'attributes'	=> $this->_get_view_attributes(),
+			'before'		=> Arr::get($meta, 'before', ''),
+		);
+	}
+
+	/**
+	 * Get the HTML attributes allowed.
+	 *
+	 * @return	array
+	 */
+	protected function _get_allowed_attributes()
+	{
+		if ($this->_html5)
+		{
+			return MMI_HTML5_Attributes_Keygen::get();
+		}
+		return MMI_HTML4_Attributes::get();
+	}
+} // End Kohana_MMI_Form_Field_Keygen

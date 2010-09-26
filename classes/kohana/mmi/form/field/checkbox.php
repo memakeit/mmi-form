@@ -23,6 +23,10 @@ class Kohana_MMI_Form_Field_Checkbox extends MMI_Form_Field
 		}
 		$options['_type'] = 'input';
 		$options['type'] = 'checkbox';
+		if (empty($options['_order']))
+		{
+			$options['_order'] = array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR);
+		}
 		parent::__construct($options);
 	}
 
@@ -45,11 +49,10 @@ class Kohana_MMI_Form_Field_Checkbox extends MMI_Form_Field
 	{
 		$parms = parent::_get_view_parms();
 		$value = Arr::get($parms['attributes'], 'value');
-		if (empty($value) AND ! Arr::get($this->_meta, 'group', FALSE))
+		if (empty($value) AND ! $this instanceof MMI_Form_Field_Group)
 		{
 			$parms['attributes']['value'] = 1;
 		}
-
 		if ($this->_checked())
 		{
 			$parms['attributes']['checked'] = 'checked';
@@ -69,9 +72,9 @@ class Kohana_MMI_Form_Field_Checkbox extends MMI_Form_Field
 	protected function _checked()
 	{
 		$checked = FALSE;
-		if ($_POST AND ($this->_state ^ MMI_Form::STATE_RESET))
+		if ($this->_post_data_loaded)
 		{
-			$temp = Arr::get($_POST, $this->_get_id());
+			$temp = Arr::get($_POST, $this->id());
 			$checked = ( ! empty($temp));
 		}
 		else

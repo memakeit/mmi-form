@@ -21,6 +21,13 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 		{
 			$options = array();
 		}
+
+		$text = Arr::get($options, '_text');
+		$value = Arr::get($options, 'value');
+		if (empty($text) AND ! empty($value))
+		{
+			$options['_text'] = $value;
+		}
 		$options['_type'] = 'textarea';
 		parent::__construct($options);
 	}
@@ -56,6 +63,21 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 	}
 
 	/**
+	 * Load the post data.
+	 *
+	 * @return	void
+	 */
+	protected function _load_post_data()
+	{
+		if ( ! $this->_posted)
+		{
+			return;
+		}
+		parent::_load_post_data();
+		$this->meta('text', Arr::get($this->_attributes, 'value', ''));
+	}
+
+	/**
 	 * Get the view parameters.
 	 *
 	 * @return	array
@@ -64,7 +86,7 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 	{
 		$parms = parent::_get_view_parms();
 		$meta = $this->_meta;
-		$parms['double_encode'] = Arr::get($meta, 'double_encode', FALSE);
+		$parms['double_encode'] = Arr::get($meta, 'double_encode', TRUE);
 		$parms['text'] = Arr::get($meta, 'text', Arr::get($this->_attributes, 'value', ''));
 		return $parms;
 	}
