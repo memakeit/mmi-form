@@ -36,7 +36,7 @@ class Kohana_MMI_Form_Field_HTML extends MMI_Form_Field
 		}
 
 		$options['type'] = 'html';
-		if (empty($options['_order'] ))
+		if (empty($options['_order']))
 		{
 			$options['_order'] = array(MMI_Form::ORDER_FIELD);
 		}

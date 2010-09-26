@@ -22,9 +22,8 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 			$options = array();
 		}
 
-		$text = Arr::get($options, '_text');
 		$value = Arr::get($options, 'value');
-		if (empty($text) AND ! empty($value))
+		if ( ! array_key_exists('_text', $options) AND isset($value))
 		{
 			$options['_text'] = $value;
 		}

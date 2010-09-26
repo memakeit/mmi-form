@@ -21,7 +21,7 @@ class Kohana_MMI_Form_Field_Hidden extends MMI_Form_Field
 		{
 			$options = array();
 		}
-		$options['_type'] = 'hidden';
+		$options['_type'] = 'input';
 		$options['type'] = 'hidden';
 		parent::__construct($options);
 	}
