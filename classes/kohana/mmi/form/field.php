@@ -358,11 +358,14 @@ abstract class Kohana_MMI_Form_Field
 
 		// Set defaults
 		$value = strval(Arr::get($options, 'value', ''));
-		if (empty($options['_default']))
+		if ( ! array_key_exists('_default', $options))
 		{
 			$options['_default'] = $value;
 		}
-		$options['_original'] = $value;
+		if ( ! array_key_exists('_original', $options))
+		{
+			$options['_original'] = $value;
+		}
 		$options['_updated'] = FALSE;
 		$options['value'] = $value;
 

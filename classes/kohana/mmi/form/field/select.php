@@ -128,11 +128,11 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 	{
 		// Set default and original values
 		$selected = Arr::get($options, '_selected', '');
-		if ( ! isset($options['_default']))
+		if ( ! array_key_exists('_default', $options))
 		{
 			$options['_default'] = $selected;
 		}
-		if ( ! isset($options['_original']))
+		if ( ! array_key_exists('_original', $options))
 		{
 			$options['_original'] = $selected;
 		}

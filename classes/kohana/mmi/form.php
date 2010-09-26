@@ -800,11 +800,11 @@ class Kohana_MMI_Form
 		}
 
 		// Set defaults
-		if (empty($options['action']))
+		if ( ! array_key_exists('action', $options))
 		{
 			$options['action'] = Request::instance()->uri;
 		}
-		if (empty($options['_required_symbol']))
+		if ( ! array_key_exists('_required_symbol', $options))
 		{
 			$options['_required_symbol'] = self::required_symbol();
 		}
