@@ -3,6 +3,11 @@
 // Form configuration
 return array
 (
+	'_error' => array
+	(
+		'_after' => '<br />',
+		'class' => 'error',
+	),
 	'_fieldset' => array
 	(
 		'class' => 'fs',
@@ -47,7 +52,7 @@ return array
 
 	'_auto_validate'	=> TRUE,
 	'_html5'			=> TRUE,
-	'_required_symbol'	=> '<strong>*</strong>',
+	'_required_symbol'	=> '<strong>*</strong>&nbsp;',
 	'_show_messages' 	=> TRUE,
 	'_unicode'			=> TRUE,
 	'class'				=> 'frm',
