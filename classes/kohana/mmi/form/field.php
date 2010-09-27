@@ -66,18 +66,21 @@ abstract class Kohana_MMI_Form_Field
 	protected $_state = MMI_Form::STATE_INITIAL;
 
 	/**
-	 * Set whether to use HTML5 markup.
+	 * Get the request method.
+	 * Set whether to use HTML5 markup.  Set whether data was posted.
 	 * Initialize the options.
-	 * Load post data.
 	 *
 	 * @param	array	an associative array of field options
 	 * @return	void
 	 */
 	public function __construct($options = array())
 	{
+		$method = Arr::get($_SERVER, 'REQUEST_METHOD', '');
+		$options['_method'] = $method;
+
 		$this->_html5 = MMI_Form::html5();
 		$this->_init_options($options);
-		$this->_posted = ( ! empty($_POST));
+		$this->_posted = (strcasecmp($method, 'post') === 0);
 	}
 
 	/**

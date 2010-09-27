@@ -38,7 +38,7 @@ class Kohana_MMI_Form_Field_Checkbox extends MMI_Form_Field
 	public function reset()
 	{
 		$this->_post_data_loaded = FALSE;
-		$this->_state = MMI_Form::STATE_INITIAL |MMI_Form::STATE_RESET;
+		$this->_state = MMI_Form::STATE_INITIAL | MMI_Form::STATE_RESET;
 	}
 
 	/**

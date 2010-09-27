@@ -83,7 +83,8 @@ class Kohana_MMI_Form
 	protected $_state = self::STATE_INITIAL;
 
 	/**
-	 * Set whether to use HTML5 markup.
+	 * Get the request method.
+	 * Set whether to use HTML5 markup.  Set whether data was posted.
 	 * Initialize the options.
 	 *
 	 * @param	array	an associative array of field options
@@ -91,9 +92,12 @@ class Kohana_MMI_Form
 	 */
 	public function __construct($options = array())
 	{
-		$this->_html5 = MMI_Form::html5();
+		$method = Arr::get($_SERVER, 'REQUEST_METHOD', '');
+		$options['_method'] = $method;
+
+		$this->_html5 = self::html5();
 		$this->_init_options($options);
-		$this->_posted = ( ! empty($_POST));
+		$this->_posted = (strcasecmp($method, 'post') === 0);
 	}
 
 	/**
@@ -887,7 +891,7 @@ class Kohana_MMI_Form
 	protected function _form_open()
 	{
 		$path = $this->_get_view_path('open');
-		$cache = MMI_Form::view_cache($path);
+		$cache = self::view_cache($path);
 		if (isset($cache))
 		{
 			$view = clone $cache;
@@ -895,7 +899,7 @@ class Kohana_MMI_Form
 		if ( ! isset($view))
 		{
 			$view = View::factory($path);
-			MMI_Form::view_cache($path, $view);
+			self::view_cache($path, $view);
 		}
 		$parms = $this->_get_view_parms_open();
 		return $view->set($parms)->render();
@@ -966,7 +970,7 @@ class Kohana_MMI_Form
 	protected function _form_close()
 	{
 		$path = $this->_get_view_path('close');
-		$cache = MMI_Form::view_cache($path);
+		$cache = self::view_cache($path);
 		if (isset($cache))
 		{
 			$view = clone $cache;
@@ -974,7 +978,7 @@ class Kohana_MMI_Form
 		if ( ! isset($view))
 		{
 			$view = View::factory($path);
-			MMI_Form::view_cache($path, $view);
+			self::view_cache($path, $view);
 		}
 		$parms = $this->_get_view_parms_close();
 		return $view->set($parms)->render();
