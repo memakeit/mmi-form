@@ -403,14 +403,18 @@ abstract class Kohana_MMI_Form_Field
 		$options['_updated'] = FALSE;
 		$options['value'] = $value;
 
-		// Set required attribute
+		// Process the required attribute
+		$required = Arr::get($options, 'required', FALSE);
 		if ( ! array_key_exists('required', $options))
 		{
-			$required = Arr::get($options, '_required', FALSE);
-			if ($required)
+			if (Arr::get($options, '_required', FALSE))
 			{
 				$options['required'] = 'required';
 			}
+		}
+		if ( ! $required AND array_key_exists('required', $options))
+		{
+			unset($options['required']);
 		}
 
 		// Ensure the field has an id attribute
