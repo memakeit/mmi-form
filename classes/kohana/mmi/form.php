@@ -666,7 +666,7 @@ class Kohana_MMI_Form
 	 * Add CSRF validation to the form.
 	 * This method is chainable.
 	 *
-	 * param	string	the form field id
+	 * @param	string	the form field id
 	 * @return	MMI_Form
 	 */
 	public function add_csrf($id = NULL)
@@ -686,6 +686,18 @@ class Kohana_MMI_Form
 			'value' => Security::token(TRUE),
 		));
 		return $this;
+	}
+
+	/**
+	 * Add HTML to the form.
+	 * This method is chainable.
+	 *
+	 * @param	string	the HTML string
+	 * @return	MMI_Form
+	 */
+	public function add_html($html)
+	{
+		return $this->add_field('html', array('_html' => $html));
 	}
 
 	/**
