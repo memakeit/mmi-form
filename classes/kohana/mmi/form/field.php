@@ -20,6 +20,11 @@ abstract class Kohana_MMI_Form_Field
 	protected static $_empty_rules = array('matches', 'not_empty');
 
 	/**
+	 * @var string the HTTP method
+	 */
+	protected static $_method;
+
+	/**
 	 * @var array the validation rules that have a UTF8 parameter
 	 */
 	protected static $_utf8_rules = array
@@ -75,7 +80,7 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function __construct($options = array())
 	{
-		$method = Arr::get($_SERVER, 'REQUEST_METHOD', '');
+		$method = self::get_method();
 		$options['_method'] = $method;
 
 		$this->_html5 = MMI_Form::html5();
@@ -211,6 +216,32 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		$this->_meta[$name] = $value;
+		return $this;
+	}
+
+	/**
+ 	 * Get or set whether the field is required.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	boolean	is the field required?
+	 * @return	mixed
+	 */
+	public function required($value = NULL)
+	{
+		$attributes = $this->_attributes;
+		if (func_num_args() === 0)
+		{
+			$required = Arr::get($attributes, 'required', '');
+			return ( ! empty($required));
+		}
+		elseif ($value)
+		{
+			$this->_attributes['required'] = 'required';
+		}
+		elseif (array_key_exists('required', $attributes))
+		{
+			unset($this->_attributes['required']);
+		}
 		return $this;
 	}
 
@@ -371,6 +402,16 @@ abstract class Kohana_MMI_Form_Field
 		}
 		$options['_updated'] = FALSE;
 		$options['value'] = $value;
+
+		// Set required attribute
+		if ( ! array_key_exists('required', $options))
+		{
+			$required = Arr::get($options, '_required', FALSE);
+			if ($required)
+			{
+				$options['required'] = 'required';
+			}
+		}
 
 		// Ensure the field has an id attribute
 		$id = Arr::get($options, 'id');
@@ -663,6 +704,17 @@ abstract class Kohana_MMI_Form_Field
 			$config = $config->as_array();
 		}
 		return $config;
+	}
+
+	/**
+	 * Get the HTTP method.
+	 *
+	 * @return	string
+	 */
+	public static function get_method()
+	{
+		(self::$_method === NULL) AND self::$_method = Arr::get($_SERVER, 'REQUEST_METHOD', '');
+		return self::$_method;
 	}
 
 	/**

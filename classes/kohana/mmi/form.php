@@ -33,6 +33,11 @@ class Kohana_MMI_Form
 	protected static $_config;
 
 	/**
+	 * @var string the HTTP method
+	 */
+	protected static $_method;
+
+	/**
 	 * @var array the view cache
 	 */
 	protected static $_view_cache = array();
@@ -92,7 +97,7 @@ class Kohana_MMI_Form
 	 */
 	public function __construct($options = array())
 	{
-		$method = Arr::get($_SERVER, 'REQUEST_METHOD', '');
+		$method = self::get_method();
 		$options['_method'] = $method;
 
 		$this->_html5 = self::html5();
@@ -569,7 +574,8 @@ class Kohana_MMI_Form
 				switch ($order_type)
 				{
 					case self::ORDER_ERROR:
-						$frm[] = MMI_Form_Label::factory($field->meta('error'))->render();
+						$options = array_merge(Arr::get($this->_meta, 'error', array()), $field->meta('error'));
+						$frm[] = MMI_Form_Label::factory($options)->render();
 						break;
 
 					case self::ORDER_FIELD:
@@ -577,7 +583,12 @@ class Kohana_MMI_Form
 						break;
 
 					case self::ORDER_LABEL:
-						$frm[] = MMI_Form_Label::factory($field->meta('label'))->render();
+						$options = $field->meta('label');
+						if ($field->required())
+						{
+							$options['_required'] = TRUE;
+						}
+						$frm[] = MMI_Form_Label::factory($options)->render();
 						break;
 				}
 			}
@@ -1098,7 +1109,7 @@ class Kohana_MMI_Form
 	 */
 	public static function required_symbol()
 	{
-		return self::get_config()->get('_required_symbol', '*');
+		return self::get_config()->get('_required_symbol', '*&nbsp;');
 	}
 
 	/**
@@ -1126,6 +1137,17 @@ class Kohana_MMI_Form
 			$config = $config->as_array();
 		}
 		return $config;
+	}
+
+	/**
+	 * Get the HTTP method.
+	 *
+	 * @return	string
+	 */
+	public static function get_method()
+	{
+		(self::$_method === NULL) AND self::$_method = Arr::get($_SERVER, 'REQUEST_METHOD', '');
+		return self::$_method;
 	}
 
 	/**

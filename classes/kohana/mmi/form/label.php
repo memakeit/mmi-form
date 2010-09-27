@@ -211,12 +211,18 @@ class Kohana_MMI_Form_Label
 	protected function _get_view_parms()
 	{
 		$meta = $this->_meta;
+		$html = Arr::get($meta, 'html', '');
+		$required = Arr::get($meta, 'required', FALSE);
+		if ($required)
+		{
+			$html = MMI_Form::required_symbol().$html;
+		}
 		return array
 		(
 			'after'			=> Arr::get($meta, 'after', ''),
 			'attributes'	=> $this->_get_view_attributes(),
 			'before'		=> Arr::get($meta, 'before', ''),
-			'html'			=> Arr::get($meta, 'html'),
+			'html'			=> $html,
 		);
 	}
 
