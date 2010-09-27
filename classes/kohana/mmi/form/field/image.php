@@ -27,6 +27,21 @@ class Kohana_MMI_Form_Field_Image extends MMI_Form_Field
 	}
 
 	/**
+	 * Load the post data.
+	 *
+	 * @return	void
+	 */
+	protected function _load_post_data()
+	{
+		if ( ! $this->_posted)
+		{
+			return;
+		}
+		$this->_post_data_loaded = TRUE;
+		$this->_state |= MMI_Form::STATE_POSTED;
+	}
+
+	/**
 	 * Get the view parameters.
 	 *
 	 * @return	array

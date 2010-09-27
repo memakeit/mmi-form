@@ -45,6 +45,21 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 	}
 
 	/**
+	 * Load the post data.
+	 *
+	 * @return	void
+	 */
+	protected function _load_post_data()
+	{
+		if ( ! $this->_posted)
+		{
+			return;
+		}
+		$this->_post_data_loaded = TRUE;
+		$this->_state |= MMI_Form::STATE_POSTED;
+	}
+
+	/**
 	 * Get the view parameters.
 	 *
 	 * @return	array
@@ -68,20 +83,5 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 			return MMI_HTML5_Attributes_Button::get();
 		}
 		return MMI_HTML4_Attributes_Button::get();
-	}
-
-	/**
-	 * Load the post data.
-	 *
-	 * @return	void
-	 */
-	protected function _load_post_data()
-	{
-		if ( ! $this->_posted)
-		{
-			return;
-		}
-		$this->_post_data_loaded = TRUE;
-		$this->_state |= MMI_Form::STATE_POSTED;
 	}
 } // End Kohana_MMI_Form_Field_Button

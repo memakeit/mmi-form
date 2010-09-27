@@ -136,7 +136,6 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 		{
 			$options['_original'] = $selected;
 		}
-
 		parent::_init_options($options);
 	}
 
