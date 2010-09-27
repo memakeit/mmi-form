@@ -1033,11 +1033,11 @@ class Kohana_MMI_Form
 	 */
 	protected function _get_view_parms_close()
 	{
-		$meta = $this->_meta;
+		$close = Arr::get($this->_meta, 'close', array());
 		return array
 		(
-			'after'		=> Arr::get($meta, 'after', ''),
-			'before'	=> Arr::get($meta, 'before', ''),
+			'after'		=> Arr::get($close, '_after', ''),
+			'before'	=> Arr::get($close, '_before', ''),
 		);
 	}
 
@@ -1049,13 +1049,13 @@ class Kohana_MMI_Form
 	protected function _get_view_parms_open()
 	{
 		$attributes = $this->_get_view_attributes();
-		$meta = $this->_meta;
+		$open = Arr::get($this->_meta, 'open', array());
 		return array
 		(
 			'action'		=> Arr::get($attributes, 'action'),
-			'after'			=> Arr::get($meta, 'after', ''),
+			'after'			=> Arr::get($open, '_after', ''),
 			'attributes'	=> $attributes,
-			'before'		=> Arr::get($meta, 'before', ''),
+			'before'		=> Arr::get($open, '_before', ''),
 		);
 	}
 
