@@ -5,7 +5,8 @@ return array
 (
 	'_error' => array
 	(
-		'_after' => '<br />',
+		'_before' => '',
+		'_after' => PHP_EOL.'</div>',
 		'class' => 'error',
 	),
 	'_fieldset' => array
@@ -14,18 +15,19 @@ return array
 	),
 	'_label' => array
 	(
+		'_before' => '<div>'.PHP_EOL,
 		'class' => 'lbl',
 	),
 	'_open' => array
 	(
-		'_before' => 'BEFORE FORM',
+		'_before' => '_BEFORE_FORM_',
 		'_after' => '',
 		'class' => 'frm',
 	),
 	'_close' => array
 	(
 		'_before' => '',
-		'_after' => '',
+		'_after' => '_AFTER_FORM_',
 	),
 	'_messages' => array
 	(

@@ -34,6 +34,12 @@ return array
 			),
 		)
 	),
+	'datalist' => array
+	(
+		'_before' => PHP_EOL,
+		'_after' => PHP_EOL,
+		'_order' => array(MMI_Form::ORDER_FIELD),
+	),
 	'hidden' => array
 	(
 		'_before' => '<div>',
@@ -60,6 +66,26 @@ return array
 			)
 		)
 	),
+	'keygen' => array
+	(
+		'_after' => PHP_EOL.'</div>',
+		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
+	),
+	'meter' => array
+	(
+		'_after' => PHP_EOL.'</div>',
+		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
+	),
+	'output' => array
+	(
+		'_after' => PHP_EOL.'</div>',
+		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
+	),
+	'progress' => array
+	(
+		'_after' => PHP_EOL.'</div>',
+		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
+	),
 	'reset' => array
 	(
 		'_before' => '<div>',
@@ -74,6 +100,8 @@ return array
 	),
 	'textarea' => array
 	(
+		'_before' => '<br />'.PHP_EOL,
+		'_after' => PHP_EOL.'<br />',
 		'cols' => 80,
 		'rows' => 8
 	),
