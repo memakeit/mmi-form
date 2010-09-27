@@ -15,6 +15,11 @@ class Controller_MMI_Form_Test_Field extends Controller
 	public $debug = TRUE;
 
 	/**
+	 * @var boolean automatically add a submit button?
+	 **/
+	protected $_auto_add_submit = TRUE;
+
+	/**
 	 * @var MMI_Form the form object
 	 **/
 	protected $_form;
@@ -24,20 +29,23 @@ class Controller_MMI_Form_Test_Field extends Controller
 	 *
 	 * @return	void
 	 */
-	public function __construct($options = array())
+	public function __construct()
 	{
 		$this->_form = MMI_Form::factory();
 	}
 
 	/**
-	 * Display the form.
+	 * Display the form HTML.
 	 *
 	 * @return	void
 	 */
 	public function after()
 	{
 		$form = $this->_form;
-		$form->add_submit();
+		if ($this->_auto_add_submit)
+		{
+			$form->add_submit();
+		}
 		$html = trim($form->render());
 		echo $html;
 		MMI_Debug::mdump($html, 'form', $form);

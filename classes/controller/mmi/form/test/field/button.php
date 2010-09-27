@@ -1,44 +1,57 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for button field generation.
+ * Test controller for button generation.
  *
  * @package		MMI Form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Field_Button extends Controller
+class Controller_MMI_Form_Test_Field_Button extends Controller_MMI_Form_Test_Field
 {
 	/**
-	 * @var boolean turn debugging on?
+	 * @var boolean automatically add a submit button?
 	 **/
-	public $debug = TRUE;
+	protected $_auto_add_submit = FALSE;
 
 	/**
-	 * Test button field generation.
+	 * Test button generation.
 	 *
 	 * @return	void
 	 */
 	public function action_index()
 	{
+		$type = 'button';
+
 		$settings = array
 		(
-			'_html' => '<b>button</b>',
 			'_namespace' => 'mmi',
-
-			'checked' => TRUE,
 			'class' => 'button',
 			'id' => 'button1',
-			'maxlength' => 22,
-			'readonly' => 'readonly',
-			'value' => 'test',
+			'value' => 'button',
 		);
-
-		$type = 'button';
 		$field = MMI_Form_Field::factory($type, $settings);
-		MMI_Debug::dump($field->render(), $type);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type.' (button)');
 
-		$field->html('<i>buTTon !!!</i>');
-		MMI_Debug::mdump($field->render(), $type, $field);
+		$settings = array_merge($settings, array
+		(
+			'_html' => '<div style="height: 25px;"><b>reset</b></div>',
+			'id' => 'reset1',
+			'type' => 'reset',
+		));
+		$field = MMI_Form_Field::factory($type, $settings);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type.' (reset)');
+
+		$settings = array_merge($settings, array
+		(
+			'_html' => '<i>submit</i>',
+			'id' => 'submit1',
+			'type' => 'submit',
+		));
+		$field = MMI_Form_Field::factory($type, $settings);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type.' (submit)');
 	}
 } // End Controller_MMI_Form_Test_Field_Button

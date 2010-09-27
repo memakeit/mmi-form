@@ -7,13 +7,8 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Field_Output extends Controller
+class Controller_MMI_Form_Test_Field_Output extends Controller_MMI_Form_Test_Field
 {
-	/**
-	 * @var boolean turn debugging on?
-	 **/
-	public $debug = TRUE;
-
 	/**
 	 * Test output element generation.
 	 *
@@ -21,18 +16,28 @@ class Controller_MMI_Form_Test_Field_Output extends Controller
 	 */
 	public function action_index()
 	{
+		$type = 'output';
+
 		$settings = array
 		(
-			'_html' => 'output!!',
+			'_html' => 'output 1!',
+			'_label' => 'Output 1',
 			'_namespace' => 'mmi',
-
 			'class' => 'output',
 			'id' => 'output1',
 		);
-
-		$type = 'output';
 		$field = MMI_Form_Field::factory($type, $settings);
-		echo $field->render();
-		MMI_Debug::mdump($field->render(), $type, $field);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type);
+
+		$settings = array_merge($settings, array
+		(
+			'_html' => 'output 2!',
+			'_label' => 'Output 2',
+			'id' => 'output2',
+		));
+		$field = MMI_Form_Field::factory($type, $settings);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type);
 	}
 } // End Controller_MMI_Form_Test_Field_Output

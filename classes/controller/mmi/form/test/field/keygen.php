@@ -7,13 +7,8 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Field_Keygen extends Controller
+class Controller_MMI_Form_Test_Field_Keygen extends Controller_MMI_Form_Test_Field
 {
-	/**
-	 * @var boolean turn debugging on?
-	 **/
-	public $debug = TRUE;
-
 	/**
 	 * Test keygen element generation.
 	 *
@@ -21,21 +16,30 @@ class Controller_MMI_Form_Test_Field_Keygen extends Controller
 	 */
 	public function action_index()
 	{
+		$type = 'keygen';
+
 		$settings = array
 		(
+			'_label' => 'Keygen 1',
 			'_namespace' => 'mmi',
-
-			'challenge' => 'challenge',
 			'class' => 'keygen',
 			'id' => 'keygen1',
-			'keytype' => 'rsa',
-			'value' => 76,
-			'title' => '(keygen)',
+			'title' => '(keygen 1)',
 		);
-
-		$type = 'keygen';
 		$field = MMI_Form_Field::factory($type, $settings);
-		echo $field->render();
-		MMI_Debug::mdump($field->render(), $type, $field);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type);
+
+		$settings = array_merge($settings, array
+		(
+			'_label' => 'Keygen 2',
+			'challenge' => 'challenge',
+			'id' => 'keygen2',
+			'keytype' => 'rsa',
+			'title' => '(keygen 2)',
+		));
+		$field = MMI_Form_Field::factory($type, $settings);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type);
 	}
 } // End Controller_MMI_Form_Test_Field_Keygen

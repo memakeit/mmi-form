@@ -7,13 +7,8 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Field_Select extends Controller
+class Controller_MMI_Form_Test_Field_Select extends Controller_MMI_Form_Test_Field
 {
-	/**
-	 * @var boolean turn debugging on?
-	 **/
-	public $debug = TRUE;
-
 	/**
 	 * Test select field generation.
 	 *
@@ -21,35 +16,42 @@ class Controller_MMI_Form_Test_Field_Select extends Controller
 	 */
 	public function action_index()
 	{
+		$type = 'select';
+
 		$settings = array
 		(
+			'_label' => 'Select 1',
 			'_namespace' => 'mmi',
-
-			'checked' => TRUE,
-			'class' => 'mmi select',
+			'_selected' => 'value2',
+			'class' => 'select',
 			'id' => 'select1',
-			'readonly' => 'readonly',
-			'value' => 'test',
 		);
-
-		$type = 'select';
 		$field = MMI_Form_Field::factory($type, $settings);
 		$field
 			->add_option('value1', 'name1')
-			->clear_options()
 			->add_option('value2', 'name2')
-			->add_option('value3', array('value4' => 'name4', 'value5' => 'name5'))
-			->add_option('value100', array('value101' => 'name101', 'value102' => 'name102'))
+			->add_option('value3', array('value3A' => 'name3A', 'value3B' => 'name3B'))
+			->add_option('value4', array('value4A' => 'name4A', 'value4B' => 'name4B'))
 			->remove_option('value3')
-
-			->attribute('multiple', TRUE)
-			->attribute('size', 10)
 			->blank_option('blank!')
-			->selected('value2');
 		;
-		MMI_Debug::dump($field->render(), $type.' multiple');
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type.' (multiple FALSE)');
 
-		$field->attribute('multiple', FALSE);
-		MMI_Debug::mdump($field->render(), $type, $field);
+		$settings = array_merge($settings, array
+		(
+			'_label' => 'Select 2',
+			'id' => 'select2',
+			'multiple' => 'multiple',
+			'size' => 5,
+		));
+		$field = MMI_Form_Field::factory($type, $settings)->options(array
+		(
+			'value100' => 'name100',
+			'value200' => 'name200',
+			'value300' => array('value301' => 'name301', 'value302' => 'name302'),
+		));
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type.' (multiple TRUE)');
 	}
 } // End Controller_MMI_Form_Test_Field_Select

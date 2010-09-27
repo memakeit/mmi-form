@@ -7,13 +7,8 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Field_Label extends Controller
+class Controller_MMI_Form_Test_Field_Label extends Controller_MMI_Form_Test_Field
 {
-	/**
-	 * @var boolean turn debugging on?
-	 **/
-	public $debug = TRUE;
-
 	/**
 	 * Test label generation.
 	 *
@@ -21,20 +16,27 @@ class Controller_MMI_Form_Test_Field_Label extends Controller
 	 */
 	public function action_index()
 	{
+		$type = 'label';
+
 		$settings = array
 		(
-			'_html' => 'First Name:',
+			'_before' => '',
+			'_html' => 'Label 1:',
 			'_namespace' => 'mmi',
-
-			'checked' => TRUE,
 			'id' => 'lbl1',
-			'maxlength' => 22,
-			'readonly' => 'readonly',
-			'value' => 'test',
 		);
-
-		$type = 'file';
 		$label = MMI_Form_Label::factory($settings);
-		MMI_Debug::mdump($label->render(), 'label', $label);
+		$this->_form->add_html('<p>'.$label->render().'</p>');
+		MMI_Debug::dump($label->render(), $type);
+
+		$settings = array_merge($settings, array
+		(
+			'_html' => 'Label 2',
+			'_namespace' => 'mmi',
+			'id' => 'lbl2',
+		));
+		$label = MMI_Form_Label::factory($settings);
+		$this->_form->add_html('<p>'.$label->render().'</p>');
+		MMI_Debug::dump($label->render(), $type);
 	}
 } // End Controller_MMI_Form_Test_Field_Label

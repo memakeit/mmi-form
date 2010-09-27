@@ -7,13 +7,8 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Field_Fieldset extends Controller
+class Controller_MMI_Form_Test_Field_Fieldset extends Controller_MMI_Form_Test_Field
 {
-	/**
-	 * @var boolean turn debugging on?
-	 **/
-	public $debug = TRUE;
-
 	/**
 	 * Test fieldset generation.
 	 *
@@ -21,19 +16,22 @@ class Controller_MMI_Form_Test_Field_Fieldset extends Controller
 	 */
 	public function action_index()
 	{
+		$type = 'fieldset';
+
 		$settings = array
 		(
-			'_legend' => 'Address',
+			'_legend' => 'Debug Fieldset',
 			'_namespace' => 'mmi',
-
-			'class' => 'file',
+			'class' => 'fieldset',
 			'id' => 'fs1',
 			'value' => 'test',
 		);
-
-		$type = 'file';
 		$fieldset = MMI_Form_FieldSet::factory($settings);
-		MMI_Debug::mdump($fieldset->open(), 'fieldset open', $fieldset);
-		MMI_Debug::mdump($fieldset->close(), 'fieldset close', $fieldset);
+		$this->_form
+			->add_html($fieldset->open())
+			->add_html(MMI_Debug::mget($fieldset->open(), $type.' (open)', $fieldset))
+			->add_html(MMI_Debug::mget($fieldset->close(), $type.' (close)', $fieldset))
+			->add_html($fieldset->close())
+		;
 	}
 } // End Controller_MMI_Form_Test_Field_Fieldset

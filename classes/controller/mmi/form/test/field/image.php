@@ -1,44 +1,45 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for image field generation.
+ * Test controller for image input generation.
  *
  * @package		MMI Form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Field_Image extends Controller
+class Controller_MMI_Form_Test_Field_Image extends Controller_MMI_Form_Test_Field
 {
 	/**
-	 * @var boolean turn debugging on?
-	 **/
-	public $debug = TRUE;
-
-	/**
-	 * Test image field generation.
+	 * Test image input generation.
 	 *
 	 * @return	void
 	 */
 	public function action_index()
 	{
+		$type = 'image';
+
 		$settings = array
 		(
+			'_label' => 'Image 1',
 			'_namespace' => 'mmi',
-
-			'checked' => TRUE,
 			'class' => 'image',
 			'id' => 'image1',
-			'maxlength' => 22,
-			'readonly' => 'readonly',
 			'src' => 'media/img/favicon.ico',
-			'value' => 'test',
+			'value' => 'img 1',
 		);
-
-		$type = 'image';
 		$field = MMI_Form_Field::factory($type, $settings);
-		MMI_Debug::dump($field->render(), $type.' (relative src specified)');
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type.' (relative src)');
 
-		$field->attribute('src', 'http:://www.yahoo.com/favicon.ico');
-		MMI_Debug::mdump($field->render(), $type.' (absolute src specified)', $field);
+		$settings = array_merge($settings, array
+		(
+			'_label' => 'Image 2',
+			'id' => 'image2',
+			'src' => 'http:://www.yahoo.com/favicon.ico',
+			'value' => 'img 2',
+		));
+		$field = MMI_Form_Field::factory($type, $settings);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type.' (absolute src)');
 	}
 } // End Controller_MMI_Form_Test_Field_Image

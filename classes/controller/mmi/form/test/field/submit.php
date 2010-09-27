@@ -1,40 +1,46 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for submit field generation.
+ * Test controller for submit button generation.
  *
  * @package		MMI Form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Field_Submit extends Controller
+class Controller_MMI_Form_Test_Field_Submit extends Controller_MMI_Form_Test_Field
 {
 	/**
-	 * @var boolean turn debugging on?
+	 * @var boolean automatically add a submit button?
 	 **/
-	public $debug = TRUE;
+	protected $_auto_add_submit = FALSE;
 
 	/**
-	 * Test submit field generation.
+	 * Test submit button generation.
 	 *
 	 * @return	void
 	 */
 	public function action_index()
 	{
+		$type = 'submit';
+
 		$settings = array
 		(
 			'_namespace' => 'mmi',
-
-			'checked' => TRUE,
 			'class' => 'submit',
 			'id' => 'submit1',
-			'maxlength' => 22,
-			'readonly' => 'readonly',
-			'value' => 'test',
+			'value' => 'submit 1',
 		);
-
-		$type = 'submit';
 		$field = MMI_Form_Field::factory($type, $settings);
-		MMI_Debug::mdump($field->render(), $type, $field);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type);
+
+		$settings = array_merge($settings, array
+		(
+			'id' => 'submit2',
+			'value' => 'submit 2',
+		));
+		$field = MMI_Form_Field::factory($type, $settings);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type);
 	}
 } // End Controller_MMI_Form_Test_Field_Submit
