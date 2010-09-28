@@ -118,15 +118,8 @@ abstract class Kohana_MMI_Form_Field
 
 		if (strcasecmp($name, 'value') === 0)
 		{
-			$is_group = ($this instanceof MMI_Form_Field_Group);
-			if ( ! $is_group AND ! is_scalar($value))
-			{
-				$msg = 'Only scalar values can be used to set the value of a form field.';
-				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
-				throw new Kohana_Exception($msg);
-			}
 			$original = Arr::get($this->_meta, 'original');
-			$value = $is_group ? $value : strval($value);
+			$value = $this->_value_as_string($value);
 			$this->_meta['updated'] = ($original !== $value);
 		}
 		$this->_attributes[$name] = $value;
@@ -390,8 +383,11 @@ abstract class Kohana_MMI_Form_Field
 			$options['class'] = $class;
 		}
 
+		// Ensure values are cast to strings
+		$value = Arr::get($options, 'value', '');
+		$options['value'] = $this->_value_as_string($value);
+
 		// Set defaults
-		$value = strval(Arr::get($options, 'value', ''));
 		if ( ! array_key_exists('_default', $options))
 		{
 			$options['_default'] = $value;
@@ -401,7 +397,6 @@ abstract class Kohana_MMI_Form_Field
 			$options['_original'] = $value;
 		}
 		$options['_updated'] = FALSE;
-		$options['value'] = $value;
 
 		// Process the required attribute
 		$required = Arr::get($options, 'required', FALSE);
@@ -442,6 +437,36 @@ abstract class Kohana_MMI_Form_Field
 				$this->_attributes[$name] = $value;
 			}
 		}
+	}
+
+	/**
+	 * Cast a value to a string.  If the value is an array, each array value is cast to a string.
+	 *
+	 * @param	mixed	the value to cast to a string
+	 * @return	mixed
+	 */
+	protected function _value_as_string($input)
+	{
+		if (is_scalar($input))
+		{
+			$input = strval($input);
+		}
+		elseif (is_array($input))
+		{
+			foreach($input as $name => $value)
+			{
+				if (is_array($value))
+				{
+					$value = $this->_value_as_string($value);
+				}
+				elseif (is_scalar($input))
+				{
+					$value = strval($value);
+				}
+				$input[$name] = $value;
+			}
+		}
+		return $input;
 	}
 
 	/**
