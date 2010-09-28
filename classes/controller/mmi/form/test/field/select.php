@@ -41,6 +41,7 @@ class Controller_MMI_Form_Test_Field_Select extends Controller_MMI_Form_Test_Fie
 		$settings = array_merge($settings, array
 		(
 			'_label' => 'Select 2',
+			'_selected' => array('value100', 'value301'),
 			'id' => 'select2',
 			'multiple' => 'multiple',
 			'size' => 5,
