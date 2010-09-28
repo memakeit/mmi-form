@@ -54,7 +54,7 @@ class Kohana_MMI_Form_Field_Image extends MMI_Form_Field
 		{
 			if (strpos($src, '://') === FALSE)
 			{
-				// Add the base URL
+				// Prepend the base URL
 				$parms['attributes']['src'] = URL::site($src, TRUE);
 			}
 		}

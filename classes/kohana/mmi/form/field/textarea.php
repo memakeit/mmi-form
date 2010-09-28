@@ -33,6 +33,7 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 
 	/**
 	 * Get or set whether to double encode the textarea text.
+	 * This method is chainable when setting a value.
 	 *
 	 * @param	boolean	double encode the text?
 	 * @return	mixed
@@ -48,6 +49,7 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 
 	/**
 	 * Get or set the textarea text.
+	 * This method is chainable when setting a value.
 	 *
 	 * @param	string	the text
 	 * @return	mixed

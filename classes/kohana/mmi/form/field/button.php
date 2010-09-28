@@ -21,6 +21,12 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 		{
 			$options = array();
 		}
+
+		$value = Arr::get($options, 'value');
+		if ( ! array_key_exists('_html', $options) AND isset($value))
+		{
+			$options['_html'] = $value;
+		}
 		$options['_type'] = 'button';
 		if (empty($options['type']))
 		{
@@ -67,7 +73,7 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$parms = parent::_get_view_parms();
-		$parms['html'] = Arr::get($this->_meta, 'html', Arr::get($this->_attributes, 'value', ''));
+		$parms['html'] = Arr::get($this->_meta, 'html', '');
 		return $parms;
 	}
 

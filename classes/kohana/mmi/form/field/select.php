@@ -36,6 +36,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 	 * If the value is FALSE, no blank option is displayed.
 	 * If the value is TRUE, an empty string is used as the blank option name.
 	 * If the value is a string, the string is used as the blank option name.
+	 * This method is chainable when setting a value.
 	 *
 	 * @param	mixed	include a blank option? (or specify the blank option name)
 	 * @return	mixed
@@ -51,6 +52,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 
 	/**
 	 * Get or set the options.
+	 * This method is chainable when setting a value.
 	 *
 	 * @param	array	the options
 	 * @return	mixed
@@ -66,6 +68,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 
 	/**
 	 * Add an option or option group.
+	 * This method is chainable.
 	 *
 	 * @param	mixed	the value (string for an option; array for an optgroup)
 	 * @param	string	the name
@@ -79,6 +82,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 
 	/**
 	 * Remove an option or option group.
+	 * This method is chainable.
 	 *
 	 * @param	string	the value (or optgroup label)
 	 * @return	MMI_Form_Field_Select
@@ -94,6 +98,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 
 	/**
 	 * Clear the options.
+	 * This method is chainable.
 	 *
 	 * @return	MMI_Form_Field_Select
 	 */
@@ -104,6 +109,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 
 	/**
 	 * Get or set the selected options.
+	 * This method is chainable when setting a value.
 	 *
 	 * @param	mixed	the selected option values (string|array)
 	 * @return	mixed
@@ -181,11 +187,11 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 		$multiple = Arr::get($attributes, 'multiple', FALSE);
 		if ($multiple === FALSE)
 		{
-			$parms['name'] = Arr::get($attributes, 'name', '');
 			if (isset($parms['attributes']['multiple']))
 			{
 				unset($parms['attributes']['multiple']);
 			}
+			$parms['name'] = Arr::get($attributes, 'name', '');
 		}
 		else
 		{
