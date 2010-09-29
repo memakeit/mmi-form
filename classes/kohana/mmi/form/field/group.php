@@ -29,50 +29,48 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 	 */
 	public function render()
 	{
+		$this->_pre_render();
+
 		// Get group options
 		$meta = $this->_meta;
 		$choices = Arr::get($meta, 'choices', array());
 		$group_options = Arr::get($meta, 'group', array());
-		$group_order = Arr::get($meta, '_order', $this->_default_item_order);
+		$item_order = Arr::get($group_options, '_order', $this->_default_item_order);
 
-		// Cast the form value(s) to string(s)
-		$form_value = Arr::get($this->_attributes, 'value', '');
-		if (is_array($form_value))
+		// Get the form value(s)
+		if ($this->_posted)
 		{
-			foreach ($form_value as $idx => $value)
-			{
-				$form_value[$idx] = strval($value);
-			}
+			$form_value = Arr::get($this->_meta, 'posted', '');
 		}
-		elseif (is_scalar($form_value))
+		else
 		{
-			$form_value = strval($form_value);
+			$form_value = Arr::get($this->_attributes, 'value', '');
 		}
 
 		// Generate the item HTML
 		$items = array();
 		foreach ($choices as $name => $value)
 		{
-			$html = '';
+			$html = array();
 			$id = $this->_get_item_id();
-			foreach ($group_order as $order)
+			foreach ($item_order as $order)
 			{
 				switch ($order)
 				{
 					case MMI_Form::ORDER_ERROR:
-						$html .= $this->_item_error($id);
+						$html[] = $this->_item_error($id);
 						break;
 
 					case MMI_Form::ORDER_FIELD:
-						$html .= $this->_item_field($id, strval($value), $form_value);
+						$html[] = $this->_item_field($id, strval($value), $form_value);
 						break;
 
 					case MMI_Form::ORDER_LABEL:
-						$html .= $this->_item_label($id, $name);
+						$html[] = $this->_item_label($id, $name);
 						break;
 				}
 			}
-			$items[] = $html;
+			$items[] = implode(PHP_EOL, $html);
 		}
 
 		// Generate the group HTML
@@ -96,7 +94,7 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 	}
 
 	/**
-	 * Generate the item's error HTML.
+	 * Generate the error HTML.
 	 *
 	 * @param	string	the item id
 	 * @return	string
@@ -110,17 +108,19 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 	}
 
 	/**
-	 * Generate the item's input field HTML.
+	 * Generate the input field HTML.
 	 *
 	 * @param	string	the item id
 	 * @param	string	the item value
-	 * @param	mixed	the checked form value(s)
+	 * @param	mixed	the form value(s)
 	 * @return	string
 	 */
 	protected function _item_field($id, $value, $form_value)
 	{
 		$meta = $this->_meta;
 		$options = Arr::path($meta, 'group._field', array());
+		$options['_is_group'] = TRUE;
+		$options['_order'] = Arr::path($meta, 'group._order', array());;
 		$options['id'] = $id;
 		$options['value'] = $value;
 		if ((is_array($form_value) AND in_array($value, $form_value)) OR (is_scalar($form_value) AND $value === $form_value))
@@ -141,7 +141,7 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 	}
 
 	/**
-	 * Generate the item's label HTML.
+	 * Generate the label HTML.
 	 *
 	 * @param	string	the item id
 	 * @param	string	the item value
@@ -153,6 +153,31 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 		$options['_html'] = $name;
 		$options['for'] = $id;
 		return MMI_Form_Label::factory($options)->render();
+	}
+
+	/**
+	 * Load the post data.
+	 *
+	 * @return	void
+	 */
+	protected function _load_post_data()
+	{
+		if ( ! $this->_posted)
+		{
+			return;
+		}
+
+		$post = Security::xss_clean($_POST);
+		if ( ! empty($post))
+		{
+			$name = MMI_Form::clean_id($this->_get_name());
+			$original = Arr::get($this->_meta, 'original');
+			$posted = Arr::get($post, $name, '');
+			$this->_meta['posted'] = $posted;
+			$this->_meta['updated'] = ($original !== $posted);
+		}
+		$this->_post_data_loaded = TRUE;
+		$this->_state |= MMI_Form::STATE_POSTED;
 	}
 
 	/**

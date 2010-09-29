@@ -63,7 +63,7 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$parms = parent::_get_view_parms();
-		$is_group = Arr::get($meta, 'is_group', FALSE);
+		$is_group = Arr::get($this->_meta, 'is_group', FALSE);
 		$value = Arr::get($parms['attributes'], 'value');
 		if ( ! $is_group AND empty($value))
 		{
