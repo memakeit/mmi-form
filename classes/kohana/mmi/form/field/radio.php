@@ -21,11 +21,6 @@ class Kohana_MMI_Form_Field_Radio extends MMI_Form_Field_Checkable
 		{
 			$options = array();
 		}
-
-		if (empty($options['_order']))
-		{
-			$options['_order'] = array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR);
-		}
 		$options['_type'] = 'input';
 		$options['type'] = 'radio';
 		parent::__construct($options);
