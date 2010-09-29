@@ -26,7 +26,6 @@ class Controller_MMI_Form_Test_Field_Text extends Controller_MMI_Form_Test_Field
 			'id' => 'text1',
 			'maxlength' => 10,
 			'required' => 'required',
-			'value' => 'text 1',
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
