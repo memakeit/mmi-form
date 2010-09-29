@@ -7,12 +7,12 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
+class Kohana_MMI_Form_Field_Select extends MMI_Form_Field_Selectable
 {
 	/**
 	 * Set default options.
 	 *
-	 * @param	array	an associative array of field options
+	 * @param	array	an associative array of options
 	 * @return	void
 	 */
 	public function __construct($options = array())
@@ -20,12 +20,6 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 		if ( ! is_array($options))
 		{
 			$options = array();
-		}
-
-		$value = Arr::get($options, 'value');
-		if ( ! array_key_exists('_selected', $options) AND isset($value))
-		{
-			$options['_selected'] = $value;
 		}
 		$options['_type'] = 'select';
 		parent::__construct($options);
@@ -48,101 +42,6 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 			return $this->meta('blank_option');
 		}
 		return $this->meta('blank_option', $value);
-	}
-
-	/**
-	 * Get or set the options.
-	 * This method is chainable when setting a value.
-	 *
-	 * @param	array	the options
-	 * @return	mixed
-	 */
-	public function options($value = NULL)
-	{
-		if (func_num_args() === 0)
-		{
-			return $this->meta('choices');
-		}
-		return $this->meta('choices', $value);
-	}
-
-	/**
-	 * Add an option or option group.
-	 * This method is chainable.
-	 *
-	 * @param	mixed	the value (string for an option; array for an optgroup)
-	 * @param	string	the name
-	 * @return	MMI_Form_Field_Select
-	 */
-	public function add_option($value, $name)
-	{
-		$this->_meta['choices'][$value] = $name;
-		return $this;
-	}
-
-	/**
-	 * Remove an option or option group.
-	 * This method is chainable.
-	 *
-	 * @param	string	the value (or optgroup label)
-	 * @return	MMI_Form_Field_Select
-	 */
-	public function remove_option($value)
-	{
-		if (isset($this->_meta['choices'][$value]))
-		{
-			unset($this->_meta['choices'][$value]);
-		}
-		return $this;
-	}
-
-	/**
-	 * Clear the options.
-	 * This method is chainable.
-	 *
-	 * @return	MMI_Form_Field_Select
-	 */
-	public function clear_options()
-	{
-		return $this->meta('choices', array());
-	}
-
-	/**
-	 * Get or set the selected options.
-	 * This method is chainable when setting a value.
-	 *
-	 * @param	mixed	the selected option values (string|array)
-	 * @return	mixed
-	 */
-	public function selected($value = NULL)
-	{
-		if (func_num_args() === 0)
-		{
-			return $this->meta('selected');
-		}
-		return $this->meta('selected', $value);
-	}
-
-	/**
-	 * Merge the user-specified and config file settings.
-	 * Separate the meta data from the HTML attributes.
-	 *
-	 * @param	array	an associative array of field options
-	 * @return	void
-	 */
-	protected function _init_options($options)
-	{
-		// Set default and original values
-		$selected = Arr::get($options, '_selected', '');
-		if ( ! array_key_exists('_default', $options))
-		{
-			$options['_default'] = $selected;
-		}
-		if ( ! array_key_exists('_original', $options))
-		{
-			$options['_original'] = $selected;
-		}
-		parent::_init_options($options);
 	}
 
 	/**
@@ -182,22 +81,21 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 		$attributes = $parms['attributes'];
 		$meta = $this->_meta;
 		$parms['options'] = $this->_options();
-		$parms['selected'] = Arr::get($meta, 'selected', array());
 
 		$multiple = Arr::get($attributes, 'multiple', FALSE);
-		if ($multiple === FALSE)
+		if (empty($multiple))
 		{
 			if (isset($parms['attributes']['multiple']))
 			{
 				unset($parms['attributes']['multiple']);
 			}
-			$parms['name'] = Arr::get($attributes, 'name', '');
+			$parms['attributes']['name'] = Arr::get($attributes, 'name', '');
 		}
 		else
 		{
 			$parms['attributes']['multiple'] = 'multiple';
+			$parms['attributes']['name'] = Arr::get($attributes, 'name', '').'[]';
 			$parms['attributes']['size'] = Arr::get($attributes, 'size', 5);
-			$parms['name'] = Arr::get($attributes, 'name', '').'[]';
 		}
 		return $parms;
 	}
@@ -209,8 +107,9 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 	 */
 	protected function _options()
 	{
-		$blank_option = Arr::get($this->_meta, 'blank_option', FALSE);
-		$choices = Arr::get($this->_meta, 'choices', array());
+		$meta = $this->_meta;
+		$blank_option = Arr::get($meta, 'blank_option', FALSE);
+		$choices = Arr::get($meta, 'choices', array());
 		if ($blank_option !== FALSE)
 		{
 			if ($blank_option === TRUE)
@@ -222,7 +121,8 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field
 				Arr::unshift($choices, '', $blank_option);
 			}
 		}
-		return $choices;
+		$selected = Arr::get($meta, 'selected', '');
+		return $this->_options_html($choices, $selected);
 	}
 
 	/**

@@ -1,3 +1,3 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-echo $before.Form::select($name, $options, $selected, $attributes).$after;
+echo $before.'<select'.HTML::attributes($attributes).'>'.$options.'</select>'.$after;
