@@ -15,7 +15,7 @@ abstract class Kohana_MMI_Form_Field_Selectable extends MMI_Form_Field
 	/**
 	 * Set default options.
 	 *
-	 * @param	array	an associative array of options
+	 * @param	array	an associative array of field options
 	 * @return	void
 	 */
 	public function __construct($options = array())
