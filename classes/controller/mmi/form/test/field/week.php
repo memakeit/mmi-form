@@ -25,7 +25,6 @@ class Controller_MMI_Form_Test_Field_Week extends Controller_MMI_Form_Test_Field
 			'class' => 'week',
 			'id' => 'week1',
 			'required' => 'required',
-			'value' => '2010-11-11',
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
@@ -38,10 +37,11 @@ class Controller_MMI_Form_Test_Field_Week extends Controller_MMI_Form_Test_Field
 			'class' => 'week',
 			'id' => 'week2',
 			'required' => FALSE,
-			'value' => '',
+			'step' => 2,
+			'value' => '2010-W11',
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type);
+		MMI_Debug::dump($field->render(), $type.' (step 2)');
 	}
 } // End Controller_MMI_Form_Test_Field_Week

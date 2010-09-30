@@ -21,63 +21,31 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 	 */
 	public function action_index()
 	{
-//		$settings = array
-//		(
-//			'_html' => '<b>button</b>',
-////			'_namespace' => 'mmi',
-//
-//			'checked' => TRUE,
-//			'class' => 'button',
-//			'id' => 'button1',
-//			'maxlength' => 22,
-//			'readonly' => 'readonly',
-//			'value' => 'test',
-//		);
-//
-//		$type = 'button';
-//		$btn = MMI_Form_Field::factory($type, $settings);
-
 		$settings = array
 		(
-			'class' => 'text',
-			'name' => 'text1',
-			'title' => 'first name',
-			'value' => 'shawn',
-
-			'_description' => 'yr 1st name',
+			'_label' => 'Label 1',
 			'_namespace' => 'mmi',
-
-			'_label' => array
-			(
-				'class' => 'lbl',
-				'_html' => 'lbl #1:'
-			),
-			'_error' => array
-			(
-				'class' => 'err',
-			),
 			'_rules' => array
 			(
 				'min_length' => array(6),
 				'alpha' => array(FALSE),
 			),
+
+			'class' => 'text',
+			'name' => 'text1',
+			'title' => 'enter a first name at least 6 characters long',
+			'value' => 'memakeit',
 		);
 		$type = 'text';
 		$txt = MMI_Form_Field::factory($type, $settings);
 
-		$form = MMI_Form::factory();
-		$form
-			->add_field($txt)
-			->fieldset_open(array('_legend' => 'submit ...', 'id' => 'fs1', '_namespace' => 'mmi'))
-			->add_field('submit', array
-			(
-				'id' => 'submit',
-				'value' => 'Submit!',
-			))
+		$form = MMI_Form::factory(array('_open' => array('_before' => 'Test Form')))
+			->add_field($type, $settings)
+			->fieldset_open(array('_legend' => 'Submit ...', 'id' => 'fs1', '_namespace' => 'mmi'))
+			->add_submit()
 			->fieldset_close()
 		;
 
-		$form->add_plugin('csrf', 'csrf', array('id' => 'mmit'));
 //		$form->fieldset_open(array('_legend' => 'captcha!'));
 //		$form->add_captcha('recaptcha');
 //		$form->fieldset_close();
@@ -85,12 +53,13 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 //		$jquery = $form->jval_get_validation_js();
 //		MMI_Debug::dead($jquery, 'jquery_get_validation_js');
 //MMI_Debug::dead($form, 'form');
-		echo $form->render();
-		MMI_Debug::dump($form->render(), 'form');
+		$html = $form->render();
+		echo $html;
+		MMI_Debug::dump($html, 'form');
 //		MMI_Debug::dump($form->valid(), 'valid');
 //		MMI_Debug::dump($form->error(), 'errors');
 //		MMI_Debug::dump($form->updated(), 'updated');
 //		MMI_Debug::dump($form->diff(), 'diff');
-		MMI_Debug::dump(MMI_Form::instance(), 'form');
+//		MMI_Debug::dump(MMI_Form::instance(), 'form');
 	}
 } // End Controller_MMI_Form_Test_Form_Form

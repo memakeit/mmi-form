@@ -32,20 +32,34 @@ class Controller_MMI_Form_Test_Field_Number extends Controller_MMI_Form_Test_Fie
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type);
+		MMI_Debug::dump($field->render(), $type.' (min 0; max 100; step 10)');
 
 		$settings = array_merge($settings, array
 		(
 			'_label' => 'Number 2',
 			'id' => 'number2',
-			'max' => 10,
 			'min' => 0,
 			'required' => FALSE,
-			'step' => 1,
+			'step' => 2,
 			'value' => 6,
 		));
+		unset($settings['max']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type);
+		MMI_Debug::dump($field->render(), $type. ' (min 0; step 2)');
+
+		$settings = array_merge($settings, array
+		(
+			'_label' => 'Number 3',
+			'id' => 'number3',
+			'max' => 100,
+			'required' => FALSE,
+			'step' => 25,
+			'value' => 6,
+		));
+		unset($settings['min']);
+		$field = MMI_Form_Field::factory($type, $settings);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type. ' (max 100; step 25)');
 	}
 } // End Controller_MMI_Form_Test_Field_Number

@@ -25,6 +25,7 @@ class Controller_MMI_Form_Test_Field_Text extends Controller_MMI_Form_Test_Field
 			'class' => 'text',
 			'id' => 'text1',
 			'maxlength' => 10,
+			'pattern' => '[\d]+',
 			'required' => 'required',
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
@@ -39,6 +40,7 @@ class Controller_MMI_Form_Test_Field_Text extends Controller_MMI_Form_Test_Field
 			'required' => FALSE,
 			'value' => 'text 2',
 		));
+		unset($settings['pattern']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
 		MMI_Debug::dump($field->render(), $type);
