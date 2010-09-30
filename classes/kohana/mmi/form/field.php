@@ -325,7 +325,17 @@ abstract class Kohana_MMI_Form_Field
 
 		// Add validation settings
 		$validate = Validate::factory(array($id => $value));
-		$validate->callbacks($id, Arr::get($meta, 'callbacks', array()));
+		$callbacks = Arr::get($meta, 'callbacks', array());
+		foreach ($callbacks as $callback)
+		{
+			$method = array_shift($callback);
+			$parms = array_shift($callback);
+			if ( ! is_array($parms))
+			{
+				$parms = array();
+			}
+			$validate->callback($id, $method, $parms);
+		}
 		$validate->filters($id, Arr::get($meta, 'filters', array()));
 		$validate->label($id, $label);
 		$validate->rules($id, Arr::get($meta, 'rules', array()));
@@ -690,10 +700,29 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _finalize_rules()
 	{
+		$attributes = $this->_attributes;
 		$rules = Arr::get($this->_meta, 'rules');
-		if ( ! (is_array($rules) AND count($rules) > 0))
+		if ( ! is_array($rules))
 		{
-			return;
+			$rules = array();
+		}
+
+		// Process required attribute
+		$required = Arr::get($attributes, 'required');
+		if ( ! empty($required))
+		{
+			$rules['not_empty'] = NULL;
+		}
+
+		// Process pattern attribute
+		$pattern = Arr::get($attributes, 'pattern');
+		if ( ! empty($pattern))
+		{
+			if (substr($pattern, 0, 1) !== '/')
+			{
+				$pattern = '/'.$pattern.'/';
+			}
+			$rules['regex'] = array($pattern);
 		}
 
 		// Process rules that are executed even when the value is empty
