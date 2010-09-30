@@ -77,7 +77,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 	 */
 	public static function max(Validate $validate, $field, $parms = array())
 	{
-		$max = array_shift($parms);
+		$max = Arr::get($parms, 'max');
 		$value = Arr::get($_POST, $field);
 		if (is_numeric($max) AND is_numeric($value))
 		{
@@ -100,7 +100,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 	 */
 	public static function min(Validate $validate, $field, $parms = array())
 	{
-		$min = array_shift($parms);
+		$min = Arr::get($parms, 'min');
 		$value = Arr::get($_POST, $field);
 		if (is_numeric($min) AND is_numeric($value))
 		{
@@ -129,11 +129,11 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 		$value = Arr::get($_POST, $field);
 		if (is_numeric($step) AND is_numeric($value))
 		{
-			if (is_numeric(($min)) AND $value >= $min)
+			if (is_numeric($min) AND $value >= $min)
 			{
 				$value = $value - $min;
 			}
-			elseif (is_numeric(($max)) AND $value <= $max)
+			elseif (is_numeric($max) AND $value <= $max)
 			{
 				$value = $max - $value;
 			}
