@@ -40,9 +40,12 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 	/**
 	 * Is the CSRF token valid?  If not, set an error in the form.
 	 *
+	 * @param 	Validate	the validation object
+	 * @param	string		the field name
+	 * @param	array		the validation parameters
 	 * @return	boolean
 	 */
-	public function valid()
+	public function valid(Validate $validate, $field, $parms = array())
 	{
 		$valid = ($this->_token === $_POST[$this->_id()]);
 		if ( ! $valid)
@@ -69,7 +72,10 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 			'value'			=> $token,
 			'_callbacks'	=> array
 			(
-				array($this, 'valid', array($token)),
+				array
+				(
+					array($this, 'valid')
+				),
 			),
 		));
 	}
