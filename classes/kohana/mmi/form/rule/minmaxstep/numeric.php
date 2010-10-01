@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Validation rules to enforce numeric min, max, and step attributes.
+ * Validation rules to enforce min, max, and step attributes of numeric types.
  *
  * @package		MMI Form
  * @author		Me Make It
@@ -81,7 +81,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 		$value = Arr::get($_POST, $field);
 		if (is_numeric($max) AND is_numeric($value))
 		{
-			if (intval($value) <= intval($max))
+			if ($value <= $max)
 			{
 				return TRUE;
 			}
@@ -104,7 +104,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 		$value = Arr::get($_POST, $field);
 		if (is_numeric($min) AND is_numeric($value))
 		{
-			if (intval($value) >= intval($min))
+			if ($value >= $min)
 			{
 				return TRUE;
 			}
