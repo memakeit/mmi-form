@@ -112,7 +112,11 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 				return TRUE;
 			}
 		}
-		$validate->error($field, 'range_'.$mode, array($min, $max));
+
+		if ( ! empty($value))
+		{
+			$validate->error($field, 'range', array($min, $max));
+		}
 		return FALSE;
 	}
 
@@ -149,7 +153,11 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 				return TRUE;
 			}
 		}
-		$validate->error($field, 'max_'.$mode, array($max));
+
+		if ( ! empty($value))
+		{
+			$validate->error($field, 'custom_max', array($max));
+		}
 		return FALSE;
 	}
 
@@ -186,7 +194,11 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 				return TRUE;
 			}
 		}
-		$validate->error($field, 'min_'.$mode, array($min));
+
+		if ( ! empty($value))
+		{
+			$validate->error($field, 'custom_min', array($min));
+		}
 		return FALSE;
 	}
 
@@ -245,7 +257,18 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 				return TRUE;
 			}
 		}
-		$validate->error($field, 'step_'.$mode, array($step));
+
+		if ( ! empty($value))
+		{
+			$info = array();
+			if (method_exists($class, 'format_step') AND ! empty($step))
+			{
+				$info = call_user_func(array($class, 'format_step'), $step);
+			}
+			$step_label = Arr::get($info, 'label', $mode);
+			$step_qty = Arr::get($info, 'qty', $step);
+			$validate->error($field, 'custom_step', array($step_qty, Inflector::plural($step_label, $step_qty)));
+		}
 		return FALSE;
 	}
 } // End Kohana_MMI_Form_Rule_MinMaxStep_DateTime

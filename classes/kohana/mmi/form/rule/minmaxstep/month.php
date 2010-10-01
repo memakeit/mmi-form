@@ -21,7 +21,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Month
 		{
 			$year = $matches[1];
 			$month = $matches[2];
-			return (Date::MONTH * 12 *intval($year)) + (Date::MONTH * intval($month));
+			return (Date::MONTH * 12 * intval($year)) + (Date::MONTH * intval($month));
 		}
 		return NULL;
 	}
