@@ -33,7 +33,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			$rules = array();
 		}
 
-		// Process max and min attributes
+		// Process the max and min attributes
 		$min = Arr::get($attributes, 'min');
 		$max = Arr::get($attributes, 'max');
 		if ( ! empty($min) AND ! empty($max))
@@ -61,7 +61,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			);
 		}
 
-		// Process step attribute
+		// Process the step attribute
 		if (isset($step))
 		{
 			$callbacks['step_'.$mode] = array
@@ -74,7 +74,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 	}
 
 	/**
-	 * Test if a month is within a range.
+	 * Test if a value is within a range.
 	 *
 	 * @param 	Validate	the validation object
 	 * @param	string		the field name
@@ -117,7 +117,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 	}
 
 	/**
-	 * Test if a month is less than or equal than a maximum value.
+	 * Test if a value is less than or equal than a maximum value.
 	 *
 	 * @param 	Validate	the validation object
 	 * @param	string		the field name
@@ -154,7 +154,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 	}
 
 	/**
-	 * Test if a month is greater than or equal than a minimum value.
+	 * Test if a value is greater than or equal than a minimum value.
 	 *
 	 * @param 	Validate	the validation object
 	 * @param	string		the field name
@@ -191,7 +191,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 	}
 
 	/**
-	 * Test if a month is evenly divisible by the step value.
+	 * Test if a value is evenly divisible by the step value.
 	 *
 	 * @param 	Validate	the validation object
 	 * @param	string		the field name
