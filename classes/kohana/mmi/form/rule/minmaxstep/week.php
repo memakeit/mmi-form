@@ -27,7 +27,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Week
 	}
 
 	/**
-	 * Caclulate the week step interval.
+	 * Calculate the week step interval.
 	 *
 	 * @param	integer	the step interval
 	 * @return	integer

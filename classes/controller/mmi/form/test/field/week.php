@@ -48,7 +48,7 @@ class Controller_MMI_Form_Test_Field_Week extends Controller_MMI_Form_Test_Field
 		unset($settings['_after'], $settings['max']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type. ' (min 2010-W10; step 2)');
+		MMI_Debug::dump($field->render(), $type.' (min 2010-W10; step 2)');
 
 		$settings = array_merge($settings, array
 		(
@@ -63,6 +63,6 @@ class Controller_MMI_Form_Test_Field_Week extends Controller_MMI_Form_Test_Field
 		unset($settings['_before'], $settings['min']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type. ' (max 2010-W30; step 3)');
+		MMI_Debug::dump($field->render(), $type.' (max 2010-W30; step 3)');
 	}
 } // End Controller_MMI_Form_Test_Field_Week

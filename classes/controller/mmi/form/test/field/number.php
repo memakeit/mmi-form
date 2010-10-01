@@ -46,7 +46,7 @@ class Controller_MMI_Form_Test_Field_Number extends Controller_MMI_Form_Test_Fie
 		unset($settings['max']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type. ' (min 0; step 2)');
+		MMI_Debug::dump($field->render(), $type.' (min 0; step 2)');
 
 		$settings = array_merge($settings, array
 		(
@@ -60,6 +60,6 @@ class Controller_MMI_Form_Test_Field_Number extends Controller_MMI_Form_Test_Fie
 		unset($settings['min']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type. ' (max 100; step 25)');
+		MMI_Debug::dump($field->render(), $type.' (max 100; step 25)');
 	}
 } // End Controller_MMI_Form_Test_Field_Number
