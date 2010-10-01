@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Validation rules to enforce min, max, and step attributes of month input types.
+ * Validation rules to enforce min, max, and step attributes of time input types.
  *
  * @package		MMI Form
  * @author		Me Make It
