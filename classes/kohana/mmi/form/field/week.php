@@ -33,7 +33,7 @@ class Kohana_MMI_Form_Field_Week extends MMI_Form_Field
 	 */
 	protected function _finalize_rules()
 	{
-		MMI_Form_Rule_MinMaxStep_Week::init($this);
+		MMI_Form_Rule_MinMaxStep_DateTime::init($this, 'week');
 		parent::_finalize_rules();
 	}
 } // End Kohana_MMI_Form_Field_Week
