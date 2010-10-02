@@ -69,11 +69,11 @@ class Controller_MMI_Form_Test_Field_Time extends Controller_MMI_Form_Test_Field
 			'_label' => 'Time 4',
 			'id' => 'time4',
 			'max' => '08:00',
-			'step' => Date::HOUR * 1,
+			'step' => Date::HOUR * 1.5,
 		));
 		unset($settings['_before'], $settings['min']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (max 08:00; step 1 hour)');
+		MMI_Debug::dump($field->render(), $type.' (max 08:00; step 1.5 hours)');
 	}
 } // End Controller_MMI_Form_Test_Field_Time
