@@ -803,6 +803,7 @@ abstract class Kohana_MMI_Form_Field
 		{
 			$type = 'text';
 		}
+		$type = str_replace('-', '', $type);
 
 		// Set the class name
 		$class = 'MMI_Form_Field_';
