@@ -1,27 +1,28 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Validation rules to enforce min, max, and step attributes of week input types.
+ * Validation rules to enforce min, max, and step attributes of date input types.
  *
  * @package		MMI Form
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Kohana_MMI_Form_Rule_MinMaxStep_Week
+class Kohana_MMI_Form_Rule_MinMaxStep_Date
 {
 	/**
 	 * Convert the value to a timestamp.
 	 *
-	 * @param	string	the year and week (ex. 2010-W09)
+	 * @param	string	the year, month and day (ex. 2010-09-31)
 	 * @return	integer
 	 */
 	public static function get_value($value)
 	{
-		if (preg_match('/(\d{4})-W(\d{2})/i', $value, $matches))
+		if (preg_match('/(\d{4})-(\d{2})-(\d{2})/i', $value, $matches))
 		{
 			$year = $matches[1];
-			$week = $matches[2];
-			return strtotime("{$year}W{$week} GMT");
+			$month = $matches[2];
+			$day = $matches[3];
+			return gmmktime(0, 0, 0, $month, $day, $year);
 		}
 		return NULL;
 	}
@@ -33,7 +34,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Week
 	 */
 	public static function get_default_min()
 	{
-		return self::get_value('1970-W01');
+		return self::get_value('1970-01-01');
 	}
 
 	/**
@@ -61,8 +62,19 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Week
 	{
 		if (is_numeric($step))
 		{
-			return (Date::WEEK * $step);
+			return (Date::DAY * $step);
 		}
 		return NULL;
 	}
-} // End Kohana_MMI_Form_Rule_MinMaxStep_Week
+
+	/**
+	 * Get the step label and quantity.
+	 *
+	 * @param	integer	the step interval
+	 * @return	array
+	 */
+	public static function format_step($step)
+	{
+		return array('label' => 'day', 'qty' => $step);
+	}
+} // End Kohana_MMI_Form_Rule_MinMaxStep_Date

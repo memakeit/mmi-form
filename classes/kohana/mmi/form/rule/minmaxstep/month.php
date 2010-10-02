@@ -10,9 +10,9 @@
 class Kohana_MMI_Form_Rule_MinMaxStep_Month
 {
 	/**
-	 * Convert the representation of a month to a timestamp.
+	 * Process the value.
 	 *
-	 * @param	string	the string representation of the month (ex. 2010-03)
+	 * @param	string	the year and month (ex. 2010-03)
 	 * @return	integer
 	 */
 	public static function get_value($value)
@@ -21,23 +21,33 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Month
 		{
 			$year = $matches[1];
 			$month = $matches[2];
-			return (Date::MONTH * 12 * intval($year)) + (Date::MONTH * intval($month));
+			return (12 * intval($year) + intval($month));
 		}
 		return NULL;
 	}
 
 	/**
-	 * Calculate the month step interval.
+	 * Get the default minimum value.
 	 *
-	 * @param	integer	the step interval
 	 * @return	integer
 	 */
-	public static function get_step($step)
+	public static function get_default_min()
 	{
-		if (is_numeric($step))
-		{
-			return (Date::MONTH * $step);
-		}
-		return NULL;
+		return self::get_value('1970-01');
+	}
+
+	/**
+	 * Check whether the step interval is valid.
+	 *
+	 * @param	integer	the value
+	 * @param	integer	the base value for calculations
+	 * @param	integer	the step amount
+	 * @return	boolean
+	 */
+	public static function valid_step($value, $base, $step)
+	{
+		$span = abs($value - $base);
+		$div = $span / $step;
+		return (is_int($span) AND ceil($div) == $div);
 	}
 } // End Kohana_MMI_Form_Rule_MinMaxStep_Month

@@ -10,49 +10,59 @@
 class Kohana_MMI_Form_Rule_MinMaxStep_Time
 {
 	/**
-	 * Convert the string representation to a timestamp.
+	 * Process the value.
 	 *
-	 * @param	string	the string representation of the time (ex. 11:45, 13:15:01, 08:20:00.25)
-	 * @return	integer
+	 * @param	string	the time (ex. 11:45, 13:15:01, 08:20:00.25)
+	 * @return	mixed
 	 */
 	public static function get_value($value)
 	{
-		if (preg_match('/(\d{2}):(\d{2}):(\d{2}\.{d}+)/i', $value, $matches))
+		if (preg_match('/(\d{2}):(\d{2}):(\d{2}\.\d+)/i', $value, $matches))
 		{
 			$hours = $matches[1];
 			$minutes = $matches[2];
 			$seconds = $matches[3];
-			return (Date::HOUR * intval($hours)) + (Date::MINUTE * intval($minutes) + $seconds);
+			return (Date::HOUR * intval($hours) + Date::MINUTE * intval($minutes) + $seconds);
 		}
 		if (preg_match('/(\d{2}):(\d{2}):(\d{2})/i', $value, $matches))
 		{
 			$hours = $matches[1];
 			$minutes = $matches[2];
 			$seconds = $matches[3];
-			return (Date::HOUR * intval($hours)) + (Date::MINUTE * intval($minutes) + intval($seconds));
+			return (Date::HOUR * intval($hours) + Date::MINUTE * intval($minutes) + intval($seconds));
 		}
 		elseif (preg_match('/(\d{2}):(\d{2})/i', $value, $matches))
 		{
 			$hours = $matches[1];
 			$minutes = $matches[2];
-			return (Date::HOUR * intval($hours)) + (Date::MINUTE * intval($minutes));
+			return (Date::HOUR * intval($hours) + Date::MINUTE * intval($minutes));
 		}
 		return NULL;
 	}
 
 	/**
-	 * Calculate the step interval.
+	 * Get the default minimum value.
 	 *
-	 * @param	mixed	the step interval (int|float)
-	 * @return	mixed
+	 * @return	integer
 	 */
-	public static function get_step($step)
+	public static function get_default_min()
 	{
-		if (is_numeric($step))
-		{
-			return $step;
-		}
-		return NULL;
+		return self::get_value('00:00');
+	}
+
+	/**
+	 * Check whether the step interval is valid.
+	 *
+	 * @param	mixed	the value
+	 * @param	mixed	the base value for calculations
+	 * @param	mixed	the step amount
+	 * @return	boolean
+	 */
+	public static function valid_step($value, $base, $step)
+	{
+		$span = $value - $base;
+		$div = $span / $step;
+		return (ceil($div) == $div);
 	}
 
 	/**

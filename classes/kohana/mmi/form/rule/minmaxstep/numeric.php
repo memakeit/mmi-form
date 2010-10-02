@@ -35,12 +35,10 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 		$max = Arr::get($attributes, 'max');
 		if (is_numeric($min) AND is_numeric($max))
 		{
-			$step = Arr::get($attributes, 'step');
 			$rules['range'] = array($min, $max);
 		}
 		elseif (is_numeric($min))
 		{
-			$step = Arr::get($attributes, 'step');
 			$callbacks['min_numeric'] = array
 			(
 				array('MMI_Form_Rule_MinMaxStep_Numeric', 'min'), array('min' => $min)
@@ -48,7 +46,6 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 		}
 		elseif (is_numeric($max))
 		{
-			$step = Arr::get($attributes, 'step');
 			$callbacks['max_numeric'] = array
 			(
 				array('MMI_Form_Rule_MinMaxStep_Numeric', 'max'), array('max' => $max)
@@ -56,7 +53,8 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 		}
 
 		// Process the step attribute
-		if (isset($step))
+		$step = Arr::get($attributes, 'step');
+		if (is_numeric($step))
 		{
 			$callbacks['step_numeric'] = array
 			(
@@ -79,13 +77,14 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 	{
 		$max = Arr::get($parms, 'max');
 		$value = Arr::get($_POST, $field);
-		if (is_numeric($max) AND is_numeric($value))
+		if (is_numeric($max) AND is_numeric($value) AND $value <= $max)
 		{
-			if ($value <= $max)
-			{
-				return TRUE;
-			}
-			$validate->error($field, 'max_numeric', array($max));
+			return TRUE;
+		}
+
+		if ($value !== '')
+		{
+			$validate->error($field, 'cust_max', array($max));
 		}
 		return FALSE;
 	}
@@ -102,13 +101,14 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 	{
 		$min = Arr::get($parms, 'min');
 		$value = Arr::get($_POST, $field);
-		if (is_numeric($min) AND is_numeric($value))
+		if (is_numeric($min) AND is_numeric($value) AND $value >= $min)
 		{
-			if ($value >= $min)
-			{
-				return TRUE;
-			}
-			$validate->error($field, 'min_numeric', array($min));
+			return TRUE;
+		}
+
+		if ($value !== '')
+		{
+			$validate->error($field, 'cust_min', array($min));
 		}
 		return FALSE;
 	}
@@ -125,24 +125,35 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Numeric
 	{
 		$max = Arr::get($parms, 'max');
 		$min = Arr::get($parms, 'min');
+		$base = NULL;
+		if (is_numeric($min))
+		{
+			$base = $min;
+		}
+		elseif (is_numeric($max))
+		{
+			$base = $max;
+		}
+		if ( ! is_numeric($base))
+		{
+			$base = 0;
+		}
+
 		$step = Arr::get($parms, 'step');
 		$value = Arr::get($_POST, $field);
-		if (is_numeric($step) AND is_numeric($value))
+		if (is_numeric($step) AND is_numeric($value) AND is_numeric($base))
 		{
-			if (is_numeric($min) AND $value >= $min)
-			{
-				$value = $value - $min;
-			}
-			elseif (is_numeric($max) AND $value <= $max)
-			{
-				$value = $max - $value;
-			}
-			$div = $value / $step;
+			$span = abs($value - $base);
+			$div = $span / $step;
 			if (ceil($div) == $div)
 			{
 				return TRUE;
 			}
-			$validate->error($field, 'step_numeric', array($step));
+		}
+
+		if ($value !== '')
+		{
+			$validate->error($field, 'cust_step_num', array($step));
 		}
 		return FALSE;
 	}
