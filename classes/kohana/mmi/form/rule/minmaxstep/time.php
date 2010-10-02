@@ -77,6 +77,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Time
 		{
 			return array('label' => 'second', 'qty' => $step);
 		}
+
 		if ($step >= Date::HOUR)
 		{
 			$div = $step / Date::HOUR;
