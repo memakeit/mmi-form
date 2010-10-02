@@ -20,17 +20,30 @@ class Controller_MMI_Form_Test_Field_Month extends Controller_MMI_Form_Test_Fiel
 
 		$settings = array
 		(
-			'_after' => '2010-10',
-			'_before' => '2010-01',
 			'_label' => 'Month 1',
 			'_namespace' => 'mmi',
 			'class' => 'month',
 			'id' => 'month1',
+			'required' => 'required',
+			'step' => 3,
+			'value' => '1970-01',
+		);
+		$field = MMI_Form_Field::factory($type, $settings);
+		$this->_form->add_field($field);
+		MMI_Debug::dump($field->render(), $type.' (step 3)');
+
+		$settings = array_merge($settings, array
+		(
+			'_after' => '2010-10',
+			'_before' => '2010-01',
+			'_label' => 'Month 2',
+			'id' => 'month2',
 			'max' => '2010-10',
 			'min' => '2010-01',
-			'required' => 'required',
+			'required' => FALSE,
 			'step' => 1,
-		);
+			'value' => '',
+		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
 		MMI_Debug::dump($field->render(), $type.' (min 2010-01; max 2010-10; step 1)');
@@ -38,14 +51,10 @@ class Controller_MMI_Form_Test_Field_Month extends Controller_MMI_Form_Test_Fiel
 		$settings = array_merge($settings, array
 		(
 			'_before' => '2010-10',
-			'_label' => 'Month 2',
-			'_namespace' => 'mmi',
-			'class' => 'month',
-			'id' => 'month2',
+			'_label' => 'Month 3',
+			'id' => 'month3',
 			'min' => '2010-10',
-			'required' => FALSE,
 			'step' => 2,
-			'value' => '2010-01',
 		));
 		unset($settings['_after'], $settings['max']);
 		$field = MMI_Form_Field::factory($type, $settings);
@@ -55,18 +64,14 @@ class Controller_MMI_Form_Test_Field_Month extends Controller_MMI_Form_Test_Fiel
 		$settings = array_merge($settings, array
 		(
 			'_after' => '2010-03',
-			'_label' => 'Month 3',
-			'_namespace' => 'mmi',
-			'class' => 'month',
-			'id' => 'month3',
+			'_label' => 'Month 4',
+			'id' => 'month4',
 			'max' => '2010-03',
-			'required' => FALSE,
-			'step' => 3,
-			'value' => '2010-06',
+			'step' => 4,
 		));
 		unset($settings['_before'], $settings['min']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (max 2010-03; step 3)');
+		MMI_Debug::dump($field->render(), $type.' (max 2010-03; step 4)');
 	}
 } // End Controller_MMI_Form_Test_Field_Month
