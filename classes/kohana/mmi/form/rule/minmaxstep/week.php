@@ -21,7 +21,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Week
 		{
 			$year = $matches[1];
 			$week = $matches[2];
-			return strtotime("{$year}W{$week} GMT");
+			return strtotime("{$year}W{$week} UTC");
 		}
 		return NULL;
 	}
