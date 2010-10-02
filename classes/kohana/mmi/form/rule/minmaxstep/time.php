@@ -73,7 +73,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_Time
 	 */
 	public static function format_step($step)
 	{
-		if ( ! is_int($step))
+		if ( ! ctype_digit(strval($step)))
 		{
 			return array('label' => 'second', 'qty' => $step);
 		}
