@@ -213,6 +213,18 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
+	 * Get the field name.
+	 *
+	 * @return	string
+	 */
+	public function name()
+	{
+		$name = Arr::get($this->_attributes, 'name', '');
+		$namespace = Arr::get($this->_meta, 'namespace', '');
+		return self::field_name($name, $namespace);
+	}
+
+	/**
  	 * Get or set whether the field is required.
 	 * This method is chainable when setting a value.
 	 *
@@ -646,11 +658,8 @@ abstract class Kohana_MMI_Form_Field
 		}
 		else
 		{
-			$id = Arr::get($this->_attributes, 'id', '');
-			$name = Arr::get($this->_attributes, 'name', '');
-			$namespace = Arr::get($this->_meta, 'namespace', '');
-			$attributes['id'] = self::field_id($id, $namespace);
-			$attributes['name'] = self::field_id($name, $namespace);
+			$attributes['id'] = $this->id();
+			$attributes['name'] = $this->name();
 		}
 
 		// Process the value
@@ -852,5 +861,27 @@ abstract class Kohana_MMI_Form_Field
 			return $namespace.$id;
 		}
 		return $namespace.'_'.$id;
+	}
+
+	/**
+	 * Get the field name.
+	 *
+	 * @param	string	the field name
+	 * @param	string	the field namespace
+	 * @return	string
+	 */
+	public static function field_name($name, $namespace = NULL)
+	{
+		$name = preg_replace('/[^-a-z\d_\[\]]/i', '', $name);
+		$namespace = MMI_Form::clean_id($namespace);
+		if (empty($namespace))
+		{
+			return $name;
+		}
+		if (substr($namespace, -1) === '_')
+		{
+			return $namespace.$name;
+		}
+		return $namespace.'_'.$name;
 	}
 } // End Kohana_MMI_Form_Field

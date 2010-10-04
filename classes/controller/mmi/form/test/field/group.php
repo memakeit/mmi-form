@@ -66,6 +66,7 @@ class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Fiel
 				'rb3' => 'value 3',
 				'rb4' => 'value 4',
 			),
+			'_namespace' => 'mmi',
 			'class' => 'radio',
 			'id' => 'radio1',
 			'name' => 'rbgroup1',
