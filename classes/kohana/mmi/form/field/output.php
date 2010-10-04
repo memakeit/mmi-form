@@ -48,9 +48,11 @@ class Kohana_MMI_Form_Field_Output extends MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$attributes = $this->_get_view_attributes();
-		if (empty($attributes['name']) AND ! empty($attributes['id']))
+		$id = strval(Arr::get($attributes, 'id', ''));
+		$name = strval(Arr::get($attributes, 'name', ''));
+		if (empty($name) AND ! empty($id))
 		{
-			$attributes['name'] = $attributes['id'];
+			$attributes['name'] = $id;
 		}
 
 		$meta = $this->_meta;

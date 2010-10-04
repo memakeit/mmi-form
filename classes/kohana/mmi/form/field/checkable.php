@@ -83,7 +83,7 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 	{
 		$parms = parent::_get_view_parms();
 		$is_group = Arr::get($this->_meta, 'is_group', FALSE);
-		$value = Arr::get($parms['attributes'], 'value');
+		$value = strval(Arr::get($parms['attributes'], 'value', ''));
 		if ( ! $is_group AND empty($value))
 		{
 			$parms['attributes']['value'] = 1;
@@ -110,7 +110,7 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 		$is_group = Arr::get($this->_meta, 'is_group', FALSE);
 		if ( ! $is_group AND $this->_post_data_loaded)
 		{
-			$temp = Arr::get($_POST, $this->id());
+			$temp = strval(Arr::get($_POST, $this->id(), ''));
 			$checked = ( ! empty($temp));
 		}
 		else

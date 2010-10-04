@@ -48,7 +48,7 @@ class Kohana_MMI_Form_Field_Group_Checkbox extends MMI_Form_Field_Group
 	 */
 	protected function _get_name()
 	{
-		$name = Arr::get($this->_attributes, 'name', '');
+		$name = strval(Arr::get($this->_attributes, 'name', ''));
 		if ( ! empty($name))
 		{
 			$namespace = Arr::get($this->_meta, 'namespace');
