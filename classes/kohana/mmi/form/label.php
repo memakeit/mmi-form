@@ -238,7 +238,7 @@ class Kohana_MMI_Form_Label
 		$meta = $this->_meta;
 
 		// Process the id and namespace
-		$id = Arr::get($attributes, 'id');
+		$id = strval(Arr::get($attributes, 'id', ''));
 		if ( ! empty($id))
 		{
 			$namespace = Arr::get($meta, 'namespace');
@@ -246,8 +246,8 @@ class Kohana_MMI_Form_Label
 		}
 
 		// If a title is not set, use the description if present
-		$description = Arr::get($meta, 'description');
-		$title = Arr::get($attributes, 'title');
+		$description = strval(Arr::get($meta, 'description', ''));
+		$title = strval(Arr::get($attributes, 'title', ''));
 		if (empty($title) AND ! empty($description))
 		{
 			$attributes['title'] = $description;

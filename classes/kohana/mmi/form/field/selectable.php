@@ -25,8 +25,8 @@ abstract class Kohana_MMI_Form_Field_Selectable extends MMI_Form_Field
 			$options = array();
 		}
 
-		$value = Arr::get($options, 'value');
-		if ( ! array_key_exists('_selected', $options) AND isset($value))
+		$value = strval(Arr::get($options, 'value', ''));
+		if ( ! array_key_exists('_selected', $options) AND ! empty($value))
 		{
 			$options['_selected'] = $value;
 		}

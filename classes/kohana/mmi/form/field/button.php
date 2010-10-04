@@ -22,8 +22,8 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 			$options = array();
 		}
 
-		$value = Arr::get($options, 'value');
-		if ( ! array_key_exists('_html', $options) AND isset($value))
+		$value = strval(Arr::get($options, 'value', ''));
+		if ( ! array_key_exists('_html', $options) AND ! empty($value))
 		{
 			$options['_html'] = $value;
 		}

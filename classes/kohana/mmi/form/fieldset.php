@@ -252,12 +252,8 @@ class Kohana_MMI_Form_FieldSet
 	{
 		// Process the legend
 		$meta = $this->_meta;
-		$legend = Arr::get($meta, 'legend');
-		if (empty($legend))
-		{
-			$legend = '';
-		}
-		else
+		$legend = strval(Arr::get($meta, 'legend', ''));
+		if ( ! empty($legend))
 		{
 			$legend = '<legend>'.$legend.'</legend>';
 		}
@@ -283,7 +279,7 @@ class Kohana_MMI_Form_FieldSet
 		$meta = $this->_meta;
 
 		// Process the id and namespace
-		$id = Arr::get($attributes, 'id');
+		$id = strval(Arr::get($attributes, 'id', ''));
 		if ( ! empty($id))
 		{
 			$namespace = Arr::get($meta, 'namespace');
@@ -291,8 +287,8 @@ class Kohana_MMI_Form_FieldSet
 		}
 
 		// If a title is not set, use the description if present
-		$description = Arr::get($meta, 'description');
-		$title = Arr::get($attributes, 'title');
+		$description = strval(Arr::get($meta, 'description', ''));
+		$title = strval(Arr::get($attributes, 'title', ''));
 		if (empty($title) AND ! empty($description))
 		{
 			$attributes['title'] = $description;

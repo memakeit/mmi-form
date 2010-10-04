@@ -22,10 +22,22 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 			$options = array();
 		}
 
-		$value = Arr::get($options, 'value');
-		if ( ! array_key_exists('_text', $options) AND isset($value))
+		$text = strval(Arr::get($options, '_text', ''));
+		$value = strval(Arr::get($options, 'value', ''));
+		if (empty($text) AND ! empty($value))
 		{
 			$options['_text'] = $value;
+		}
+		elseif (empty($value) AND ! empty($text))
+		{
+			if ( ! array_key_exists('_default', $options))
+			{
+				$options['_default'] = $text;
+			}
+			if ( ! array_key_exists('_original', $options))
+			{
+				$options['_original'] = $text;
+			}
 		}
 		$options['_type'] = 'textarea';
 		parent::__construct($options);
@@ -61,6 +73,17 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 			return $this->meta('text');
 		}
 		return $this->meta('text', $value);
+	}
+
+	/**
+	 * Reset the form field.
+	 *
+	 * @return	void
+	 */
+	public function reset()
+	{
+		$this->meta('text', Arr::get($this->_meta, 'original', ''));
+		parent::reset();
 	}
 
 	/**

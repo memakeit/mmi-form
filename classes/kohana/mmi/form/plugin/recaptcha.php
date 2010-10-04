@@ -46,8 +46,8 @@ class Kohana_MMI_Form_Plugin_reCAPTCHA extends MMI_Form_Plugin implements MMI_Fo
 
 		// Ensure a public and private key are configured
 		$config = array_merge(self::get_config(TRUE), $options);
-		$private_key = Arr::get($config, 'private_key');
-		$public_key = Arr::get($config, 'public_key');
+		$private_key = strval(Arr::get($config, 'private_key', ''));
+		$public_key = strval(Arr::get($config, 'public_key', ''));
 		if (empty($private_key) OR empty($public_key))
 		{
 			$msg = 'A public_key and private_key must be specified in the reCAPTCHA configuration file.';
@@ -123,23 +123,23 @@ class Kohana_MMI_Form_Plugin_reCAPTCHA extends MMI_Form_Plugin implements MMI_Fo
 	{
 		$config = array_merge(self::get_config(TRUE), $options);
 
-		if (empty($options['_lang']))
+		if ( ! isset($options['_lang']))
 		{
 			$options['_lang'] = Arr::get($config, 'lang', I18n::$lang);
 		}
-		if (empty($options['_private_key']))
+		if ( ! isset($options['_private_key']))
 		{
 			$options['_private_key'] =  Arr::get($config, 'private_key');
 		}
-		if (empty($options['_public_key']))
+		if ( ! isset($options['_public_key']))
 		{
 			$options['_public_key'] =  Arr::get($config, 'public_key');
 		}
-		if (empty($options['_theme']))
+		if ( ! isset($options['_theme']))
 		{
 			$options['_theme'] = Arr::get($config, 'theme', self::$_default_theme);
 		}
-		if (empty($options['_use_ssl']))
+		if ( ! isset($options['_use_ssl']))
 		{
 			$options['_use_ssl'] = Arr::get($config, 'use_ssl', FALSE);
 		}

@@ -381,11 +381,11 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		// Ensure the type settings
-		if (empty($options['_type']))
+		if ( ! isset($options['_type']))
 		{
 			$options['_type'] = Arr::get($options, 'type', 'input');
 		}
-		if (empty($options['type']))
+		if ( ! isset($options['type']))
 		{
 			$options['type'] = Arr::get($options, '_type', 'text');
 		}

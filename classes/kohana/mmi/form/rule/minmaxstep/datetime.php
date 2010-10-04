@@ -34,23 +34,23 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		}
 
 		// Process the max and min attributes
-		$min = Arr::get($attributes, 'min');
-		$max = Arr::get($attributes, 'max');
-		if (isset($min) AND isset($max))
+		$min = strval(Arr::get($attributes, 'min', ''));
+		$max = strval(Arr::get($attributes, 'max', ''));
+		if ( ! empty($min) AND ! empty($max))
 		{
 			$callbacks['range_'.$mode] = array
 			(
 				array($class, 'range'), array('min' => $min, 'max' => $max, 'mode' => $mode)
 			);
 		}
-		elseif (isset($min))
+		elseif ( ! empty($min))
 		{
 			$callbacks['min_'.$mode] = array
 			(
 				array($class, 'min'), array('min' => $min, 'mode' => $mode)
 			);
 		}
-		elseif (isset($max))
+		elseif ( ! empty($max))
 		{
 			$callbacks['max_'.$mode] = array
 			(
@@ -59,8 +59,8 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		}
 
 		// Process the step attribute
-		$step = Arr::get($attributes, 'step');
-		if (isset($step))
+		$step = strval(Arr::get($attributes, 'step', ''));
+		if ( ! empty($step))
 		{
 			$callbacks['step_'.$mode] = array
 			(
@@ -84,25 +84,21 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$mode = strtolower(Arr::get($parms, 'mode', 'date'));
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
-		$min = Arr::get($parms, 'min');
+		$min = strval(Arr::get($parms, 'min', ''));
 		$min_orig = $min;
-		if (isset($min))
+		if ( ! empty($min))
 		{
 			$min = call_user_func(array($class, 'get_value'), $min);
 		}
-		$max = Arr::get($parms, 'max');
+		$max = strval(Arr::get($parms, 'max', ''));
 		$max_orig = $max;
-		if (isset($max))
+		if ( ! empty($max))
 		{
 			$max = call_user_func(array($class, 'get_value'), $max);
 		}
 
-		$value = Arr::get($_POST, $field);
-		if ($value === '')
-		{
-			$value = NULL;
-		}
-		else
+		$value = strval(Arr::get($_POST, $field, ''));
+		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
 		}
@@ -112,7 +108,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			return TRUE;
 		}
 
-		if (isset($value))
+		if ( ! empty($value))
 		{
 			$validate->error($field, 'range', array($min_orig, $max_orig));
 		}
@@ -132,19 +128,15 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$mode = strtolower(Arr::get($parms, 'mode', 'date'));
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
-		$max = Arr::get($parms, 'max');
+		$max = strval(Arr::get($parms, 'max', ''));
 		$max_orig = $max;
-		if (isset($max))
+		if ( ! empty($max))
 		{
 			$max = call_user_func(array($class, 'get_value'), $max);
 		}
 
-		$value = Arr::get($_POST, $field);
-		if ($value === '')
-		{
-			$value = NULL;
-		}
-		else
+		$value = strval(Arr::get($_POST, $field, ''));
+		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
 		}
@@ -154,7 +146,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			return TRUE;
 		}
 
-		if (isset($value))
+		if ( ! empty($value))
 		{
 			$validate->error($field, 'cust_max', array($max_orig));
 		}
@@ -174,19 +166,15 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$mode = strtolower(Arr::get($parms, 'mode', 'date'));
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
-		$min = Arr::get($parms, 'min');
+		$min = strval(Arr::get($parms, 'min', ''));
 		$min_orig = $min;
-		if (isset($min))
+		if ( ! empty($min))
 		{
 			$min = call_user_func(array($class, 'get_value'), $min);
 		}
 
-		$value = Arr::get($_POST, $field);
-		if ($value === '')
-		{
-			$value = NULL;
-		}
-		else
+		$value = strval(Arr::get($_POST, $field, ''));
+		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
 		}
@@ -196,7 +184,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			return TRUE;
 		}
 
-		if (isset($value))
+		if ( ! empty($value))
 		{
 			$validate->error($field, 'cust_min', array($min_orig));
 		}
@@ -216,14 +204,14 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$mode = strtolower(Arr::get($parms, 'mode', 'date'));
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
-		$max = Arr::get($parms, 'max');
-		$min = Arr::get($parms, 'min');
+		$max = strval(Arr::get($parms, 'max', ''));
+		$min = strval(Arr::get($parms, 'min', ''));
 		$base = NULL;
-		if (isset($min))
+		if ( ! empty($min))
 		{
 			$base = call_user_func(array($class, 'get_value'), $min);
 		}
-		elseif (isset($max))
+		elseif ( ! empty($max))
 		{
 			$base = call_user_func(array($class, 'get_value'), $max);
 		}
@@ -232,12 +220,8 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			$base = call_user_func(array($class, 'get_default_min'), NULL);
 		}
 
-		$value = Arr::get($_POST, $field);
-		if ($value === '')
-		{
-			$value = NULL;
-		}
-		else
+		$value = strval(Arr::get($_POST, $field, ''));
+		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
 		}
@@ -251,7 +235,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			}
 		}
 
-		if (isset($value))
+		if ( ! empty($value))
 		{
 			$info = array();
 			if (method_exists($class, 'format_step') AND ! empty($step))
