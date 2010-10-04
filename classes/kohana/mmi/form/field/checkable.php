@@ -35,7 +35,7 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 	 */
 	public function reset()
 	{
-		$this->_post_data_loaded = FALSE;
+		$this->_errors = array();
 		$this->_state = MMI_Form::STATE_INITIAL | MMI_Form::STATE_RESET;
 	}
 
@@ -108,7 +108,7 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 	{
 		$checked = FALSE;
 		$is_group = Arr::get($this->_meta, 'is_group', FALSE);
-		if ( ! $is_group AND $this->_post_data_loaded)
+		if ( ! $is_group AND $this->_post_data_loaded AND ! ($this->_state & MMI_FORM::STATE_RESET))
 		{
 			$temp = strval(Arr::get($_POST, $this->id(), ''));
 			$checked = ( ! empty($temp));

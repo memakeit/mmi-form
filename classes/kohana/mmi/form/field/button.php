@@ -22,11 +22,24 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 			$options = array();
 		}
 
+		$html = strval(Arr::get($options, '_html', ''));
 		$value = strval(Arr::get($options, 'value', ''));
-		if ( ! array_key_exists('_html', $options) AND ! empty($value))
+		if (empty($html) AND ! empty($value))
 		{
 			$options['_html'] = $value;
 		}
+		elseif ( ! empty($html))
+		{
+			if ( ! array_key_exists('_default', $options))
+			{
+				$options['_default'] = $html;
+			}
+			if ( ! array_key_exists('_original', $options))
+			{
+				$options['_original'] = $html;
+			}
+		}
+
 		$options['_type'] = 'button';
 		if (empty($options['type']))
 		{
@@ -48,6 +61,17 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 			return $this->meta('html');
 		}
 		return $this->meta('html', $value);
+	}
+
+	/**
+	 * Reset the form field.
+	 *
+	 * @return	void
+	 */
+	public function reset()
+	{
+		parent::reset();
+		$this->meta('html', Arr::get($this->_meta, 'original', ''));
 	}
 
 	/**

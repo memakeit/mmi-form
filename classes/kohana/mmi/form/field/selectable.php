@@ -30,6 +30,18 @@ abstract class Kohana_MMI_Form_Field_Selectable extends MMI_Form_Field
 		{
 			$options['_selected'] = $value;
 		}
+		elseif (array_key_exists('_selected', $options))
+		{
+			$selected = Arr::get($options, '_selected');
+			if ( ! array_key_exists('_default', $options))
+			{
+				$options['_default'] = $selected;
+			}
+			if ( ! array_key_exists('_original', $options))
+			{
+				$options['_original'] = $selected;
+			}
+		}
 		parent::__construct($options);
 	}
 
@@ -104,6 +116,17 @@ abstract class Kohana_MMI_Form_Field_Selectable extends MMI_Form_Field
 			return $this->meta('selected');
 		}
 		return $this->meta('selected', $value);
+	}
+
+	/**
+	 * Reset the form field.
+	 *
+	 * @return	void
+	 */
+	public function reset()
+	{
+		parent::reset();
+		$this->meta('selected', Arr::get($this->_meta, 'original', ''));
 	}
 
 	/**
