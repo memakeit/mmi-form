@@ -309,7 +309,7 @@ abstract class Kohana_MMI_Form_Field
 	public function reset()
 	{
 		$this->value(Arr::get($this->_meta, 'default', ''));
-		$this->_post_data_loaded = FALSE;
+		$this->_errors = array();
 		$this->_state = MMI_Form::STATE_INITIAL | MMI_Form::STATE_RESET;
 	}
 
@@ -435,10 +435,11 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		// Ensure the field has an id attribute
-		$id = Arr::get($options, 'id');
-		if (empty($id) AND ! empty($options['name']))
+		$id = strval(Arr::get($options, 'id', ''));
+		$name = strval(Arr::get($options, 'name', ''));
+		if (empty($id) AND ! empty($name))
 		{
-			$options['id'] = $options['name'];
+			$options['id'] = $name;
 		}
 		elseif (empty($id))
 		{
@@ -590,7 +591,7 @@ abstract class Kohana_MMI_Form_Field
 			$label = array('_html' => $label);
 		}
 		$label['for'] = $this->id();
-		$html = Arr::get($label, '_html');
+		$html = strval(Arr::get($label, '_html', ''));
 		if ( ! empty($html) AND substr($html, -1) !== ':')
 		{
 			$html .= ':';
@@ -625,7 +626,9 @@ abstract class Kohana_MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$attributes = $this->_get_view_attributes();
-		if (empty($attributes['name']) AND ! empty($attributes['id']))
+		$id= strval(Arr::get($attributes, 'id', ''));
+		$name = strval(Arr::get($attributes, 'name', ''));
+		if (empty($name) AND ! empty($id))
 		{
 			$attributes['name'] = $attributes['id'];
 		}
@@ -659,7 +662,15 @@ abstract class Kohana_MMI_Form_Field
 		else
 		{
 			$attributes['id'] = $this->id();
-			$attributes['name'] = $this->name();
+			$name = strval(Arr::get($this->_attributes, 'name', ''));
+			if (empty($name))
+			{
+				$attributes['name'] = $this->id();
+			}
+			else
+			{
+				$attributes['name'] = $this->name();
+			}
 		}
 
 		// Process the value
@@ -682,8 +693,8 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		// If a title is not set, use the description if present
-		$description = Arr::get($meta, 'description');
-		$title = Arr::get($attributes, 'title');
+		$description = strval(Arr::get($meta, 'description', ''));
+		$title = strval(Arr::get($attributes, 'title', ''));
 		if (empty($title) AND ! empty($description))
 		{
 			$attributes['title'] = $description;

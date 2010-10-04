@@ -52,7 +52,7 @@ return array
 		'id' => 'frm_status',
 	),
 
-	'_auto_validate'	=> TRUE,
+	'_auto_validate'	=> FALSE,
 	'_html5'			=> TRUE,
 	'_required_symbol'	=> '<strong>*</strong>&nbsp;',
 	'_show_messages' 	=> TRUE,
