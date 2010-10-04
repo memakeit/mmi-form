@@ -646,7 +646,11 @@ abstract class Kohana_MMI_Form_Field
 		}
 		else
 		{
-			$attributes['id'] = $this->id();
+			$id = Arr::get($this->_attributes, 'id', '');
+			$name = Arr::get($this->_attributes, 'name', '');
+			$namespace = Arr::get($this->_meta, 'namespace', '');
+			$attributes['id'] = self::field_id($id, $namespace);
+			$attributes['name'] = self::field_id($name, $namespace);
 		}
 
 		// Process the value
