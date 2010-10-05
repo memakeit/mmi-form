@@ -126,7 +126,7 @@ abstract class Kohana_MMI_Form_Field_Selectable extends MMI_Form_Field
 	public function reset()
 	{
 		parent::reset();
-		$this->meta('selected', Arr::get($this->_meta, 'original', ''));
+		$this->meta('selected', Arr::get($this->_meta, 'default', ''));
 	}
 
 	/**

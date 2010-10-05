@@ -71,7 +71,7 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 	public function reset()
 	{
 		parent::reset();
-		$this->meta('html', Arr::get($this->_meta, 'original', ''));
+		$this->meta('html', Arr::get($this->_meta, 'default', ''));
 	}
 
 	/**

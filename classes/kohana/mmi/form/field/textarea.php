@@ -83,7 +83,7 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 	public function reset()
 	{
 		parent::reset();
-		$this->meta('text', Arr::get($this->_meta, 'original', ''));
+		$this->meta('text', Arr::get($this->_meta, 'default', ''));
 	}
 
 	/**
