@@ -22,6 +22,31 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 		MMI_Form::ORDER_LABEL
 	);
 
+/**
+	 * Set default options.
+	 *
+	 * @param	array	an associative array of field options
+	 * @return	void
+	 */
+	public function __construct($options = array())
+	{
+		if ( ! is_array($options))
+		{
+			$options = array();
+		}
+
+		$value = Arr::get($options, 'value', '');
+		if ( ! array_key_exists('_default', $options))
+		{
+			$options['_default'] = $value;
+		}
+		if ( ! array_key_exists('_original', $options))
+		{
+			$options['_original'] = $value;
+		}
+		parent::__construct($options);
+	}
+
 	/**
 	 * Generate the HTML.
 	 *
@@ -38,7 +63,11 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 		$item_order = Arr::get($group_options, '_order', $this->_default_item_order);
 
 		// Get the form value(s)
-		if ($this->_posted)
+		if ($this->_state & MMI_Form::STATE_RESET)
+		{
+			$form_value = Arr::get($this->_meta, 'default', '');
+		}
+		elseif ($this->_posted)
 		{
 			$form_value = Arr::get($this->_meta, 'posted', '');
 		}
