@@ -205,6 +205,10 @@ abstract class Kohana_MMI_Form_Field
 			{
 				return $this->_label_meta();
 			}
+			if (strcasecmp($name, 'rules') === 0)
+			{
+				$this->_finalize_rules();
+			}
 			return Arr::get($this->_meta, $name);
 		}
 
