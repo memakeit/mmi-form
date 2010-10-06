@@ -46,9 +46,6 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 			->fieldset_close()
 		;
 
-//		$form->fieldset_open(array('_legend' => 'captcha!'));
-//		$form->add_captcha('recaptcha');
-//		$form->fieldset_close();
 //		$form->add_plugin('jquery_validation', 'jval');
 //		$jquery = $form->jval_get_validation_js();
 //		MMI_Debug::dead($jquery, 'jquery_get_validation_js');

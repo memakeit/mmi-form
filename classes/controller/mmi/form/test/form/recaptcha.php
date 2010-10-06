@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for a form with the reCAPTCHA plugin.
+ * Test controller for form generation with the reCAPTCHA plugin.
  *
  * @package		MMI Form
  * @author		Me Make It
