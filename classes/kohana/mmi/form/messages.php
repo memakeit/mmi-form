@@ -15,6 +15,17 @@ class Kohana_MMI_Form_Messages
 	protected static $_config;
 
 	/**
+	 * Get the default CSS class.
+	 *
+	 * @return	string
+	 */
+	public static function class_default()
+	{
+		$config = self::get_config();
+		return trim(Arr::get($config, 'class', ''));
+	}
+
+	/**
 	 * Get the CSS class for failure messages.
 	 *
 	 * @return	string
