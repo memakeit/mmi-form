@@ -331,6 +331,7 @@ abstract class Kohana_MMI_Form_Field
 		elseif ( ! $this->_post_data_loaded)
 		{
 			$this->_load_post_data();
+			$this->_finalize_rules();
 		}
 
 		$attributes = $this->_attributes;
