@@ -574,8 +574,11 @@ class Kohana_MMI_Form
 				switch ($order_type)
 				{
 					case self::ORDER_ERROR:
-						$options = array_merge(Arr::get($this->_meta, 'error', array()), $field->meta('error'));
-						$frm[] = MMI_Form_Label::factory($options)->render();
+						if ( ! $field->valid())
+						{
+							$options = array_merge(Arr::get($this->_meta, 'error', array()), $field->meta('error'));
+							$frm[] = MMI_Form_Label::factory($options)->render();
+						}
 						break;
 
 					case self::ORDER_FIELD:
@@ -938,37 +941,37 @@ class Kohana_MMI_Form
 	 */
 	protected function _messages()
 	{
-		if ( ! $this->_posted)
+		$class = MMI_Form_Messages::class_default();
+		$msg = '';
+		if ($this->_posted)
 		{
-			return;
-		}
-
-		$count_all = count($this->error());
-		$count_general = count( $this->_errors);
-		if ($count_all > 0)
-		{
-			if ($count_general === $count_all)
+			$count_all = count($this->error());
+			$count_general = count( $this->_errors);
+			if ($count_all > 0)
 			{
-				$msg = MMI_Form_Messages::msg_failure();
-			}
-			else
-			{
-				$count = $count_all - $count_general;
-				if ($count === 1)
+				if ($count_general === $count_all)
 				{
-					$msg = MMI_Form_Messages::msg_failure_single();
+					$msg = MMI_Form_Messages::msg_failure();
 				}
 				else
 				{
-					$msg = MMI_Form_Messages::msg_failure_multiple($count);
+					$count = $count_all - $count_general;
+					if ($count === 1)
+					{
+						$msg = MMI_Form_Messages::msg_failure_single();
+					}
+					else
+					{
+						$msg = MMI_Form_Messages::msg_failure_multiple($count);
+					}
 				}
+				$class = MMI_Form_Messages::class_failure();
 			}
-			$class = MMI_Form_Messages::class_failure();
-		}
-		else
-		{
-			$msg = MMI_Form_Messages::msg_success();
-			$class = MMI_Form_Messages::class_success();
+			else
+			{
+				$msg = MMI_Form_Messages::msg_success();
+				$class = MMI_Form_Messages::class_success();
+			}
 		}
 
 		if ($this->_html5)
@@ -982,7 +985,7 @@ class Kohana_MMI_Form
 		$attributes = array
 		(
 			'class'	=> $class,
-			'id'	=> Arr::get($this->_attributes, 'id', 'frm').'_status',
+			'id'	=> MMI_Form_Messages::get_status_id(),
 		);
 		$attributes = array_intersect_key($attributes, array_flip($allowed));
 		return '<div'.HTML::attributes($attributes).'>'.$msg.'</div>';
