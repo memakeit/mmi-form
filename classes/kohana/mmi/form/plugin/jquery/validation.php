@@ -198,11 +198,14 @@ EOJS;
 
 					switch($rule_name)
 					{
+						case 'max_length':
+							// This rule is handled by the input attribute maxlength
+							break;
+
 						// Built-in validation methods
 						case 'date':
 						case 'email':
 						case 'matches':
-//						case 'max_length': // this rule is handled by the input attribute maxlength
 						case 'min_length':
 						case 'not_empty':
 						case 'range':
@@ -223,6 +226,7 @@ EOJS;
 						case 'phone':
 						case 'regex':
 							$this->_methods[] = $jquery_rule;
+							$parms = preg_quote(substr($parms, 1, -1));
 							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
 							break;
 
@@ -713,8 +717,8 @@ EOJS;
 			'errorClass'		=> $error_class,
 			'errorPlacement'	=> self::get_default_error_placement(),
 			'highlight'			=> self::get_default_highlight(),
-			'invalidHandler'	=> self::get_default_invalid_handler(),
-			'submitHandler'		=> self::get_default_submit_handler(),
+			'invalidHandler'	=> self::get_default_invalid_handler('#'.MMI_Form_Messages::get_status_id()),
+			'submitHandler'		=> self::get_default_submit_handler('#'.MMI_Form_Messages::get_status_id()),
 			'success'			=> self::get_default_success(),
 			'unhighlight'		=> self::get_default_unhighlight(),
 			'validClass'		=> $valid_class,
@@ -731,8 +735,8 @@ EOJS;
 return<<<EOJS
 function(error, element)
 {
-	var class = element.attr('class');
-	if (class === 'group' || class.indexOf(' group') !== -1)
+	var c = element.attr('class');
+	if (c === 'group' || c.indexOf(' group') !== -1)
 	{
 		error.insertAfter(element.parent().prev().children()[0]);
 	}
@@ -754,15 +758,15 @@ EOJS;
 return<<<EOJS
 function(element, errorClass, validClass)
 {
-	var element = $(element);
-	var class = element.attr('class');
-	if (class === 'group' || class.indexOf(' group') !== -1)
+	var e = $(element);
+	var c = e.attr('class');
+	if (c === 'group' || c.indexOf(' group') !== -1)
 	{
-		element.parent().removeClass(validClass).addClass(errorClass);
+		e.parent().removeClass(validClass).addClass(errorClass);
 	}
 	else
 	{
-		element.removeClass(validClass).addClass(errorClass);
+		e.removeClass(validClass).addClass(errorClass);
 	}
 }
 EOJS;
@@ -779,18 +783,19 @@ EOJS;
 return<<<EOJS
 function(frm, validator)
 {
-	var num_errors = validator.numberOfInvalids();
-	var settings = validator.settings;
-	if (num_errors)
+	var num = validator.numberOfInvalids();
+	var s = validator.settings;
+	if (num)
 	{
-		var message = (parseInt(num_errors) === 1)
+		var msg = (parseInt(num) === 1)
 			? '1 field is invalid. It has been highlighted.'
-			: num_errors + ' fields are invalid. They have been highlighted.';
-		$('$status_id').removeClass(settings.validClass).addClass(settings.errorClass).html(message).show();
+			: num + ' fields are invalid. They have been highlighted.'
+		;
+		$('{$status_id}').removeClass(s.validClass).addClass(s.errorClass).html(msg).show();
 	}
 	else
 	{
-		$('$status_id').removeClass(settings.errorClass).hide();
+		$('{$status_id}').removeClass(s.errorClass).hide();
 	}
 }
 EOJS;
@@ -803,13 +808,13 @@ EOJS;
 	 * @param	string	the id of the buttons container
 	 * @return	string
 	 */
-	public static function get_default_submit_handler($message = 'Submitting ...', $status_id = '#frm_status', $buttons_id = 'form.frm p.btn')
+	public static function get_default_submit_handler($status_id = '#frm_status', $buttons_id = 'form.frm p.btn', $message = 'Submitting ...')
 	{
 return<<<EOJS
 function(frm)
 {
-	$('$status_id').removeClass(validator.settings.errorClass).hide();
-	$('$buttons_id').replaceWith('<div class="submit">$message</div>');
+	$('{$status_id}').removeClass(validator.settings.errorClass).hide();
+	$('{$buttons_id}').replaceWith('<div class="submit">{$message}</div>');
 	frm.submit();
 }
 EOJS;
@@ -840,15 +845,15 @@ EOJS;
 return<<<EOJS
 function(element, errorClass, validClass)
 {
-	var element = $(element);
-	var class = element.attr('class');
-	if (class === 'group' || class.indexOf(' group') !== -1)
+	var e = $(element);
+	var c = e.attr('class');
+	if (c === 'group' || c.indexOf(' group') !== -1)
 	{
-		element.parent().removeClass(errorClass).addClass(validClass);
+		e.parent().removeClass(errorClass).addClass(validClass);
 	}
 	else
 	{
-		element.removeClass(errorClass).addClass(validClass);
+		e.removeClass(errorClass).addClass(validClass);
 	}
 }
 EOJS;
@@ -883,109 +888,3 @@ EOJS;
 		return self::$_unicode_ranges;
 	}
 } // End Kohana_MMI_Form_Plugin_JQuery_Validation
-
-//
-// Kohana validation functions not implemeted:
-//	email_domain
-//
-//	/**
-//	 * @var array HTML5 input types
-//	 */
-//	protected static $_types = array
-//	(
-//		'color',
-//		'date',
-//		'datetime',
-//		'datetime-local',
-//		'email',
-//		'month',
-//		'number',
-//		'range',
-//		'tel',
-//		'time',
-//		'url',
-//		'week',
-//	);
-//
-//	/**
-//	 * @var array HTML5 inputs that support the max attribute
-//	 */
-//	protected static $_attr_max = array
-//	(
-//		'date', 'datetime', 'datetime-local', 'month', 'time', 'week',
-//		'number',
-//		'range',
-//	);
-//
-//	/**
-//	 * @var array HTML5 inputs that support the min attribute
-//	 */
-//	protected static $_attr_min = array
-//	(
-//		'date', 'datetime', 'datetime-local', 'month', 'time', 'week',
-//		'number',
-//		'range',
-//	);
-//
-//	/**
-//	 * @var array HTML5 inputs that support the multiple attribute
-//	 */
-//	protected static $_attr_multiple = array
-//	(
-//		'email',
-//		'file',
-//	);
-//
-//	/**
-//	 * @var array HTML5 inputs that support the pattern attribute
-//	 */
-//	protected static $_attr_pattern = array
-//	(
-//		'email',
-//		'password',
-//		'search',
-//		'tel',
-//		'text',
-//		'url',
-//	);
-//
-//	/**
-//	 * @var array HTML5 inputs that support the placeholder attribute
-//	 */
-//	protected static $_attr_placeholder = array
-//	(
-//		'email',
-//		'password',
-//		'search',
-//		'tel',
-//		'text',
-//		'url',
-//	);
-//
-//	/**
-//	 * @var array HTML5 inputs that support the required attribute
-//	 */
-//	protected static $_attr_required = array
-//	(
-//		'checkbox',
-//		'date', 'datetime', 'datetime-local', 'month', 'time', 'week',
-//		'email',
-//		'file',
-//		'number',
-//		'password',
-//		'radio',
-//		'search',
-//		'tel',
-//		'text',
-//		'url',
-//	);
-//
-//	/**
-//	 * @var array HTML5 inputs that support the step attribute
-//	 */
-//	protected static $_attr_step = array
-//	(
-//		'date', 'datetime', 'datetime-local', 'month', 'time', 'week',
-//		'number',
-//		'range',
-//	);
