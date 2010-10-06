@@ -655,7 +655,10 @@ class Kohana_MMI_Form
 			'_source'		=> MMI_Form_Field_HTML::SRC_CALLBACK,
 			'_callbacks'	=> array
 			(
-				array($captcha, 'valid', NULL),
+				array
+				(
+					array($captcha, 'valid')
+				),
 			),
 		));
 		$this->add_field('html', $options);
