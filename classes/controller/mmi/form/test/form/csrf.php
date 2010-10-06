@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for form generation.
+ * Test controller for a form with the CSRF plugin.
  *
  * @package		MMI Form
  * @author		Me Make It
@@ -39,7 +39,12 @@ class Controller_MMI_Form_Test_Form_CSRF extends Controller
 		$type = 'text';
 		$txt = MMI_Form_Field::factory($type, $settings);
 
-		$form = MMI_Form::factory(array('_open' => array('_before' => 'CSRF Test Form')))
+		$form = MMI_Form::factory(array
+		(
+			'_auto_validate' => TRUE,
+			'_open' => array('_before' => 'CSRF Test Form'),
+		));
+		$form
 			->add_plugin('csrf', 'csrf', array('id' => 'csrf'))
 			->add_field($txt)
 			->add_submit()
