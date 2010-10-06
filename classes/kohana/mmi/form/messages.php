@@ -131,6 +131,16 @@ class Kohana_MMI_Form_Messages
 	}
 
 	/**
+	 * Get the id of the page div that displays status messages.
+	 *
+	 * @return	string
+	 */
+	public static function get_status_id()
+	{
+		return Arr::get(self::get_config(), 'id', 'frm_status');
+	}
+
+	/**
 	 * Get the failure message for general errors.
 	 *
 	 * @return	string
