@@ -564,7 +564,6 @@ abstract class Kohana_MMI_Form_Field
 		{
 			$this->_load_post_data();
 		}
-		$this->_finalize_rules();
 		$this->_state |= MMI_Form::STATE_PRE_RENDERED;
 	}
 
