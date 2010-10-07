@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Image extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test image input generation.
 	 *
 	 * @return	void
@@ -29,7 +34,10 @@ class Controller_MMI_Form_Test_Field_Image extends Controller_MMI_Form_Test_Fiel
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (relative src)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (relative src)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -40,6 +48,9 @@ class Controller_MMI_Form_Test_Field_Image extends Controller_MMI_Form_Test_Fiel
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (absolute src)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (absolute src)');
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Image

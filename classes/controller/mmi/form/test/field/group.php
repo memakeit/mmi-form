@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test grouped input (checkbox and radio button) generation.
 	 *
 	 * @return	void
@@ -27,24 +32,29 @@ class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Fiel
 				'cb3' => 'value 3',
 				'cb4' => 'value 4',
 			),
+			'_label' => 'CB Group 1',
 			'_namespace' => 'mmi',
 			'class' => 'checkbox',
 			'id' => 'checkbox1',
 			'name' => 'cbgroup1',
-			'value' => 'value 1',
+			'required' => TRUE,
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form
-			->fieldset_open(array('_legend' => 'CB Group 1 (one value)'))
+			->fieldset_open()
 			->add_field($field)
 			->fieldset_close()
 		;
-		MMI_Debug::dump($field->render(), $type.' (one value)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (one value)');
+		}
 
 		$settings = array_merge($settings, array
 		(
 			'id' => 'checkbox2',
 			'name' => 'cbgroup2',
+			'required' => FALSE,
 			'value' => array('value 2', 'value 4'),
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
@@ -53,7 +63,10 @@ class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Fiel
 			->add_field($field)
 			->fieldset_close()
 		;
-		MMI_Debug::dump($field->render(), $type.' (multiple values)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (multiple values)');
+		}
 
 		// Radio buttons
 		$type = 'radio';
@@ -70,6 +83,7 @@ class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Fiel
 			'class' => 'radio',
 			'id' => 'radio1',
 			'name' => 'rbgroup1',
+			'required' => TRUE,
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form
@@ -77,12 +91,16 @@ class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Fiel
 			->add_field($field)
 			->fieldset_close()
 		;
-		MMI_Debug::dump($field->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type);
+		}
 
 		$settings = array_merge($settings, array
 		(
 			'id' => 'radio2',
 			'name' => 'rbgroup2',
+			'required' => FALSE,
 			'value' => 'value 2',
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
@@ -91,6 +109,9 @@ class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Fiel
 			->add_field($field)
 			->fieldset_close()
 		;
-		MMI_Debug::dump($field->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type);
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Group

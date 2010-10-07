@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_HTML extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test HTML generation.
 	 *
 	 * @return	void
@@ -28,22 +33,34 @@ class Controller_MMI_Form_Test_Field_HTML extends Controller_MMI_Form_Test_Field
 		$field = MMI_Form_Field::factory($type, $settings);
 		$field->html('<i>HTML string !!!</i>');
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (text)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (text)');
+		}
 
 		$field = MMI_Form_Field::factory($type, $settings);
 		$field->html_callback('Controller_MMI_Form_Test_Field_HTML::test_static');
 		$this->_form->add_field($field);
-		MMI_Debug::mdump($field->render(), $type.' (static callback)');
+		if ($this->debug)
+		{
+			MMI_Debug::mdump($field->render(), $type.' (static callback)');
+		}
 
 		$field = MMI_Form_Field::factory($type, $settings);
 		$field->html_callback(array('Controller_MMI_Form_Test_Field_HTML', 'test_static', array('!me', 'make it?')));
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (static callback)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (static callback)');
+		}
 
 		$field = MMI_Form_Field::factory($type, $settings);
 		$field->html_callback(array($this, 'test', array('me', 'mmi')));
 		$this->_form->add_field($field);
-		MMI_Debug::mdump($field->render(), $type.' (callback)');
+		if ($this->debug)
+		{
+			MMI_Debug::mdump($field->render(), $type.' (callback)');
+		}
 
 		$this->_form->add_html('</div>');
 	}

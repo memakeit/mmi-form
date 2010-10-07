@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Form_Form extends Controller
 {
 	/**
+	 * @var string the cache type
+	 **/
+	public $cache_type = MMI_Cache::CACHE_TYPE_NONE;
+
+	/**
 	 * @var boolean turn debugging on?
 	 **/
 	public $debug = TRUE;
@@ -52,7 +57,7 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 //MMI_Debug::dead($form, 'form');
 		$html = $form->render();
 		echo $html;
-		MMI_Debug::mdump($html, 'form', $form);
+//		MMI_Debug::mdump($html, 'form', $form);
 //		MMI_Debug::dump($form->valid(), 'valid');
 //		MMI_Debug::dump($form->error(), 'errors');
 //		MMI_Debug::dump($form->updated(), 'updated');

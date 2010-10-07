@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Email extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test email input generation.
 	 *
 	 * @return	void
@@ -30,7 +35,10 @@ class Controller_MMI_Form_Test_Field_Email extends Controller_MMI_Form_Test_Fiel
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (w/multiple and pattern)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (w/multiple and pattern)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -43,6 +51,9 @@ class Controller_MMI_Form_Test_Field_Email extends Controller_MMI_Form_Test_Fiel
 		unset($settings['multiple'], $settings['pattern']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (w/out multiple and w/out pattern)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (w/out multiple and w/out pattern)');
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Email

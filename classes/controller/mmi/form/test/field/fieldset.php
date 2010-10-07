@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Fieldset extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test fieldset generation.
 	 *
 	 * @return	void

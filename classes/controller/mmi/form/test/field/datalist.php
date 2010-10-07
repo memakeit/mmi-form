@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_DataList extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test datalist generation.
 	 *
 	 * @return	void
@@ -34,7 +39,10 @@ class Controller_MMI_Form_Test_Field_DataList extends Controller_MMI_Form_Test_F
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type);
+		}
 
 		// Create the text inputs
 		$type = 'text';
@@ -49,7 +57,10 @@ class Controller_MMI_Form_Test_Field_DataList extends Controller_MMI_Form_Test_F
 		);
 		$text = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($text);
-		MMI_Debug::dump($text->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($text->render(), $type);
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -61,6 +72,9 @@ class Controller_MMI_Form_Test_Field_DataList extends Controller_MMI_Form_Test_F
 		));
 		$text = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($text);
-		MMI_Debug::dump($text->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($text->render(), $type);
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_DataList

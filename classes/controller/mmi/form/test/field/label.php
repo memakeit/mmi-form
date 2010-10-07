@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Label extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test label generation.
 	 *
 	 * @return	void
@@ -27,7 +32,10 @@ class Controller_MMI_Form_Test_Field_Label extends Controller_MMI_Form_Test_Fiel
 		);
 		$label = MMI_Form_Label::factory($settings);
 		$this->_form->add_html('<p>'.$label->render().'</p>');
-		MMI_Debug::dump($label->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($label->render(), $type);
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -37,6 +45,9 @@ class Controller_MMI_Form_Test_Field_Label extends Controller_MMI_Form_Test_Fiel
 		));
 		$label = MMI_Form_Label::factory($settings);
 		$this->_form->add_html('<p>'.$label->render().'</p>');
-		MMI_Debug::dump($label->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($label->render(), $type);
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Label

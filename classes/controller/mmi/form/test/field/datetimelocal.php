@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_DateTimeLocal extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test datetime-local input generation.
 	 *
 	 * @return	void
@@ -30,7 +35,10 @@ class Controller_MMI_Form_Test_Field_DateTimeLocal extends Controller_MMI_Form_T
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (step 30 minutes)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (step 30 minutes)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -46,7 +54,10 @@ class Controller_MMI_Form_Test_Field_DateTimeLocal extends Controller_MMI_Form_T
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (min 2010-09-01T00:00:00; max 2011-01-01T00:00:00; step 1.5 hours)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (min 2010-09-01T00:00:00; max 2011-01-01T00:00:00; step 1.5 hours)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -59,7 +70,10 @@ class Controller_MMI_Form_Test_Field_DateTimeLocal extends Controller_MMI_Form_T
 		unset($settings['_after'], $settings['max']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (min 2010-06-01T00:00:00; step 15 minutes)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (min 2010-06-01T00:00:00; step 15 minutes)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -72,6 +86,9 @@ class Controller_MMI_Form_Test_Field_DateTimeLocal extends Controller_MMI_Form_T
 		unset($settings['_before'], $settings['min']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (max 2011-01-01T00:00:00; step 1 day)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (max 2011-01-01T00:00:00; step 1 day)');
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_DateTimeLocal

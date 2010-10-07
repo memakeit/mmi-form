@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Button extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * @var boolean automatically add a submit button?
 	 **/
 	protected $_auto_add_submit = FALSE;
@@ -32,7 +37,10 @@ class Controller_MMI_Form_Test_Field_Button extends Controller_MMI_Form_Test_Fie
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (button)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (button)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -42,7 +50,10 @@ class Controller_MMI_Form_Test_Field_Button extends Controller_MMI_Form_Test_Fie
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (reset)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (reset)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -52,6 +63,9 @@ class Controller_MMI_Form_Test_Field_Button extends Controller_MMI_Form_Test_Fie
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (submit)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (submit)');
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Button
