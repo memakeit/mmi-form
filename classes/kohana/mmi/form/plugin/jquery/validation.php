@@ -94,8 +94,11 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		return<<<EOJS
 var validator;
 $(window).load(function(){
-	validator = $('$form_id').validate({
-$options
+	$('{$form_id}').find('label.error').each(function(){
+		$(this).attr('generated', true);
+	});
+	validator = $('{$form_id}').validate({
+{$options}
 	});
 {$this->_get_methods()}
 });
@@ -198,11 +201,11 @@ EOJS;
 
 					switch($rule_name)
 					{
+						// Built-in validation methods
 						case 'max_length':
 							// This rule is handled by the input attribute maxlength
 							break;
 
-						// Built-in validation methods
 						case 'date':
 						case 'email':
 						case 'matches':
@@ -224,9 +227,7 @@ EOJS;
 						case 'ip':
 						case 'numeric':
 						case 'phone':
-						case 'regex':
 							$this->_methods[] = $jquery_rule;
-							$parms = preg_quote(substr($parms, 1, -1));
 							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
 							break;
 
@@ -245,9 +246,16 @@ EOJS;
 							}
 							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
 							break;
+
+						case 'regex':
+							$this->_methods[] = $jquery_rule;
+							$parms = preg_quote(substr($parms, 1, -1));
+							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
+							break;
 					}
 				}
 			}
+			$this->_process_min_max_attr($field);
 		}
 	}
 
@@ -281,12 +289,8 @@ EOJS;
 		}
 		else
 		{
-			$parms = $this->_get_default_rule_parms($parms);
+			$parms = $this->_get_default_rule_parms($name);
 		}
-//		if ($name === 'matches')
-//		{
-//			$parms = '#'.str_replace('.', '_', $parms);
-//		}
 		return $parms;
 	}
 
@@ -307,6 +311,62 @@ EOJS;
 				break;
 		}
 		return $default;
+	}
+
+	/**
+	 * Process the min and max attributes.
+	 * For numeric input types (number and range), set the validation message.
+	 * For date-time input types (date, datetime, datetime-local, month, time, week),
+	 * remove the validation rule.  The min and max rules expect numeric data, not a
+	 * date-time string.  If the min and max rules are not explicitly removed,
+	 * the validation plugin will automatically generate them using the non-numeric
+	 * attribute values.
+	 *
+	 * @return	void
+	 */
+	protected function _process_min_max_attr($field)
+	{
+		$id = $field->id();
+		$rules = Arr::path($this->_options, 'rules.'.$id, array());
+		if (array_key_exists('range', $rules))
+		{
+			// Do not process min and max when a range rule exists
+			return;
+		}
+
+		$type_datetime = array('date', 'datetime', 'datetime-local', 'month', 'time', 'week');
+		$type_numeric = array('number', 'range');
+
+		$attributes = $field->attribute();
+		$type = strtolower(Arr::get($attributes, 'type', 'text'));
+		if ( ! in_array($type, $type_datetime) AND ! in_array($type, $type_numeric))
+		{
+			// Do not process min and max when the input type does not support it
+			return;
+		}
+
+		foreach (array('min', 'max') as $attr_name)
+		{
+			$attr_value = trim(strval(Arr::get($attributes, $attr_name, '')));
+			if ($attr_value !== '')
+			{
+				$jquery_rule = $this->_get_jquery_rule_name($attr_name);
+				if (is_numeric($attr_value) AND in_array($type, $type_numeric))
+				{
+					$rule_parms = array($attr_value);
+					$label = trim(Arr::get($field->meta('label'), 'html'), ':');
+					$msg = MMI_Form_Messages::format_error_msg($label, 'cust_'.$attr_name, $rule_parms);
+					$parms = $this->_parse_rule_parms($attr_name, $rule_parms);
+
+					$this->_options['messages'][$id][$jquery_rule] = $msg;
+					$this->_options['rules'][$id][$jquery_rule] = $parms;
+				}
+				elseif (in_array($type, $type_datetime))
+				{
+					$this->_options['rules'][$id][$jquery_rule] = FALSE;
+				}
+			}
+		}
 	}
 
 	/**
@@ -735,8 +795,7 @@ EOJS;
 return<<<EOJS
 function(error, element)
 {
-	var c = element.attr('class');
-	if (c === 'group' || c.indexOf(' group') !== -1)
+	if (element.hasClass('group'))
 	{
 		error.insertAfter(element.parent().prev().children()[0]);
 	}
@@ -759,8 +818,7 @@ return<<<EOJS
 function(element, errorClass, validClass)
 {
 	var e = $(element);
-	var c = e.attr('class');
-	if (c === 'group' || c.indexOf(' group') !== -1)
+	if (e.hasClass('group'))
 	{
 		e.parent().removeClass(validClass).addClass(errorClass);
 	}
@@ -846,8 +904,7 @@ return<<<EOJS
 function(element, errorClass, validClass)
 {
 	var e = $(element);
-	var c = e.attr('class');
-	if (c === 'group' || c.indexOf(' group') !== -1)
+	if (e.hasClass('group'))
 	{
 		e.parent().removeClass(errorClass).addClass(validClass);
 	}
