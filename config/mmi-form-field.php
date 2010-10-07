@@ -101,7 +101,9 @@ return array
 	'textarea' => array
 	(
 		'_before' => '<br />'.PHP_EOL,
-		'_after' => PHP_EOL.'<br />',
+		'_after' => PHP_EOL.'</div>',
+		'_error' => array('_after' => ''),
+		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
 		'cols' => 80,
 		'rows' => 8
 	),
