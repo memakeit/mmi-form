@@ -22,7 +22,7 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 		MMI_Form::ORDER_LABEL
 	);
 
-/**
+	/**
 	 * Set default options.
 	 *
 	 * @param	array	an associative array of field options
