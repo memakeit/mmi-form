@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Select extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test select field generation.
 	 *
 	 * @return	void
@@ -36,7 +41,10 @@ class Controller_MMI_Form_Test_Field_Select extends Controller_MMI_Form_Test_Fie
 			->blank_option('blank!')
 		;
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (multiple FALSE)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (multiple FALSE)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -53,6 +61,9 @@ class Controller_MMI_Form_Test_Field_Select extends Controller_MMI_Form_Test_Fie
 			'value300' => array('value301' => 'name301', 'value302' => 'name302'),
 		));
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (multiple TRUE)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (multiple TRUE)');
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Select

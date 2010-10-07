@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Password extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test password input generation.
 	 *
 	 * @return	void
@@ -29,7 +34,10 @@ class Controller_MMI_Form_Test_Field_Password extends Controller_MMI_Form_Test_F
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type);
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -41,6 +49,9 @@ class Controller_MMI_Form_Test_Field_Password extends Controller_MMI_Form_Test_F
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type);
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type);
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Password

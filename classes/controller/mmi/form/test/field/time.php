@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Time extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test time input generation.
 	 *
 	 * @return	void
@@ -32,7 +37,10 @@ class Controller_MMI_Form_Test_Field_Time extends Controller_MMI_Form_Test_Field
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (step 10.5 seconds)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (step 10.5 seconds)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -48,7 +56,10 @@ class Controller_MMI_Form_Test_Field_Time extends Controller_MMI_Form_Test_Field
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (min 00:00; max 12:00; step 15 minutes)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (min 00:00; max 12:00; step 15 minutes)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -61,7 +72,10 @@ class Controller_MMI_Form_Test_Field_Time extends Controller_MMI_Form_Test_Field
 		unset($settings['_after'], $settings['max']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (min 13:00; step 30 minutes)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (min 13:00; step 30 minutes)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -74,6 +88,9 @@ class Controller_MMI_Form_Test_Field_Time extends Controller_MMI_Form_Test_Field
 		unset($settings['_before'], $settings['min']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (max 08:00; step 1.5 hours)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (max 08:00; step 1.5 hours)');
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Time

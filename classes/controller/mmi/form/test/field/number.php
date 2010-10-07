@@ -10,6 +10,11 @@
 class Controller_MMI_Form_Test_Field_Number extends Controller_MMI_Form_Test_Field
 {
 	/**
+	 * @var boolean turn debugging on?
+	 **/
+	public $debug = FALSE;
+
+	/**
 	 * Test number input generation.
 	 *
 	 * @return	void
@@ -30,7 +35,10 @@ class Controller_MMI_Form_Test_Field_Number extends Controller_MMI_Form_Test_Fie
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (step 10)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (step 10)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -46,7 +54,10 @@ class Controller_MMI_Form_Test_Field_Number extends Controller_MMI_Form_Test_Fie
 		));
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (min 0; max 100; step 2)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (min 0; max 100; step 2)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -59,7 +70,10 @@ class Controller_MMI_Form_Test_Field_Number extends Controller_MMI_Form_Test_Fie
 		unset($settings['_after'], $settings['max']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (min 1000; step 100)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (min 1000; step 100)');
+		}
 
 		$settings = array_merge($settings, array
 		(
@@ -73,6 +87,9 @@ class Controller_MMI_Form_Test_Field_Number extends Controller_MMI_Form_Test_Fie
 		unset($settings['_before'], $settings['min']);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$this->_form->add_field($field);
-		MMI_Debug::dump($field->render(), $type.' (max 0; step 25)');
+		if ($this->debug)
+		{
+			MMI_Debug::dump($field->render(), $type.' (max 0; step 25)');
+		}
 	}
 } // End Controller_MMI_Form_Test_Field_Number
