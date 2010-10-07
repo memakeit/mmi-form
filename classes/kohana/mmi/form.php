@@ -574,11 +574,8 @@ class Kohana_MMI_Form
 				switch ($order_type)
 				{
 					case self::ORDER_ERROR:
-						if ( ! $field->valid())
-						{
-							$options = array_merge(Arr::get($this->_meta, 'error', array()), $field->meta('error'));
-							$frm[] = MMI_Form_Label::factory($options)->render();
-						}
+						$options = array_merge(Arr::get($this->_meta, 'error', array()), $field->meta('error'));
+						$frm[] = MMI_Form_Label::factory($options)->render();
 						break;
 
 					case self::ORDER_FIELD:
@@ -840,6 +837,13 @@ class Kohana_MMI_Form
 		if ( ! array_key_exists('_required_symbol', $options))
 		{
 			$options['_required_symbol'] = self::required_symbol();
+		}
+
+		// Ensure the form has an id attribute
+		$id = trim(strval(Arr::get($options, 'id', '')));
+		if ($id === '')
+		{
+			$options['id'] = 'mmi_form';
 		}
 
 		// Separate the meta data from the HTML attributes
