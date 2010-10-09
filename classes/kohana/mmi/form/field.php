@@ -157,7 +157,7 @@ abstract class Kohana_MMI_Form_Field
 			return $this->_errors;
 		}
 
-		if ( ! empty($msg) AND ! in_array($msg, $this->_errors))
+		if (isset($msg) AND ! in_array($msg, $this->_errors))
 		{
 			$this->_errors[] = $msg;
 		}
@@ -165,15 +165,26 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
-	 * Get the field id.
+	 * Get or set the field id.
+	 * This method is chainable when setting a value.
 	 *
-	 * @return	string
+	 * @param	string	the field id
+	 * @return	mixed
 	 */
-	public function id()
+	public function id($value = NULL)
 	{
-		$id = Arr::get($this->_attributes, 'id', '');
-		$namespace = Arr::get($this->_meta, 'namespace', '');
-		return self::field_id($id, $namespace);
+		if (func_num_args() === 0)
+		{
+			$id = trim(strval(Arr::get($this->_attributes, 'id', '')));
+			if ($id !== '')
+			{
+				$namespace = Arr::get($this->_meta, 'namespace', '');
+				$id = self::field_id($id, $namespace);
+			}
+			return $id;
+		}
+		$this->_attributes['id'] = $value;
+		return $this;
 	}
 
 	/**
@@ -217,15 +228,26 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
-	 * Get the field name.
+	 * Get or set the field name.
+	 * This method is chainable when setting a value.
 	 *
-	 * @return	string
+	 * @param	string	the field name
+	 * @return	mixed
 	 */
-	public function name()
+	public function name($value = NULL)
 	{
-		$name = Arr::get($this->_attributes, 'name', '');
-		$namespace = Arr::get($this->_meta, 'namespace', '');
-		return self::field_name($name, $namespace);
+		if (func_num_args() === 0)
+		{
+			$name = trim(strval(Arr::get($this->_attributes, 'name', '')));
+			if ($name !== '')
+			{
+				$namespace = Arr::get($this->_meta, 'namespace', '');
+				$name = self::field_name($name, $namespace);
+			}
+			return $name;
+		}
+		$this->_attributes['name'] = $value;
+		return $this;
 	}
 
 	/**
@@ -240,7 +262,7 @@ abstract class Kohana_MMI_Form_Field
 		$attributes = $this->_attributes;
 		if (func_num_args() === 0)
 		{
-			$required = Arr::get($attributes, 'required', '');
+			$required = Arr::get($attributes, 'required');
 			return ( ! empty($required));
 		}
 		elseif ($value)
@@ -336,12 +358,12 @@ abstract class Kohana_MMI_Form_Field
 
 		$attributes = $this->_attributes;
 		$meta = $this->_meta;
-		$id = $this->id();
+		$name = MMI_Form::clean_id($this->name());
 		$label = trim(Arr::get($this->_label_meta(), 'html'), ':');
 		$value = Arr::get($attributes, 'value', '');
 
 		// Add validation settings
-		$validate = Validate::factory(array($id => $value));
+		$validate = Validate::factory(array($name => $value));
 		$callbacks = Arr::get($meta, 'callbacks', array());
 		foreach ($callbacks as $callback)
 		{
@@ -351,11 +373,11 @@ abstract class Kohana_MMI_Form_Field
 			{
 				$parms = array();
 			}
-			$validate->callback($id, $method, $parms);
+			$validate->callback($name, $method, $parms);
 		}
-		$validate->filters($id, Arr::get($meta, 'filters', array()));
-		$validate->label($id, $label);
-		$validate->rules($id, Arr::get($meta, 'rules', array()));
+		$validate->filters($name, Arr::get($meta, 'filters', array()));
+		$validate->label($name, $label);
+		$validate->rules($name, Arr::get($meta, 'rules', array()));
 
 		if ( ! $validate->check())
 		{
@@ -440,13 +462,17 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		// Ensure the field has an id attribute
-		$id = strval(Arr::get($options, 'id', ''));
-		$name = strval(Arr::get($options, 'name', ''));
-		if (empty($id) AND ! empty($name))
+		$id = trim(strval(Arr::get($options, 'id', '')));
+		$name = trim(strval(Arr::get($options, 'name', '')));
+		if ($id === '' AND $name !== '')
 		{
 			$options['id'] = $name;
 		}
-		elseif (empty($id))
+		elseif ($name === '' AND $id !== '')
+		{
+			$options['name'] = $id;
+		}
+		if ($id === '')
 		{
 			$options['id'] = str_replace('.', '', microtime(TRUE));
 			$options['_id_generated'] = TRUE;
@@ -520,7 +546,7 @@ abstract class Kohana_MMI_Form_Field
 		$value = trim(preg_replace('/\s+/', ' ', $value));
 
 		// Remove duplicates
-		if ( ! empty($value))
+		if ($value !== '')
 		{
 			$value = array_unique(explode(' ', $value));
 			$value = implode(' ', $value);
@@ -543,8 +569,9 @@ abstract class Kohana_MMI_Form_Field
 		$post = Security::xss_clean($_POST);
 		if ( ! empty($post))
 		{
+			$name = MMI_Form::clean_id($this->name());
 			$original = Arr::get($this->_meta, 'original');
-			$posted = strval(Arr::get($post, $this->id(), ''));
+			$posted = Arr::get($post, $name, '');
 			$this->_meta['posted'] = $posted;
 			$this->_meta['updated'] = ($original !== $posted);
 			$this->_attributes['value'] = $posted;
@@ -587,16 +614,14 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _label_meta()
 	{
-		$attributes = $this->_attributes;
-		$meta = $this->_meta;
-		$label = Arr::get($meta, 'label', array());
+		$label = Arr::get($this->_meta, 'label', array());
 		if ( ! is_array($label))
 		{
 			$label = array('_html' => $label);
 		}
 		$label['for'] = $this->id();
-		$html = strval(Arr::get($label, '_html', ''));
-		if ( ! empty($html) AND substr($html, -1) !== ':')
+		$html = trim(strval(Arr::get($label, '_html', '')));
+		if ($html !== '' AND substr($html, -1) !== ':')
 		{
 			$html .= ':';
 		}
@@ -630,9 +655,9 @@ abstract class Kohana_MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$attributes = $this->_get_view_attributes();
-		$id = strval(Arr::get($attributes, 'id', ''));
-		$name = strval(Arr::get($attributes, 'name', ''));
-		if (empty($name) AND ! empty($id))
+		$id = trim(strval(Arr::get($attributes, 'id', '')));
+		$name = trim(strval(Arr::get($attributes, 'name', '')));
+		if ($name === '' AND $id !== '')
 		{
 			$attributes['name'] = $id;
 		}
@@ -665,11 +690,12 @@ abstract class Kohana_MMI_Form_Field
 		}
 		else
 		{
-			$attributes['id'] = $this->id();
-			$name = strval(Arr::get($this->_attributes, 'name', ''));
-			if (empty($name))
+			$id = $this->id();
+			$attributes['id'] = $id;
+			$name = trim(strval(Arr::get($this->_attributes, 'name', '')));
+			if ($name === '')
 			{
-				$attributes['name'] = $this->id();
+				$attributes['name'] = $id;
 			}
 			else
 			{
@@ -697,9 +723,9 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		// If a title is not set, use the description if present
-		$description = strval(Arr::get($meta, 'description', ''));
-		$title = strval(Arr::get($attributes, 'title', ''));
-		if (empty($title) AND ! empty($description))
+		$description = trim(strval(Arr::get($meta, 'description', '')));
+		$title = trim(strval(Arr::get($attributes, 'title', '')));
+		if ($title === '' AND $description !== '')
 		{
 			$attributes['title'] = $description;
 		}
@@ -743,8 +769,8 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		// Process pattern attribute
-		$pattern = Arr::get($attributes, 'pattern');
-		if ( ! empty($pattern))
+		$pattern = trim(strval(Arr::get($attributes, 'pattern', '')));
+		if ($pattern !== '')
 		{
 			if (substr($pattern, 0, 1) !== '/')
 			{
@@ -867,7 +893,7 @@ abstract class Kohana_MMI_Form_Field
 	{
 		$id = MMI_Form::clean_id($id);
 		$namespace = MMI_Form::clean_id($namespace);
-		if (empty($namespace))
+		if ($namespace === '')
 		{
 			return $id;
 		}
@@ -889,7 +915,7 @@ abstract class Kohana_MMI_Form_Field
 	{
 		$name = preg_replace('/[^-a-z\d_\[\]]/i', '', $name);
 		$namespace = MMI_Form::clean_id($namespace);
-		if (empty($namespace))
+		if ($namespace === '')
 		{
 			return $name;
 		}
