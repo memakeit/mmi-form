@@ -32,6 +32,27 @@ class Kohana_MMI_Form_Field_Group_Checkbox extends MMI_Form_Field_Group
 	}
 
 	/**
+	 * Get or set the field name.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	string	the field name
+	 * @return	mixed
+	 */
+	public function name($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			$name = parent::name();
+			if ($name !== '')
+			{
+				$name .= '[]';
+			}
+			return $name;
+		}
+		return parent::name($value);
+	}
+
+	/**
 	 * Get the item id.
 	 *
 	 * @return	string
@@ -39,21 +60,5 @@ class Kohana_MMI_Form_Field_Group_Checkbox extends MMI_Form_Field_Group
 	protected function _get_item_id()
 	{
 		return MMI_Form::clean_id('cb_id_'.self::$_cb_count++);
-	}
-
-	/**
-	 * Get the field name.
-	 *
-	 * @return	string
-	 */
-	protected function _get_name()
-	{
-		$name = strval(Arr::get($this->_attributes, 'name', ''));
-		if ( ! empty($name))
-		{
-			$namespace = Arr::get($this->_meta, 'namespace');
-			$name = MMI_Form::clean_id(MMI_Form_field::field_id($name, $namespace)).'[]';
-		}
-		return $name;
 	}
 } // End Kohana_MMI_Form_Field_Group_Checkbox
