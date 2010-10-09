@@ -10,25 +10,6 @@
 abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 {
 	/**
-	 * Set default options.
-	 *
-	 * @param	array	an associative array of field options
-	 * @return	void
-	 */
-	public function __construct($options = array())
-	{
-		if ( ! is_array($options))
-		{
-			$options = array();
-		}
-		if (empty($options['_order']))
-		{
-			$options['_order'] = array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR);
-		}
-		parent::__construct($options);
-	}
-
-	/**
 	 * Reset the form field.
 	 *
 	 * @return	void
@@ -37,6 +18,18 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 	{
 		$this->_errors = array();
 		$this->_state = MMI_Form::STATE_INITIAL | MMI_Form::STATE_RESET;
+	}
+
+	/**
+	 * Get the label settings.
+	 *
+	 * @return	array
+	 */
+	protected function _label_meta()
+	{
+		$label = parent::_label_meta();
+		$label['_html'] = trim($label['_html'], ':');
+		return $label;
 	}
 
 	/**
