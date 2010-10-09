@@ -22,13 +22,13 @@ class Kohana_MMI_Form_Field_Textarea extends MMI_Form_Field
 			$options = array();
 		}
 
-		$text = strval(Arr::get($options, '_text', ''));
-		$value = strval(Arr::get($options, 'value', ''));
-		if (empty($text) AND ! empty($value))
+		$text = trim(strval(Arr::get($options, '_text', '')));
+		$value = trim(strval(Arr::get($options, 'value', '')));
+		if ($text === '' AND $value !== '')
 		{
 			$options['_text'] = $value;
 		}
-		elseif ( ! empty($text))
+		elseif ($text !== '')
 		{
 			if ( ! array_key_exists('_default', $options))
 			{

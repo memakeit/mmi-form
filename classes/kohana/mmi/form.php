@@ -139,8 +139,8 @@ class Kohana_MMI_Form
 		}
 
 		// Add the namespace
-		$namespace = $field->meta('namespace');
-		if ( ! empty($namespace))
+		$namespace = trim(strval($field->meta('namespace')));
+		if ($namespace !== '')
 		{
 			$id = self::clean_id($namespace);
 			$namespace = trim($namespace);
@@ -178,6 +178,7 @@ class Kohana_MMI_Form
 			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
 			throw new Kohana_Exception($msg);
 		}
+		$namespace = trim(strval($namespace));
 
 		// Process a form object
 		if ($field instanceof MMI_Form_Field)
@@ -190,12 +191,12 @@ class Kohana_MMI_Form
 		}
 
 		// Process wildcards
-		elseif ($field === '*' AND empty($namespace))
+		elseif ($field === '*' AND $namespace === '')
 		{
 			// Remove all fields
 			$this->_fields = array();
 		}
-		elseif ($field === '*' AND ! empty($namespace))
+		elseif ($field === '*' AND $namespace !== '')
 		{
 			// Remove all fields for the namespace
 			$namespace = self::clean_id($namespace);
@@ -410,7 +411,9 @@ class Kohana_MMI_Form
 	public function field($id = NULL, $namespace = NULL)
 	{
 		$fields = $this->_fields;
-		if ( ! empty($id))
+		$id = trim(strval($id));
+		$namespace = trim(strval($namespace));
+		if ($id !== '')
 		{
 			$id = self::clean_id($id);
 			$namespace = self::clean_id($namespace);
@@ -423,7 +426,7 @@ class Kohana_MMI_Form
 				}
 			}
 		}
-		elseif (empty($id) AND ! empty($namespace))
+		elseif ($id === '' AND $namespace != '')
 		{
 			$namespace = self::clean_id($namespace);
 			$found = array();
@@ -674,7 +677,8 @@ class Kohana_MMI_Form
 	 */
 	public function add_csrf($id = NULL)
 	{
-		if (empty($id))
+		$id = trim(strval($id));
+		if ($id === '')
 		{
 			$id = 'mmi_csrf';
 		}
@@ -713,6 +717,7 @@ class Kohana_MMI_Form
 	 */
 	public function add_submit($text = 'Submit', $options = array())
 	{
+		$options['_before'] = '<div class="submit">';
 		$options['value'] = $text;
 		$this->add_field('submit', $options);
 		return $this;
@@ -880,7 +885,7 @@ class Kohana_MMI_Form
 		$value = trim(preg_replace('/\s+/', ' ', $value));
 
 		// Remove duplicates
-		if ( ! empty($value))
+		if ($value !== '')
 		{
 			$value = array_unique(explode(' ', $value));
 			$value = implode(' ', $value);
@@ -1080,8 +1085,8 @@ class Kohana_MMI_Form
 		$attributes = $this->_attributes;
 
 		// Process the id and namespace
-		$id = Arr::get($attributes, 'id');
-		if ( ! empty($id))
+		$id = trim(strval(Arr::get($attributes, 'id', '')));
+		if ($id !== '')
 		{
 			$namespace = Arr::get($this->_meta, 'namespace');
 			$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);

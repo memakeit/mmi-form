@@ -22,13 +22,13 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 			$options = array();
 		}
 
-		$html = strval(Arr::get($options, '_html', ''));
-		$value = strval(Arr::get($options, 'value', ''));
-		if (empty($html) AND ! empty($value))
+		$html = trim(strval(Arr::get($options, '_html', '')));
+		$value = trim(strval(Arr::get($options, 'value', '')));
+		if ($html === '' AND $value !== '')
 		{
 			$options['_html'] = $value;
 		}
-		elseif ( ! empty($html))
+		elseif ($html !== '')
 		{
 			if ( ! array_key_exists('_default', $options))
 			{

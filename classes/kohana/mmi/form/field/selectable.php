@@ -25,8 +25,8 @@ abstract class Kohana_MMI_Form_Field_Selectable extends MMI_Form_Field
 			$options = array();
 		}
 
-		$value = strval(Arr::get($options, 'value', ''));
-		if ( ! array_key_exists('_selected', $options) AND ! empty($value))
+		$value = trim(strval(Arr::get($options, 'value', '')));
+		if ($value !== '' AND ! array_key_exists('_selected', $options))
 		{
 			$options['_selected'] = $value;
 		}
@@ -130,15 +130,14 @@ abstract class Kohana_MMI_Form_Field_Selectable extends MMI_Form_Field
 	}
 
 	/**
-	 * Merge the user-specified and config file settings.
-	 * Separate the meta data from the HTML attributes.
+	 * Set the default and original values.
 	 *
 	 * @param	array	an associative array of field options
 	 * @return	void
 	 */
 	protected function _init_options($options)
 	{
-		// Set default and original values
+		// Set the default and original values
 		$selected = Arr::get($options, '_selected', '');
 		if ( ! array_key_exists('_default', $options))
 		{

@@ -155,7 +155,7 @@ class Kohana_MMI_Form_FieldSet
 		$value = trim(preg_replace('/\s+/', ' ', $value));
 
 		// Remove duplicates
-		if ( ! empty($value))
+		if ($value !== '')
 		{
 			$value = array_unique(explode(' ', $value));
 			$value = implode(' ', $value);
@@ -252,8 +252,8 @@ class Kohana_MMI_Form_FieldSet
 	{
 		// Process the legend
 		$meta = $this->_meta;
-		$legend = strval(Arr::get($meta, 'legend', ''));
-		if ( ! empty($legend))
+		$legend = trim(strval(Arr::get($meta, 'legend', '')));
+		if ($legend !== '')
 		{
 			$legend = '<legend>'.$legend.'</legend>';
 		}
@@ -279,17 +279,17 @@ class Kohana_MMI_Form_FieldSet
 		$meta = $this->_meta;
 
 		// Process the id and namespace
-		$id = strval(Arr::get($attributes, 'id', ''));
-		if ( ! empty($id))
+		$id = trim(strval(Arr::get($attributes, 'id', '')));
+		if ($id !== '')
 		{
 			$namespace = Arr::get($meta, 'namespace');
 			$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
 		}
 
 		// If a title is not set, use the description if present
-		$description = strval(Arr::get($meta, 'description', ''));
-		$title = strval(Arr::get($attributes, 'title', ''));
-		if (empty($title) AND ! empty($description))
+		$description = trim(strval(Arr::get($meta, 'description', '')));
+		$title = trim(strval(Arr::get($attributes, 'title', '')));
+		if ($title === '' AND $description !== '')
 		{
 			$attributes['title'] = $description;
 		}

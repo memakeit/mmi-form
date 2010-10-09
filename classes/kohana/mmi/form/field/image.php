@@ -49,8 +49,8 @@ class Kohana_MMI_Form_Field_Image extends MMI_Form_Field
 	protected function _get_view_parms()
 	{
 		$parms = parent::_get_view_parms();
-		$src = strval(Arr::get($parms['attributes'], 'src', ''));
-		if ( ! empty($src))
+		$src = trim(strval(Arr::get($parms['attributes'], 'src', '')));
+		if ($src !== '')
 		{
 			if (strpos($src, '://') === FALSE)
 			{

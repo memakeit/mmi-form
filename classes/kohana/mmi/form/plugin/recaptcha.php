@@ -46,9 +46,9 @@ class Kohana_MMI_Form_Plugin_reCAPTCHA extends MMI_Form_Plugin implements MMI_Fo
 
 		// Ensure a public and private key are configured
 		$config = array_merge(self::get_config(TRUE), $options);
-		$private_key = strval(Arr::get($config, 'private_key', ''));
-		$public_key = strval(Arr::get($config, 'public_key', ''));
-		if (empty($private_key) OR empty($public_key))
+		$private_key = trim(strval(Arr::get($config, 'private_key', '')));
+		$public_key = trim(strval(Arr::get($config, 'public_key', '')));
+		if ($private_key === '' OR $public_key === '')
 		{
 			$msg = 'A public_key and private_key must be specified in the reCAPTCHA configuration file.';
 			MMI_Log::log_error(__METHOD__, __LINE__, $msg);

@@ -29,8 +29,8 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 		}
 		parent::__construct($options);
 
-		$id = strval(Arr::get($this->_options, 'id', ''));
-		if (empty($id))
+		$id = trim(strval(Arr::get($this->_options, 'id', '')));
+		if ($id === '')
 		{
 			$this->_options['id'] = 'mmi_token';
 		}

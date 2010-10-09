@@ -27,8 +27,8 @@ class Kohana_MMI_Form_Field_HTML extends MMI_Form_Field
 		}
 
 		// Process HTML when a string is initially specified
-		$scalar = strval(Arr::get($options, '_scalar', ''));
-		if ( ! empty($scalar))
+		$scalar = trim(strval(Arr::get($options, '_scalar', '')));
+		if ($scalar !== '')
 		{
 			$options['id'] = str_replace('.', '', microtime(TRUE));
 			$options['_html'] = $scalar;
@@ -36,11 +36,11 @@ class Kohana_MMI_Form_Field_HTML extends MMI_Form_Field
 		}
 
 		$options['type'] = 'html';
-		if (empty($options['_order']))
+		if ( ! array_key_exists('_order', $options))
 		{
 			$options['_order'] = array(MMI_Form::ORDER_FIELD);
 		}
-		if (empty($options['_source']))
+		if ( ! array_key_exists('_source', $options))
 		{
 			$options['_source'] = self::SRC_STRING;
 		}
