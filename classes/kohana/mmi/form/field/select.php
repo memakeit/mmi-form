@@ -59,8 +59,9 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field_Selectable
 		$post = Security::xss_clean($_POST);
 		if ( ! empty($post))
 		{
+			$name = MMI_Form::clean_id($this->name());
 			$original = Arr::get($this->_meta, 'original');
-			$posted = Arr::get($post, $this->id(), '');
+			$posted = Arr::get($post, $name, '');
 			$this->_meta['posted'] = $posted;
 			$this->_meta['selected'] = $posted;
 			$this->_meta['updated'] = ($original !== $posted);
