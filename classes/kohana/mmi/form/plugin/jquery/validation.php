@@ -162,7 +162,7 @@ EOJS;
 	 */
 	protected function _normalize_spaces($value)
 	{
-		if ( ! empty($value))
+		if (trim(strval($value)) !== '')
 		{
 			$value = UTF8::trim(preg_replace('/[\s\n\r\t]+/', ' ', $value));
 		}
@@ -180,11 +180,12 @@ EOJS;
 		$ignore = array('button', 'hidden', 'image', 'reset', 'submit');
 		foreach ($fields as $field)
 		{
-			$field_name = MMI_Form_Field::field_id($field->attribute('id'), $field->meta('namespace'));
+			$field_name = $field->name();
 			if (strpos($field_name, '[]') !== FALSE)
 			{
 				$field_name = "'".$field_name."'";
 			}
+
 			if ( ! in_array($field->attribute('type'), $ignore))
 			{
 				$rules = $field->meta('rules');
@@ -797,7 +798,7 @@ function(error, element)
 {
 	if (element.hasClass('group'))
 	{
-		error.insertAfter(element.parent().prev().children()[0]);
+		error.insertAfter(element.parent().find('label' + validator.settings.errorClass));
 	}
 	else
 	{
@@ -866,7 +867,7 @@ EOJS;
 	 * @param	string	the id of the buttons container
 	 * @return	string
 	 */
-	public static function get_default_submit_handler($status_id = '#frm_status', $buttons_id = 'form.frm p.btn', $message = 'Submitting ...')
+	public static function get_default_submit_handler($status_id = '#frm_status', $buttons_id = 'div.submit', $message = 'Submitting ...')
 	{
 return<<<EOJS
 function(frm)
