@@ -151,8 +151,7 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 		}
 
 		// Ensure group sub-arrays are properly merged
-		$group_config = self::get_config()->get($options['type'], array());
-		$group_config = Arr::get($group_config, '_group', array());
+		$group_config = self::get_config()->get('_group', array());
 		foreach (array('_error', '_item', '_label') as $name)
 		{
 			$default = Arr::get($group_config, $name, array());

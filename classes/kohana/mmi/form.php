@@ -717,7 +717,6 @@ class Kohana_MMI_Form
 	 */
 	public function add_submit($text = 'Submit', $options = array())
 	{
-		$options['_before'] = '<div class="submit">';
 		$options['value'] = $text;
 		$this->add_field('submit', $options);
 		return $this;
