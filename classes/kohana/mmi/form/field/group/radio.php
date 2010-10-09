@@ -40,20 +40,4 @@ class Kohana_MMI_Form_Field_Group_Radio extends MMI_Form_Field_Group
 	{
 		return MMI_Form::clean_id('rb_id_'.self::$_rb_count++);
 	}
-
-	/**
-	 * Get the field name.
-	 *
-	 * @return	string
-	 */
-	protected function _get_name()
-	{
-		$name = strval(Arr::get($this->_attributes, 'name', ''));
-		if ( ! empty($name))
-		{
-			$namespace = Arr::get($this->_meta, 'namespace');
-			$name = MMI_Form::clean_id(MMI_Form_field::field_id($name, $namespace));
-		}
-		return $name;
-	}
 } // End Kohana_MMI_Form_Field_Group_Radio
