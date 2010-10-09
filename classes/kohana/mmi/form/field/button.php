@@ -41,7 +41,7 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 		}
 
 		$options['_type'] = 'button';
-		if (empty($options['type']))
+		if ( ! array_key_exists('type', $options))
 		{
 			$options['type'] = 'button';
 		}
