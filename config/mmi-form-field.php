@@ -1,6 +1,18 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 // Field-specific configuration
+$no_error = array
+(
+	'_after' => PHP_EOL.'</div>',
+	'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
+);
+$simple = array
+(
+	'_before' => '<div>',
+	'_after' => '</div>',
+	'_order' => array(MMI_Form::ORDER_FIELD),
+);
+
 return array
 (
 	'_defaults' => array
@@ -8,31 +20,30 @@ return array
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD, MMI_Form::ORDER_ERROR),
 		'class' => 'fld',
 	),
-	'button' => array
+	'_group' => array
 	(
-		'_before' => '<div>',
+		'_before' => '',
 		'_after' => '</div>',
-		'_order' => array(MMI_Form::ORDER_FIELD),
+		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
+		'_item'=> array
+		(
+			'_before' => '',
+			'_after' => '',
+			'_label' => array('_before' => '', '_after' => '<br />'),
+			'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL),
+			'class' => 'group',
+		),
+		'_error' => array('_after' => '<br />'),
+		'_label' => array
+		(
+			'_before' => '<div class="group">',
+			'_after' => '',
+		),
 	),
+	'button' => $simple,
 	'checkbox' => array
 	(
-		'_group' => array
-		(
-			'_before' => '<div class="cbg">',
-			'_after' => '</div>',
-			'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL),
-			'_field'=> array
-			(
-				'_before' => '',
-				'_after' => '',
-			),
-			'_error' => array(),
-			'_label' => array
-			(
-				'_before' => '',
-				'_after' => '<br />',
-			),
-		)
+		'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
 	),
 	'datalist' => array
 	(
@@ -40,61 +51,19 @@ return array
 		'_after' => PHP_EOL,
 		'_order' => array(MMI_Form::ORDER_FIELD),
 	),
-	'hidden' => array
-	(
-		'_before' => '<div>',
-		'_after' => '</div>',
-		'_order' => array(MMI_Form::ORDER_FIELD),
-	),
+	'hidden' => $simple,
 	'radio' => array
 	(
-		'_group' => array
-		(
-			'_before' => '<div class="rbg">',
-			'_after' => '</div>',
-			'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL),
-			'_field' => array
-			(
-				'_before' => '',
-				'_after' => '',
-			),
-			'_error' => array(),
-			'_label' => array
-			(
-				'_before' => '',
-				'_after' => '<br />',
-			)
-		)
+		'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
 	),
-	'keygen' => array
-	(
-		'_after' => PHP_EOL.'</div>',
-		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
-	),
-	'meter' => array
-	(
-		'_after' => PHP_EOL.'</div>',
-		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
-	),
-	'output' => array
-	(
-		'_after' => PHP_EOL.'</div>',
-		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
-	),
-	'progress' => array
-	(
-		'_after' => PHP_EOL.'</div>',
-		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
-	),
-	'reset' => array
-	(
-		'_before' => '<div>',
-		'_after' => '</div>',
-		'_order' => array(MMI_Form::ORDER_FIELD),
-	),
+	'keygen' => $no_error,
+	'meter' => $no_error,
+	'output' => $no_error,
+	'progress' => $no_error,
+	'reset' => $simple,
 	'submit' => array
 	(
-		'_before' => '<div>',
+		'_before' => '<div class="submit">',
 		'_after' => '</div>',
 		'_order' => array(MMI_Form::ORDER_FIELD),
 	),
@@ -105,6 +74,6 @@ return array
 		'_error' => array('_after' => ''),
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
 		'cols' => 80,
-		'rows' => 8
+		'rows' => 8,
 	),
 );
