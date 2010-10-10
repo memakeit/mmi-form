@@ -285,4 +285,15 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 		$label['_html'] = $html;
 		return $label;
 	}
+
+	/**
+	 * Finalize validation rules.
+	 *
+	 * @return	void
+	 */
+	protected function _finalize_rules()
+	{
+		MMI_Form_Rule_MinMax_Items::init($this);
+		parent::_finalize_rules();
+	}
 } // End Kohana_MMI_Form_Field_Group

@@ -35,9 +35,12 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		'credit_card'	=> 'creditcard',
 		'digits'		=> 'digit',
 		'matches'		=> 'equalTo',
+		'max_items'		=> 'maxlength',
 		'max_length'	=> 'maxlength',
+		'min_items'		=> 'minlength',
 		'min_length'	=> 'minlength',
 		'not_empty'		=> 'required',
+		'range_items'	=> 'rangelength',
 	);
 
 	/**
@@ -170,7 +173,7 @@ EOJS;
 	}
 
 	/**
-	 * Generate the jQuery validation rules from the Kohana validation rules.
+	 * Generate the jQuery validation rules.
 	 *
 	 * @return	void
 	 */
@@ -180,84 +183,140 @@ EOJS;
 		$ignore = array('button', 'hidden', 'image', 'reset', 'submit');
 		foreach ($fields as $field)
 		{
-			$field_name = $field->name();
-			if (strpos($field_name, '[]') !== FALSE)
-			{
-				$field_name = "'".$field_name."'";
-			}
-
 			if ( ! in_array($field->attribute('type'), $ignore))
 			{
-				$rules = $field->meta('rules');
-				if ( ! is_array($rules))
-				{
-					$rules = array();
-				}
-				foreach ($rules as $rule_name => $rule_parms)
-				{
-					$label = trim(Arr::get($field->meta('label'), 'html'), ':');
-					$jquery_rule = $this->_get_jquery_rule_name($rule_name);
-					$msg = MMI_Form_Messages::format_error_msg($label, $rule_name, $rule_parms);
-					$parms = $this->_parse_rule_parms($rule_name, $rule_parms);
-
-					switch($rule_name)
-					{
-						// Built-in validation methods
-						case 'max_length':
-							// This rule is handled by the input attribute maxlength
-							break;
-
-						case 'date':
-						case 'email':
-						case 'matches':
-						case 'min_length':
-						case 'not_empty':
-						case 'range':
-						case 'url':
-							$this->_options['messages'][$field_name][$jquery_rule] = $msg;
-							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-							break;
-
-						// Custom validation methods
-						case 'alpha':
-						case 'alpha_dash':
-						case 'alpha_numeric':
-						case 'color':
-						case 'decimal':
-						case 'exact_length':
-						case 'ip':
-						case 'numeric':
-						case 'phone':
-							$this->_methods[] = $jquery_rule;
-							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-							break;
-
-						case 'credit_card':
-							$extra_rule = 'credit_card_type';
-							$this->_methods[] = $extra_rule;
-							$this->_options['rules'][$field_name][$extra_rule] = (count($rule_parms) === 1) ? $rule_parms[0] : 'default';
-							$this->_options['rules'][$field_name][$jquery_rule] = TRUE;
-							break;
-
-						case 'digit':
-							if ($this->_unicode)
-							{
-								$jquery_rule = 'digits_unicode';
-								$this->_methods[] = $jquery_rule;
-							}
-							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-							break;
-
-						case 'regex':
-							$this->_methods[] = $jquery_rule;
-							$parms = preg_quote(substr($parms, 1, -1));
-							$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-							break;
-					}
-				}
+				$this->_generate_kohana_rules($field);
+				$this->_generate_custom_rules($field);
+				$this->_process_min_max_attr($field);
 			}
-			$this->_process_min_max_attr($field);
 		}
+	}
+
+	/**
+	 * Generate jQuery validation rules that have equivalent Kohana validation rules.
+	 *
+	 * @param	MMI_Form_Field	the form field object
+	 * @return	void
+	 */
+	protected function _generate_kohana_rules($field)
+	{
+		$field_name = $this->_get_field_name($field);
+		$rules = $field->meta('rules');
+		if ( ! is_array($rules))
+		{
+			$rules = array();
+		}
+		foreach ($rules as $rule_name => $rule_parms)
+		{
+			$label = trim(Arr::get($field->meta('label'), 'html'), ':');
+			$jquery_rule = $this->_get_jquery_rule_name($rule_name);
+			$msg = MMI_Form_Messages::format_error_msg($label, $rule_name, $rule_parms);
+			$parms = $this->_parse_rule_parms($rule_name, $rule_parms);
+
+			switch($rule_name)
+			{
+				// Built-in validation methods
+				case 'max_length':
+					// This rule is handled by the input attribute maxlength
+					break;
+
+				case 'date':
+				case 'email':
+				case 'matches':
+				case 'min_length':
+				case 'not_empty':
+				case 'range':
+				case 'url':
+					$this->_options['messages'][$field_name][$jquery_rule] = $msg;
+					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
+					break;
+
+				// Custom validation methods
+				case 'alpha':
+				case 'alpha_dash':
+				case 'alpha_numeric':
+				case 'color':
+				case 'decimal':
+				case 'exact_length':
+				case 'ip':
+				case 'numeric':
+				case 'phone':
+					$this->_methods[] = $jquery_rule;
+					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
+					break;
+
+				case 'credit_card':
+					$extra_rule = 'credit_card_type';
+					$this->_methods[] = $extra_rule;
+					$this->_options['rules'][$field_name][$extra_rule] = (count($rule_parms) === 1) ? $rule_parms[0] : 'default';
+					$this->_options['rules'][$field_name][$jquery_rule] = TRUE;
+					break;
+
+				case 'digit':
+					if ($this->_unicode)
+					{
+						$jquery_rule = 'digits_unicode';
+						$this->_methods[] = $jquery_rule;
+					}
+					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
+					break;
+
+				case 'regex':
+					$this->_methods[] = $jquery_rule;
+					$parms = preg_quote(substr($parms, 1, -1));
+					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
+					break;
+			}
+		}
+	}
+
+	/**
+	 * Generate jQuery validation rules from the custom_rules of the form field.
+	 *
+	 * @param	MMI_Form_Field	the form field object
+	 * @return	void
+	 */
+	protected function _generate_custom_rules($field)
+	{
+		$field_name = $this->_get_field_name($field);
+		$rules = $field->meta('custom_rules');
+		if ( ! is_array($rules))
+		{
+			$rules = array();
+		}
+		foreach ($rules as $rule_name => $rule_parms)
+		{
+			$label = trim(Arr::get($field->meta('label'), 'html'), ':');
+			$jquery_rule = $this->_get_jquery_rule_name($rule_name);
+			$msg = MMI_Form_Messages::format_error_msg($label, 'cust_'.$rule_name, $rule_parms);
+			$parms = $this->_parse_rule_parms($rule_name, $rule_parms);
+
+			switch($rule_name)
+			{
+				case 'max_items':
+				case 'min_items':
+				case 'range_items':
+					$this->_options['messages'][$field_name][$jquery_rule] = $msg;
+					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
+					break;
+			}
+		}
+	}
+
+	/**
+	 * Get the field name, enclosing it in quotes when necessary.
+	 *
+	 * @param	MMI_Form_Field	the form field object
+	 * @return	string
+	 */
+	protected function _get_field_name($field)
+	{
+		$field_name = $field->name();
+		if (strpos($field_name, '[]') !== FALSE)
+		{
+			$field_name = "'".$field_name."'";
+		}
+		return $field_name;
 	}
 
 	/**

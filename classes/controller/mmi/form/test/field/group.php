@@ -34,6 +34,10 @@ class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Fiel
 			),
 			'_group' => array('_label' => 'CB Group 1'),
 			'_namespace' => 'mmi',
+			'_rules' => array
+			(
+				'min_items' => array('min' => 2)
+			),
 			'class' => 'checkbox',
 			'id' => 'checkbox1',
 			'name' => 'cbgroup1',
@@ -49,6 +53,10 @@ class Controller_MMI_Form_Test_Field_Group extends Controller_MMI_Form_Test_Fiel
 		$settings = array_merge($settings, array
 		(
 			'_group' => array('_label' => 'CB Group 2'),
+			'_rules' => array
+			(
+				'range_items' => array('min' => 2, 'max' => 3),
+			),
 			'id' => 'checkbox2',
 			'name' => 'cbgroup2',
 			'required' => FALSE,

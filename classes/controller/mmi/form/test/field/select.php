@@ -27,6 +27,10 @@ class Controller_MMI_Form_Test_Field_Select extends Controller_MMI_Form_Test_Fie
 		(
 			'_label' => 'Select 1',
 			'_namespace' => 'mmi',
+			'_rules' => array
+			(
+				'range_items' => array('min' => 2, 'max' => 3)
+			),
 			'_selected' => 'value2',
 			'class' => 'select',
 			'id' => 'select1',

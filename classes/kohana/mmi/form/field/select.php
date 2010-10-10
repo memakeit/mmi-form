@@ -45,6 +45,28 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field_Selectable
 	}
 
 	/**
+	 * Get or set the field name.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	string	the field name
+	 * @return	mixed
+	 */
+	public function name($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			$name = parent::name();
+			$multiple = Arr::get($this->_attributes, 'multiple', FALSE);
+			if ( ! empty($multiple))
+			{
+				$name .= '[]';
+			}
+			return $name;
+		}
+		return parent::name($value);
+	}
+
+	/**
 	 * Load the post data.
 	 *
 	 * @return	void
@@ -90,12 +112,12 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field_Selectable
 			{
 				unset($parms['attributes']['multiple']);
 			}
-			$parms['attributes']['name'] = Arr::get($attributes, 'name', '');
+			$parms['attributes']['name'] = $this->name();
 		}
 		else
 		{
 			$parms['attributes']['multiple'] = 'multiple';
-			$parms['attributes']['name'] = Arr::get($attributes, 'name', '').'[]';
+			$parms['attributes']['name'] = $this->name();
 			$parms['attributes']['size'] = Arr::get($attributes, 'size', 5);
 		}
 		return $parms;
@@ -138,5 +160,34 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field_Selectable
 			return MMI_HTML5_Attributes_Select::get();
 		}
 		return MMI_HTML4_Attributes_Select::get();
+	}
+
+	/**
+	 * Finalize validation rules.
+	 *
+	 * @return	void
+	 */
+	protected function _finalize_rules()
+	{
+		$multiple = Arr::get($this->_attributes, 'multiple', FALSE);
+		if (empty($multiple))
+		{
+			// Min, max, and range item rules are only valid for select multiple so remove them
+			$rules = Arr::get($this->_meta, 'rules', array());
+			$names = MMI_Form_Rule_MinMax_Items::get_rule_names();
+			foreach ($names as $name)
+			{
+				if (array_key_exists($name, $rules))
+				{
+					unset($rules[$name]);
+				}
+			}
+			$this->_meta['rules'] = $rules;
+		}
+		else
+		{
+			MMI_Form_Rule_MinMax_Items::init($this);
+		}
+		parent::_finalize_rules();
 	}
 } // End Kohana_MMI_Form_Field_Select
