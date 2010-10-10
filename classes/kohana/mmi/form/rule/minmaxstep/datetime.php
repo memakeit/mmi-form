@@ -116,7 +116,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 	}
 
 	/**
-	 * Test if a value is less than or equal than a maximum value.
+	 * Test if a value is less than or equal to a maximum value.
 	 *
 	 * @param 	Validate	the validation object
 	 * @param	string		the field name
@@ -154,7 +154,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 	}
 
 	/**
-	 * Test if a value is greater than or equal than a minimum value.
+	 * Test if a value is greater than or equal to a minimum value.
 	 *
 	 * @param 	Validate	the validation object
 	 * @param	string		the field name
