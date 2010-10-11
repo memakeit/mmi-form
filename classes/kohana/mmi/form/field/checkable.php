@@ -101,7 +101,7 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 	{
 		$checked = FALSE;
 		$is_group = Arr::get($this->_meta, 'is_group', FALSE);
-		if ( ! $is_group AND $this->_post_data_loaded AND ! ($this->_state & MMI_FORM::STATE_RESET))
+		if ( ! $is_group AND $this->_post_data_loaded AND ! ($this->_state & MMI_Form::STATE_RESET))
 		{
 			$value = trim(strval(Arr::get($_POST, $this->id(), '')));
 			$checked = ($value !== '');
