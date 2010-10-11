@@ -10,14 +10,9 @@
 class Controller_MMI_Form_Test_Form_reCAPTCHA extends Controller
 {
 	/**
-	 * @var string the cache type
-	 **/
-	public $cache_type = MMI_Cache::CACHE_TYPE_NONE;
-
-	/**
 	 * @var boolean turn debugging on?
 	 **/
-	public $debug = TRUE;
+	public $debug = FALSE;
 
 	public function action_index()
 	{
@@ -52,6 +47,9 @@ class Controller_MMI_Form_Test_Form_reCAPTCHA extends Controller
 
 		$html = trim($form->render());
 		echo $html;
-		MMI_Debug::mdump($html, 'form', $form);
+		if ($this->debug)
+		{
+			MMI_Debug::mdump($html, 'form', $form);
+		}
 	}
 } // End Controller_MMI_Form_Test_Form_reCAPTCHA

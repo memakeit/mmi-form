@@ -10,11 +10,6 @@
 class Controller_MMI_Form_Test_Form_Form extends Controller
 {
 	/**
-	 * @var string the cache type
-	 **/
-	public $cache_type = MMI_Cache::CACHE_TYPE_NONE;
-
-	/**
 	 * @var boolean turn debugging on?
 	 **/
 	public $debug = TRUE;
