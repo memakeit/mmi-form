@@ -119,7 +119,10 @@ class Kohana_MMI_Form
 		if ($this->_state !== self::STATE_INITIAL)
 		{
 			$msg = 'Fields can only be added when the form is in its initial state.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 
@@ -175,7 +178,10 @@ class Kohana_MMI_Form
 		if ($this->_state !== self::STATE_INITIAL)
 		{
 			$msg = 'Fields can only be removed when the form is in its initial state.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 		$namespace = trim(strval($namespace));
@@ -250,7 +256,10 @@ class Kohana_MMI_Form
 		if ($this->_state !== self::STATE_INITIAL)
 		{
 			$msg = 'Plugins can only be added when the form is in its initial state.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 
@@ -293,7 +302,10 @@ class Kohana_MMI_Form
 		if ($this->_state !== self::STATE_INITIAL)
 		{
 			$msg = 'Plugins can only be removed when the form is in its initial state.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 
@@ -340,7 +352,10 @@ class Kohana_MMI_Form
 		else
 		{
 			$msg = 'Attributes can not be set after the form has been rendered.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 	}
@@ -396,7 +411,10 @@ class Kohana_MMI_Form
 		else
 		{
 			$msg = 'Errors can not be set after the form has been rendered.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 	}
@@ -479,7 +497,10 @@ class Kohana_MMI_Form
 		else
 		{
 			$msg = 'Meta data can not be set after the form has been rendered.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 	}
@@ -528,7 +549,10 @@ class Kohana_MMI_Form
 			else
 			{
 				$msg = 'Field values can not be set after the form has been rendered.';
-				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+				if (class_exists('MMI_Log'))
+				{
+					MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+				}
 				throw new Kohana_Exception($msg);
 			}
 		}

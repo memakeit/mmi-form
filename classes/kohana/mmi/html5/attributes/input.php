@@ -340,7 +340,10 @@ class Kohana_MMI_HTML5_Attributes_Input
 		if ( ! in_array($type, self::$_types))
 		{
 			$msg = 'Invalid HTML5 input type: '.$type;
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 		if (isset(self::$_attributes[$type]))

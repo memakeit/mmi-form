@@ -876,7 +876,10 @@ abstract class Kohana_MMI_Form_Field
 		if ( ! class_exists($class))
 		{
 			$msg = $class.' field does not exist.';
-			MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			if (class_exists('MMI_Log'))
+			{
+				MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+			}
 			throw new Kohana_Exception($msg);
 		}
 		return new $class($options);
