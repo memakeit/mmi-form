@@ -21,6 +21,19 @@ class Kohana_MMI_Form_Field_Week extends MMI_Form_Field
 		{
 			$options = array();
 		}
+
+		// Add regex validation rule
+		$rules = Arr::get($options, '_rules', array());
+		if ( ! is_array($rules))
+		{
+			$rules = array();
+		}
+		if ( ! array_key_exists('regex', $rules))
+		{
+			$rules['regex'] = array('/^\d{4}-W((0[1-9])|([1-4][0-9])|(5[0-3]))$/');
+		}
+		$options['_rules'] = $rules;
+
 		$options['_type'] = 'input';
 		$options['type'] = 'week';
 		parent::__construct($options);

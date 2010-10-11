@@ -21,6 +21,19 @@ class Kohana_MMI_Form_Field_Date extends MMI_Form_Field
 		{
 			$options = array();
 		}
+
+		// Add regex validation rule
+		$rules = Arr::get($options, '_rules', array());
+		if ( ! is_array($rules))
+		{
+			$rules = array();
+		}
+		if ( ! array_key_exists('regex', $rules))
+		{
+			$rules['regex'] = array('/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/');
+		}
+		$options['_rules'] = $rules;
+
 		$options['_type'] = 'input';
 		$options['type'] = 'date';
 		parent::__construct($options);

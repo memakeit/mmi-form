@@ -27,7 +27,7 @@ class Controller_MMI_Form_Test_Field_Date extends Controller_MMI_Form_Test_Field
 		(
 			'_label' => 'Date 1',
 			'_namespace' => 'mmi',
-			'class' => 'date',
+			'class' => 'dat',
 			'id' => 'date1',
 			'required' => 'required',
 			'step' => 3,
