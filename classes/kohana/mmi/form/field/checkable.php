@@ -44,12 +44,11 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 			return;
 		}
 
-		$post = Security::xss_clean($_POST);
-		if ( ! empty($post))
+		if ( ! empty($_POST))
 		{
 			$meta = $this->_meta;
 			$original = Arr::get($meta, 'original');
-			$posted = strval(Arr::get($post, $this->name(), ''));
+			$posted = $this->_apply_filters(Arr::get($_POST, $this->name(), ''));
 			$this->_meta['posted'] = $posted;
 			$this->_meta['updated'] = ($original !== $posted);
 
