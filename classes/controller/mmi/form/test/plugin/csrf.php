@@ -3,11 +3,12 @@
  * Test controller for form generation with the CSRF plugin.
  *
  * @package		MMI Form
+ * @category	plugin
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Form_CSRF extends Controller
+class Controller_MMI_Form_Test_Plugin_CSRF extends Controller
 {
 	/**
 	 * @var boolean turn debugging on?
@@ -57,4 +58,4 @@ class Controller_MMI_Form_Test_Form_CSRF extends Controller
 			MMI_Debug::mdump($html, 'form', $form);
 		}
 	}
-} // End Controller_MMI_Form_Test_Form_CSRF
+} // End Controller_MMI_Form_Test_Plugin_CSRF

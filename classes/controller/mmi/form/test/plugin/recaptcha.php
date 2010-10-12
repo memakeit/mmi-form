@@ -3,11 +3,12 @@
  * Test controller for form generation with the reCAPTCHA plugin.
  *
  * @package		MMI Form
+ * @category	plugin
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Controller_MMI_Form_Test_Form_reCAPTCHA extends Controller
+class Controller_MMI_Form_Test_Plugin_reCAPTCHA extends Controller
 {
 	/**
 	 * @var boolean turn debugging on?
@@ -52,4 +53,4 @@ class Controller_MMI_Form_Test_Form_reCAPTCHA extends Controller
 			MMI_Debug::mdump($html, 'form', $form);
 		}
 	}
-} // End Controller_MMI_Form_Test_Form_reCAPTCHA
+} // End Controller_MMI_Form_Test_Plugin_reCAPTCHA
