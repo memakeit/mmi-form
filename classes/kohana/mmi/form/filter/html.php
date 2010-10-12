@@ -118,7 +118,7 @@ class Kohana_MMI_Form_Filter_HTML
 				if ( ! $config instanceof HTMLPurifier_Config)
 				{
 					$config = HTMLPurifier_Config::createDefault();
-					$config->loadArray($options);
+					$config->loadArray($settings);
 					self::$_config_cache[$cache_key] = $config;
 				}
 			}
