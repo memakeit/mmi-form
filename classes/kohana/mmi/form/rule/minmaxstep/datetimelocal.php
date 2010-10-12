@@ -11,17 +11,34 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTimeLocal
 {
 	/**
 	 * Convert the value to a timestamp.
+	 * If a value can not be converted to a timestamp, a DateTime object is returned.
 	 *
 	 * @param	string	a valid date time format (ex. 1990-12-31T23:59:60)
-	 * @return	integer
+	 * @return	mixed
 	 */
 	public static function get_value($value)
 	{
-		return strtotime($value);
+		$output = strtotime($value);
+		if ( ! is_numeric($output))
+		{
+			$output = self::get_value_dt($value);
+		}
+		return $output;
 	}
 
 	/**
-	 * Get the default minimum value.
+	 * Convert the value to a DateTime object.
+	 *
+	 * @param	string	a valid date time format (ex. 1990-12-31T23:59:60)
+	 * @return	DateTime
+	 */
+	public static function get_value_dt($value)
+	{
+		return new DateTime($value);
+	}
+
+	/**
+	 * Get the default minimum value (as a timestamp).
 	 *
 	 * @return	integer
 	 */
@@ -31,7 +48,18 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTimeLocal
 	}
 
 	/**
+	 * Get the default minimum value (as a DateTime object).
+	 *
+	 * @return	DateTime
+	 */
+	public static function get_default_min_dt()
+	{
+		return self::get_value_dt('1970-01-01T00:00:00');
+	}
+
+	/**
 	 * Check whether the step interval is valid.
+	 * The comparison is done using timestamp values.
 	 *
 	 * @param	integer	the value
 	 * @param	integer	the base value for calculations
@@ -47,6 +75,24 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTimeLocal
 		$span = abs($value - $base);
 		$div = $span / $step;
 		return (ceil($div) == $div);
+	}
+
+	/**
+	 * Check whether the step interval is valid.
+	 * The comparison is done using DateTime values.
+	 *
+	 * @param	DateTime	the value
+	 * @param	DateTime	the base value for calculations
+	 * @param	integer	the step amount
+	 * @return	boolean
+	 */
+	public static function valid_step_dt($value, $base, $step)
+	{
+		if (class_exists('MMI_Log'))
+		{
+			MMI_Log::log_info(__METHOD__, __LINE__, 'Unable to calculate step interval using DateTime objects');
+		}
+		return TRUE;
 	}
 
 	/**

@@ -84,26 +84,31 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$mode = strtolower(Arr::get($parms, 'mode', 'date'));
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
-		$min = strval(Arr::get($parms, 'min', ''));
-		$min_orig = $min;
-		if ( ! empty($min))
-		{
-			$min = call_user_func(array($class, 'get_value'), $min);
-		}
-		$max = strval(Arr::get($parms, 'max', ''));
-		$max_orig = $max;
-		if ( ! empty($max))
-		{
-			$max = call_user_func(array($class, 'get_value'), $max);
-		}
-
 		$value = strval(Arr::get($_POST, $field, ''));
 		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
 		}
+		$method = ($value instanceof DateTime) ? 'get_value_dt' : 'get_value';
+
+		$min = strval(Arr::get($parms, 'min', ''));
+		$min_orig = $min;
+		if ( ! empty($min))
+		{
+			$min = call_user_func(array($class, $method), $min);
+		}
+		$max = strval(Arr::get($parms, 'max', ''));
+		$max_orig = $max;
+		if ( ! empty($max))
+		{
+			$max = call_user_func(array($class, $method), $max);
+		}
 
 		if (is_numeric($min) AND is_numeric($max) AND is_numeric($value) AND $value >= $min AND $value <= $max)
+		{
+			return TRUE;
+		}
+		elseif ($min instanceof DateTime AND $max instanceof DateTime AND $value instanceof DateTime AND $value >= $min AND $value <= $max)
 		{
 			return TRUE;
 		}
@@ -128,20 +133,25 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$mode = strtolower(Arr::get($parms, 'mode', 'date'));
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
-		$max = strval(Arr::get($parms, 'max', ''));
-		$max_orig = $max;
-		if ( ! empty($max))
-		{
-			$max = call_user_func(array($class, 'get_value'), $max);
-		}
-
 		$value = strval(Arr::get($_POST, $field, ''));
 		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
 		}
+		$method = ($value instanceof DateTime) ? 'get_value_dt' : 'get_value';
+
+		$max = strval(Arr::get($parms, 'max', ''));
+		$max_orig = $max;
+		if ( ! empty($max))
+		{
+			$max = call_user_func(array($class, $method), $max);
+		}
 
 		if (is_numeric($max) AND is_numeric($value) AND $value <= $max)
+		{
+			return TRUE;
+		}
+		elseif ($max instanceof DateTime AND $value instanceof DateTime AND $value <= $max)
 		{
 			return TRUE;
 		}
@@ -166,20 +176,25 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$mode = strtolower(Arr::get($parms, 'mode', 'date'));
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
-		$min = strval(Arr::get($parms, 'min', ''));
-		$min_orig = $min;
-		if ( ! empty($min))
-		{
-			$min = call_user_func(array($class, 'get_value'), $min);
-		}
-
 		$value = strval(Arr::get($_POST, $field, ''));
 		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
 		}
+		$method = ($value instanceof DateTime) ? 'get_value_dt' : 'get_value';
+
+		$min = strval(Arr::get($parms, 'min', ''));
+		$min_orig = $min;
+		if ( ! empty($min))
+		{
+			$min = call_user_func(array($class, $method), $min);
+		}
 
 		if (is_numeric($min) AND is_numeric($value) AND $value >= $min)
+		{
+			return TRUE;
+		}
+		elseif ($min instanceof DateTime AND $value instanceof DateTime AND $value >= $min)
 		{
 			return TRUE;
 		}
@@ -204,32 +219,41 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$mode = strtolower(Arr::get($parms, 'mode', 'date'));
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
+		$value = strval(Arr::get($_POST, $field, ''));
+		if ( ! empty($value))
+		{
+			$value = call_user_func(array($class, 'get_value'), $value);
+		}
+		$method = ($value instanceof DateTime) ? 'get_value_dt' : 'get_value';
+
 		$max = strval(Arr::get($parms, 'max', ''));
 		$min = strval(Arr::get($parms, 'min', ''));
 		$base = NULL;
 		if ( ! empty($min))
 		{
-			$base = call_user_func(array($class, 'get_value'), $min);
+			$base = call_user_func(array($class, $method), $min);
 		}
 		elseif ( ! empty($max))
 		{
-			$base = call_user_func(array($class, 'get_value'), $max);
+			$base = call_user_func(array($class, $method), $max);
 		}
 		if ( ! isset($base))
 		{
-			$base = call_user_func(array($class, 'get_default_min'), NULL);
-		}
-
-		$value = strval(Arr::get($_POST, $field, ''));
-		if ( ! empty($value))
-		{
-			$value = call_user_func(array($class, 'get_value'), $value);
+			$method = ($value instanceof DateTime) ? 'get_default_min_dt' : 'get_default_min';
+			$base = call_user_func(array($class, $method), NULL);
 		}
 
 		$step = Arr::get($parms, 'step');
 		if (is_numeric($step) AND is_numeric($value) AND is_numeric($base))
 		{
 			if (call_user_func_array(array($class, 'valid_step'), array($value, $base, $step)))
+			{
+				return TRUE;
+			}
+		}
+		elseif (is_numeric($step) AND $value instanceof DateTime AND $base instanceof DateTime)
+		{
+			if (call_user_func_array(array($class, 'valid_step_dt'), array($value, $base, $step)))
 			{
 				return TRUE;
 			}
@@ -249,19 +273,45 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		return FALSE;
 	}
 
+
+
+
+
+
+
+
+
+
 	/**
 	 * Convert the value to a timestamp.
+	 * If a value can not be converted to a timestamp, a DateTime object is returned.
 	 *
 	 * @param	string	a valid date time format (ex. 1990-12-31T23:59:60Z, 1996-12-19T16:39:57-08:00)
-	 * @return	integer
+	 * @return	mixed
 	 */
 	public static function get_value($value)
 	{
-		return strtotime($value);
+		$output = strtotime($value);
+		if ( ! is_numeric($output))
+		{
+			$output = self::get_value_dt($value);
+		}
+		return $output;
 	}
 
 	/**
-	 * Get the default minimum value.
+	 * Convert the value to a DateTime object.
+	 *
+	 * @param	string	a valid date time format (ex. 1990-12-31T23:59:60Z, 1996-12-19T16:39:57-08:00)
+	 * @return	DateTime
+	 */
+	public static function get_value_dt($value)
+	{
+		return new DateTime($value);
+	}
+
+	/**
+	 * Get the default minimum value (as a timestamp).
 	 *
 	 * @return	integer
 	 */
@@ -271,7 +321,18 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 	}
 
 	/**
+	 * Get the default minimum value (as a DateTime object).
+	 *
+	 * @return	DateTime
+	 */
+	public static function get_default_min_dt()
+	{
+		return self::get_value_dt('1970-01-01T00:00:00Z');
+	}
+
+	/**
 	 * Check whether the step interval is valid.
+	 * The comparison is done using timestamp values.
 	 *
 	 * @param	integer	the value
 	 * @param	integer	the base value for calculations
@@ -283,6 +344,24 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$span = abs($value - $base);
 		$div = $span / $step;
 		return (ceil($div) == $div);
+	}
+
+	/**
+	 * Check whether the step interval is valid.
+	 * The comparison is done using DateTime values.
+	 *
+	 * @param	DateTime	the value
+	 * @param	DateTime	the base value for calculations
+	 * @param	integer	the step amount
+	 * @return	boolean
+	 */
+	public static function valid_step_dt($value, $base, $step)
+	{
+		if (class_exists('MMI_Log'))
+		{
+			MMI_Log::log_info(__METHOD__, __LINE__, 'Unable to calculate step interval using DateTime objects');
+		}
+		return TRUE;
 	}
 
 	/**
