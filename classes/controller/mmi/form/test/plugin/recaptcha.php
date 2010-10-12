@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for form generation with the reCAPTCHA plugin.
+ * Test controller for the reCAPTCHA plugin.
  *
  * @package		MMI Form
  * @category	plugin
@@ -15,6 +15,11 @@ class Controller_MMI_Form_Test_Plugin_reCAPTCHA extends Controller
 	 **/
 	public $debug = FALSE;
 
+	/**
+	 * Test the reCAPTCHA plugin.
+	 *
+	 * @return	void
+	 */
 	public function action_index()
 	{
 		$settings = array

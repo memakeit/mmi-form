@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Test controller for form generation with the CSRF plugin.
+ * Test controller for the CSRF plugin.
  *
  * @package		MMI Form
  * @category	plugin
@@ -16,7 +16,7 @@ class Controller_MMI_Form_Test_Plugin_CSRF extends Controller
 	public $debug = FALSE;
 
 	/**
-	 * Test form generation.
+	 * Test the CSRF plugin.
 	 *
 	 * @return	void
 	 */
