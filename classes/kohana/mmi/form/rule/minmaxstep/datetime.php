@@ -3,6 +3,7 @@
  * Validation rules to enforce min, max, and step attributes of date-time types.
  *
  * @package		MMI Form
+ * @category	rule
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
