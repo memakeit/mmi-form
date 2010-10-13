@@ -1,6 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 // Field-specific configuration
+$checkable = array
+(
+	'_label' => array('_after' => ''),
+	'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
+);
 $no_error = array
 (
 	'_after' => PHP_EOL.'</div>',
@@ -16,11 +21,7 @@ $simple = array
 return array
 (
 	'button' => $simple,
-	'checkbox' => array
-	(
-		'_label' => array('_after' => ''),
-		'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
-	),
+	'checkbox' => $checkable,
 	'datalist' => array
 	(
 		'_before' => PHP_EOL,
@@ -28,11 +29,7 @@ return array
 		'_order' => array(MMI_Form::ORDER_FIELD),
 	),
 	'hidden' => $simple,
-	'radio' => array
-	(
-		'_after' => '',
-		'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
-	),
+	'radio' => $checkable,
 	'keygen' => $no_error,
 	'meter' => $no_error,
 	'output' => $no_error,
