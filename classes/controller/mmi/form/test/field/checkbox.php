@@ -26,7 +26,7 @@ class Controller_MMI_Form_Test_Field_Checkbox extends Controller_MMI_Form_Test_F
 		$settings = array
 		(
 			'_before' => '<div>'.PHP_EOL,
-			'_label' => array('_before' => '', '_html' => 'Checkbox 1'),
+			'_label' => 'Checkbox 1',
 			'_namespace' => 'mmi',
 			'checked' => TRUE,
 			'class' => 'checkbox',

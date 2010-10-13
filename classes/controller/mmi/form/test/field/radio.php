@@ -26,7 +26,7 @@ class Controller_MMI_Form_Test_Field_Radio extends Controller_MMI_Form_Test_Fiel
 		$settings = array
 		(
 			'_before' => '<div>'.PHP_EOL,
-			'_label' => array('_before' => '', '_html' => 'Radio Button 1'),
+			'_label' => 'Radio Button 1',
 			'_namespace' => 'mmi',
 			'checked' => FALSE,
 			'class' => 'radio',
