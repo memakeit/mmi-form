@@ -193,6 +193,17 @@ class Kohana_MMI_Form_Messages
 	}
 
 	/**
+	 * Get the message configuration settings.
+	 *
+	 * @return	array
+	 */
+	public static function get_config()
+	{
+		(self::$_config === NULL) AND self::$_config = MMI_Form::get_config()->get('_messages', array());
+		return self::$_config;
+	}
+
+	/**
 	 * Get whether messages should be translated.
 	 *
 	 * @return	boolean
@@ -228,16 +239,5 @@ class Kohana_MMI_Form_Messages
 			}
 		}
 		self::$_options = array_merge($config, $options);
-	}
-
-	/**
-	 * Get the message configuration settings.
-	 *
-	 * @return	array
-	 */
-	public static function get_config()
-	{
-		(self::$_config === NULL) AND self::$_config = MMI_Form::get_config()->get('_messages', array());
-		return self::$_config;
 	}
 } // End Kohana_MMI_Form_Messages
