@@ -522,11 +522,11 @@ abstract class Kohana_MMI_Form_Field
 		$config_type = self::get_config()->get($options['type'], array());
 		foreach (array('_callbacks', '_filters', '_rules') as $name)
 		{
-			$value_default = Arr::get($config_default, $name, array());
-			$value_type = Arr::get($config_type, $name, array());
 			$value = Arr::get($options, $name, array());
 			if ( ! empty($value))
 			{
+				$value_default = Arr::get($config_default, $name, array());
+				$value_type = Arr::get($config_type, $name, array());
 				$options[$name] = array_merge($value_default, $value_type, $value);
 			}
 		}

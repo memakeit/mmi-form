@@ -870,7 +870,11 @@ class Kohana_MMI_Form
 		}
 		if ( ! array_key_exists('_required_symbol', $options))
 		{
-			$options['_required_symbol'] = self::required_symbol();
+			$options['_required_symbol'] = array
+			(
+				'_html' => self::required_symbol(),
+				'_placement' => self::required_symbol_placement(),
+			);
 		}
 
 		// Ensure the form has an id attribute
@@ -918,14 +922,21 @@ class Kohana_MMI_Form
 		$field = Arr::get($options, '_field', array());
 		foreach (array('_error', '_item', '_label') as $name)
 		{
-			$value_default = Arr::get($field_default, $name, array());
 			$value = Arr::get($field, $name, array());
 			if ( ! empty($value))
 			{
+				$value_default = Arr::get($field_default, $name, array());
 				$field[$name] = array_merge($value_default, $value);
 			}
 		}
 		$options['_field'] = array_merge($field_default, $field);
+
+		$required = Arr::get($options, '_required_symbol', array());
+		if ( ! empty($required))
+		{
+			$required_default = $config->get('_required_symbol', array());
+			$options['_required_symbol'] = array_merge($required_default, $required);
+		}
 		return array_merge($config->as_array(), $options);
 	}
 
