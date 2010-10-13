@@ -857,7 +857,7 @@ function(error, element)
 {
 	if (element.hasClass('group'))
 	{
-		error.insertAfter(element.parent().find('label' + validator.settings.errorClass));
+		error.insertAfter(element.parent().find('label.' + validator.settings.errorClass));
 	}
 	else
 	{
@@ -898,6 +898,9 @@ EOJS;
 	 */
 	public static function get_default_invalid_handler($status_id = '#frm_status')
 	{
+		$substitute = 9999;
+		$msg_single = MMI_Form_Messages::msg_failure_single();
+		$msg_multiple = MMI_Form_Messages::msg_failure_multiple($substitute);
 return<<<EOJS
 function(frm, validator)
 {
@@ -906,8 +909,8 @@ function(frm, validator)
 	if (num)
 	{
 		var msg = (parseInt(num) === 1)
-			? '1 field is invalid. It has been highlighted.'
-			: num + ' fields are invalid. They have been highlighted.'
+			? '{$msg_single}'
+			: '{$msg_multiple}'.replace('{$substitute}', num)
 		;
 		$('{$status_id}').removeClass(s.validClass).addClass(s.errorClass).html(msg).show();
 	}
