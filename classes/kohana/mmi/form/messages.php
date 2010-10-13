@@ -9,7 +9,6 @@
  */
 class Kohana_MMI_Form_Messages
 {
-
 	/**
 	 * @var array the message configuration
 	 */

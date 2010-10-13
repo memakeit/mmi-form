@@ -905,7 +905,7 @@ class Kohana_MMI_Form
 
 	/**
 	 * Merge the user-specified and config settings.
-	 * 	 *
+	 *
 	 * @param	array	an associative array of form options
 	 * @return	array
 	 */

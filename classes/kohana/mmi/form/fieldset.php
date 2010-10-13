@@ -321,7 +321,7 @@ class Kohana_MMI_Form_FieldSet
 	 */
 	public static function get_config()
 	{
-		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form')->get('_fieldset', array());
+		(self::$_config === NULL) AND self::$_config = MMI_Form::get_config()->get('_fieldset', array());
 		return self::$_config;
 	}
 

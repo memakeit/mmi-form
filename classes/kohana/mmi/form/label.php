@@ -287,7 +287,7 @@ class Kohana_MMI_Form_Label
 	 */
 	public static function get_config()
 	{
-		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form')->get('_label', array());
+		(self::$_config === NULL) AND self::$_config = MMI_Form::get_config()->get('_label', array());
 		return self::$_config;
 	}
 
