@@ -32,6 +32,7 @@ class Controller_MMI_Form_Test_Filter_Purify extends Controller
 			'_label' => 'Notes',
 			'_namespace' => 'mmi',
 
+			'_after' => '<br/><i>only &lt;b&gt; and &lt;i&gt; tags are allowed</i>',
 			'class' => 'textarea',
 			'id' => 'textarea1',
 			'value' => '<span><b>memakeit</b></span>!',
