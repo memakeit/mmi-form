@@ -77,8 +77,11 @@ return array
 
 	'_auto_validate'	=> FALSE,
 	'_html5'			=> TRUE,
-	'_required_before'	=> TRUE,
-	'_required_symbol'	=> '<strong>*</strong>&nbsp;',
+	'_required_symbol'	=> array
+	(
+		'_html' => '<strong>*</strong>&nbsp;',
+		'_placement' => MMI_Form::REQ_SYMBOL_BEFORE,
+	),
 	'_show_messages' 	=> TRUE,
 	'_unicode'			=> TRUE,
 	'class'				=> 'frm',

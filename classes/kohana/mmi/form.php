@@ -14,6 +14,10 @@ class Kohana_MMI_Form
 	const ORDER_FIELD = 'fld';
 	const ORDER_LABEL = 'lbl';
 
+	// Required symbol placement
+	const REQ_SYMBOL_AFTER = 'after';
+	const REQ_SYMBOL_BEFORE = 'before';
+
 	// State constants
 	const STATE_INITIAL = 1;
 	const STATE_POSTED = 2;
@@ -1191,7 +1195,19 @@ class Kohana_MMI_Form
 	 */
 	public static function required_symbol()
 	{
-		return self::get_config()->get('_required_symbol', '*&nbsp;');
+		$config = self::get_config()->get('_required_symbol', array());
+		return Arr::get($config, '_html', '*&nbsp;');
+	}
+
+	/**
+	 * Return the required symbol placement (before or after the label).
+	 *
+	 * @return	string
+	 */
+	public static function required_symbol_placement()
+	{
+		$config = self::get_config()->get('_required_symbol', array());
+		return Arr::get($config, '_placement', MMI_Form::REQ_SYMBOL_BEFORE);
 	}
 
 	/**
