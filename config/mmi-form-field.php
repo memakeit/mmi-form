@@ -3,7 +3,7 @@
 // Field-specific configuration
 $checkable = array
 (
-	'_label' => array('_after' => ''),
+	'_label' => array('_after' => '', '_before' => ''),
 	'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
 );
 $no_error = array
