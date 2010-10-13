@@ -46,6 +46,11 @@ abstract class Kohana_MMI_Form_Field
 	protected $_errors = array();
 
 	/**
+	 * @var MMI_Form the form instance
+	 */
+	protected $_form;
+
+	/**
 	 * @var boolean use HTML5 markup?
 	 */
 	protected $_html5;
@@ -165,6 +170,31 @@ abstract class Kohana_MMI_Form_Field
 		if (isset($msg) AND ! in_array($msg, $this->_errors))
 		{
 			$this->_errors[] = $msg;
+		}
+		return $this;
+	}
+
+	/**
+	 * Get or set the form.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	MMI_From	a form object
+	 * @return	mixed
+	 */
+	public function form($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			$form = $this->_form;
+			if ( ! $form instanceof MMI_Form)
+			{
+				$form = MMI_Form::instance();
+			}
+			return $form;
+		}
+		if ($value instanceof MMI_Form)
+		{
+			$this->_form = $value;
 		}
 		return $this;
 	}

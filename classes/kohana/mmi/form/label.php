@@ -20,6 +20,11 @@ class Kohana_MMI_Form_Label
 	protected $_attributes = array();
 
 	/**
+	 * @var MMI_Form the form instance
+	 */
+	protected $_form;
+
+	/**
 	 * @var boolean use HTML5 markup?
 	 */
 	protected $_html5;
@@ -66,6 +71,31 @@ class Kohana_MMI_Form_Label
 			return Arr::get($this->_attributes, $name);
 		}
 		$this->_attributes[$name] = $value;
+		return $this;
+	}
+
+	/**
+	 * Get or set the form.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	MMI_From	a form object
+	 * @return	mixed
+	 */
+	public function form($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			$form = $this->_form;
+			if ( ! $form instanceof MMI_Form)
+			{
+				$form = MMI_Form::instance();
+			}
+			return $form;
+		}
+		if ($value instanceof MMI_Form)
+		{
+			$this->_form = $value;
+		}
 		return $this;
 	}
 
