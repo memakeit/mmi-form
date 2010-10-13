@@ -11,7 +11,7 @@ This module provides the following plugins:
 
 This module provides the following filters:
 
-* an HTML Purifier filter (requires shadowhand's [purifier](http://github.com/shadowhand/purifier.git) module)
+* an HTML Purifier filter (requires shadowhand's [purifier](http://github.com/shadowhand/purifier) module)
 
 ## Dependencies
 
