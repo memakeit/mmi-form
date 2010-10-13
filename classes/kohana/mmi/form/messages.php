@@ -9,10 +9,16 @@
  */
 class Kohana_MMI_Form_Messages
 {
+
 	/**
 	 * @var array the message configuration
 	 */
 	protected static $_config;
+
+	/**
+	 * @var array the merged user-specified and config options
+	 */
+	protected static $_options = array();
 
 	/**
 	 * Get the default CSS class.
@@ -21,7 +27,7 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function class_default()
 	{
-		$config = self::get_config();
+		$config = self::options();
 		return trim(Arr::get($config, 'class', ''));
 	}
 
@@ -32,7 +38,7 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function class_failure()
 	{
-		$config = self::get_config();
+		$config = self::options();
 		return trim(Arr::get($config, 'class', '').' '.Arr::path($config, '_failure.class', ''));
 	}
 
@@ -43,7 +49,7 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function class_success()
 	{
-		$config = self::get_config();
+		$config = self::options();
 		return trim(Arr::get($config, 'class', '').' '.Arr::path($config, '_success.class', ''));
 	}
 
@@ -107,7 +113,7 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function get_path()
 	{
-		$filename = Arr::get(self::get_config(), '_file', 'validate');
+		$filename = Arr::get(self::options(), '_file', 'validate');
 		$lang = str_replace('-', DIRECTORY_SEPARATOR, I18n::$lang);
 		$file = $lang.DIRECTORY_SEPARATOR.$filename;
 
@@ -137,7 +143,7 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function get_status_id()
 	{
-		return Arr::get(self::get_config(), 'id', 'frm_status');
+		return Arr::get(self::options(), 'id', 'frm_status');
 	}
 
 	/**
@@ -147,8 +153,8 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function msg_failure()
 	{
-		$config = Arr::path(self::get_config(), '_failure._msg', array());
-		return Arr::get($config, 'general', 'There was a problem processing your request. Please try again.');
+		$config = Arr::get(self::options(), '_failure', array());
+		return Arr::get($config, '_msg_general', 'There was a problem processing your request. Please try again.');
 	}
 
 	/**
@@ -159,8 +165,8 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function msg_failure_multiple($num_errors)
 	{
-		$config = Arr::path(self::get_config(), '_failure._msg', array());
-		$msg = Arr::get($config, 'multiple', '%d fields are invalid. They have been highlighted.');
+		$config = Arr::get(self::options(), '_failure', array());
+		$msg = Arr::get($config, '_msg_multiple', '%d fields are invalid. They have been highlighted.');
 		return sprintf($msg, $num_errors);
 	}
 
@@ -171,8 +177,8 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function msg_failure_single()
 	{
-		$config = Arr::path(self::get_config(), '_failure._msg', array());
-		return Arr::get($config, 'single', '1 field is invalid. It has been highlighted.');
+		$config = Arr::get(self::options(), '_failure', array());
+		return Arr::get($config, '_msg_single', '1 field is invalid. It has been highlighted.');
 	}
 
 	/**
@@ -182,7 +188,8 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function msg_success()
 	{
-		return Arr::path(self::get_config(), '_success._msg', 'Your request has been processed.');
+		$config = Arr::get(self::options(), '_success', array());
+		return Arr::get($config, '_msg', 'Your request has been processed.');
 	}
 
 	/**
@@ -192,7 +199,35 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function translate()
 	{
-		return Arr::get(self::get_config(), '_translate', FALSE);
+		return Arr::get(self::options(), '_translate', FALSE);
+	}
+
+	/**
+	 * Get or set the message options.
+	 *
+	 * @param	array	the user-specified options
+	 * @return	mixed
+	 */
+	public static function options($options = NULL)
+	{
+		$num_args = func_num_args();
+		if ($num_args === 0)
+		{
+			return self::$_options;
+		}
+
+		// Ensure message sub-arrays are properly merged
+		$config = self::get_config();
+		foreach (array('_failure', '_success') as $name)
+		{
+			$value_default = Arr::get($config, $name, array());
+			$value = Arr::get($options, $name, array());
+			if ( ! empty($value))
+			{
+				$options[$name] = array_merge($value_default, $value);
+			}
+		}
+		self::$_options = array_merge($config, $options);
 	}
 
 	/**
@@ -202,7 +237,7 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function get_config()
 	{
-		(self::$_config === NULL) AND self::$_config = Kohana::config('mmi-form')->get('_messages', array());
+		(self::$_config === NULL) AND self::$_config = MMI_Form::get_config()->get('_messages', array());
 		return self::$_config;
 	}
 } // End Kohana_MMI_Form_Messages

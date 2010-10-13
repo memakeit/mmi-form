@@ -831,7 +831,7 @@ class Kohana_MMI_Form
 	}
 
 	/**
-	 * Merge the user-specified and config file settings.
+	 * Initialize the form options.
 	 * Separate the meta data from the HTML attributes.
 	 *
 	 * @param	array	an associative array of form options
@@ -848,8 +848,10 @@ class Kohana_MMI_Form
 		$class = $this->_combine_value($options, 'class');
 
 		// Merge the user-specified and config settings
-		$config = self::get_config();
-		$options = array_merge($config->as_array(), $options);
+		$options = $this->_merge_options($options);
+
+		// Set the message options
+		MMI_Form_Messages::options(Arr::get($options, '_messages', array()));
 
 		// Set the CSS class
 		if ( ! empty($class))
@@ -887,6 +889,36 @@ class Kohana_MMI_Form
 				$this->_attributes[$name] = $value;
 			}
 		}
+	}
+
+	/**
+	 * Merge the user-specified and config settings.
+	 * 	 *
+	 * @param	array	an associative array of form options
+	 * @return	array
+	 */
+	protected function _merge_options($options)
+	{
+		if ( ! is_array($options))
+		{
+			$options = array();
+		}
+		$config = MMI_Form::get_config();
+
+		// Ensure field sub-arrays are properly merged
+		$field_default = $config->get('_field', array());
+		$field = Arr::get($options, '_field', array());
+		foreach (array('_error', '_item', '_label') as $name)
+		{
+			$value_default = Arr::get($field_default, $name, array());
+			$value = Arr::get($field, $name, array());
+			if ( ! empty($value))
+			{
+				$field[$name] = array_merge($value_default, $value);
+			}
+		}
+		$options['_field'] = array_merge($field_default, $field);
+		return array_merge($config->as_array(), $options);
 	}
 
 	/**

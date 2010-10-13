@@ -421,9 +421,8 @@ abstract class Kohana_MMI_Form_Field
 		$class = $this->_combine_value($options, 'class');
 
 		// Merge the user-specified and config settings
-		$config = self::get_config();
-		$defaults = $config->get('_defaults', array());
-		$type_specific = $config->get($options['type'], array());
+		$defaults = MMI_Form::get_config()->get('_field', array());
+		$type_specific = self::get_config()->get($options['type'], array());
 		$options = array_merge($defaults, $type_specific, $options);
 
 		// Set the CSS class
