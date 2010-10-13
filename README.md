@@ -1,6 +1,6 @@
 # MMI Form Module
 
-This module is for generating forms using either HTML4 or HTML5.
+This module is for generating form markup in either HTML4 or HTML5.
 By default, HTML5 elements and attributes are generated.
 
 Notable features of this module include:
@@ -10,7 +10,7 @@ Notable features of this module include:
     * reCAPTCHA
 	* a jQuery form validation
 * included filters:
-    * an HTML Purifier filter
+	* an HTML Purifier filter
 
 ## Dependencies
 
