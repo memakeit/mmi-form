@@ -145,18 +145,22 @@ class Kohana_MMI_Form_Label
 		}
 
 		// Separate the meta data from the HTML attributes
+		$attributes = array();
+		$meta = array();
 		foreach ($options as $name => $value)
 		{
 			$name = trim($name);
 			if (substr($name, 0, 1) === '_')
 			{
-				$this->_meta[trim($name, '_')] = $value;
+				$meta[trim($name, '_')] = $value;
 			}
 			else
 			{
-				$this->_attributes[$name] = $value;
+				$attributes[$name] = $value;
 			}
 		}
+		$this->_attributes = $attributes;
+		$this->_meta = $meta;
 	}
 
 	/**

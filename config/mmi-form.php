@@ -5,6 +5,10 @@ return array
 (
 	'_field' => array
 	(
+		'_filters' => array
+		(
+			'trim' => NULL,
+		),
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD, MMI_Form::ORDER_ERROR),
 		'class' => 'fld',
 	),

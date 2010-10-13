@@ -395,7 +395,7 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
-	 * Merge the user-specified and config file settings.
+	 * Initialize the field options.
 	 * Separate the meta data from the HTML attributes.
 	 *
 	 * @param	array	an associative array of field options
@@ -426,13 +426,11 @@ abstract class Kohana_MMI_Form_Field
 		$class = $this->_combine_value($options, 'class');
 
 		// Merge the user-specified and config settings
-		$defaults = MMI_Form::get_config()->get('_field', array());
-		$type_specific = self::get_config()->get($options['type'], array());
-		$options = array_merge($defaults, $type_specific, $options);
+		$options = $this->_merge_options($options);
 
 		// Set the label defaults
-		$label_defaults = Arr::get($defaults, '_label', array());
-		$label_type_specific = Arr::get($type_specific , '_label', array());
+		$label_defaults = MMI_Form::get_config()->get('_label', array());
+		$label_type_specific = self::get_config()->get('_label', array());
 		$this->_label_defaults = Arr::merge($label_defaults, $label_type_specific);
 
 		// Set the CSS class
@@ -505,6 +503,36 @@ abstract class Kohana_MMI_Form_Field
 		$this->_attributes = $attributes;
 		$this->_meta = $meta;
 	}
+
+	/**
+	 * Merge the user-specified and config settings.
+	 * 	 *
+	 * @param	array	an associative array of field options
+	 * @return	array
+	 */
+	protected function _merge_options($options)
+	{
+		if ( ! is_array($options))
+		{
+			$options = array();
+		}
+
+		// Ensure field sub-arrays are properly merged
+		$config_default = MMI_Form::get_config()->get('_field', array());
+		$config_type = self::get_config()->get($options['type'], array());
+		foreach (array('_callbacks', '_filters', '_rules') as $name)
+		{
+			$value_default = Arr::get($config_default, $name, array());
+			$value_type = Arr::get($config_type, $name, array());
+			$value = Arr::get($options, $name, array());
+			if ( ! empty($value))
+			{
+				$options[$name] = array_merge($value_default, $value_type, $value);
+			}
+		}
+		return array_merge($config_default, $config_type, $options);
+	}
+
 
 	/**
 	 * Cast a value to a string.  If the value is an array, each array value is cast to a string.

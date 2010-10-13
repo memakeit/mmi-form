@@ -28,7 +28,6 @@ class Controller_MMI_Form_Test_Filter_Purify extends Controller
 			'_filters'	=> array
 			(
 				'MMI_Form_Filter_HTML::purify' => array('b,i'),
-				'trim' => NULL,
 			),
 			'_label' => 'Notes',
 			'_namespace' => 'mmi',
