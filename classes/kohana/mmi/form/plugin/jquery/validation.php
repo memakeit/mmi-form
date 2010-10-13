@@ -72,7 +72,7 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		}
 		parent::__construct($options);
 
-		$this->_unicode = $this->form()->unicode();
+		$this->_unicode = $this->_get_form_meta('unicode', FALSE);
 		$options = Arr::merge(self::get_config(TRUE), $options);
 		$this->_options = array_intersect_key
 		(

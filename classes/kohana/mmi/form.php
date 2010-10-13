@@ -62,11 +62,6 @@ class Kohana_MMI_Form
 	protected $_fields = array();
 
 	/**
-	 * @var boolean use HTML5 markup?
-	 */
-	protected $_html5;
-
-	/**
 	 * @var array the associated meta data
 	 */
 	protected $_meta = array();
@@ -104,7 +99,6 @@ class Kohana_MMI_Form
 		$method = self::get_method();
 		$options['_method'] = $method;
 
-		$this->_html5 = self::html5();
 		$this->_init_options($options);
 		$this->_posted = (strcasecmp($method, 'post') === 0);
 	}
@@ -868,12 +862,16 @@ class Kohana_MMI_Form
 		{
 			$options['action'] = Request::instance()->uri;
 		}
+		if ( ! array_key_exists('_html5', $options))
+		{
+			$options['_html5'] = TRUE;
+		}
 		if ( ! array_key_exists('_required_symbol', $options))
 		{
 			$options['_required_symbol'] = array
 			(
-				'_html' => self::required_symbol(),
-				'_placement' => self::required_symbol_placement(),
+				'_html' => '*&nbsp;',
+				'_placement' => MMI_Form::REQ_SYMBOL_BEFORE,
 			);
 		}
 
@@ -931,11 +929,11 @@ class Kohana_MMI_Form
 		}
 		$options['_field'] = array_merge($field_default, $field);
 
-		$required = Arr::get($options, '_required_symbol', array());
-		if ( ! empty($required))
+		$required_symbol = Arr::get($options, '_required_symbol', array());
+		if ( ! empty($required_symbol))
 		{
 			$required_default = $config->get('_required_symbol', array());
-			$options['_required_symbol'] = array_merge($required_default, $required);
+			$options['_required_symbol'] = array_merge($required_default, $required_symbol);
 		}
 		return array_merge($config->as_array(), $options);
 	}
@@ -1057,7 +1055,8 @@ class Kohana_MMI_Form
 			}
 		}
 
-		if ($this->_html5)
+		$html5 = Arr::get($this->_meta, 'html5', TRUE);
+		if ($html5)
 		{
 			$allowed = MMI_HTML5_Attributes::get();
 		}
@@ -1175,7 +1174,8 @@ class Kohana_MMI_Form
 	 */
 	protected function _get_allowed_attributes()
 	{
-		if ($this->_html5)
+		$html5 = Arr::get($this->_meta, 'html5', TRUE);
+		if ($html5)
 		{
 			return MMI_HTML5_Attributes_Form::get();
 		}
@@ -1191,48 +1191,6 @@ class Kohana_MMI_Form
 	public static function clean_id($id)
 	{
 		return preg_replace('/[^-a-z\d_]/i', '', $id);
-	}
-
-	/**
-	 * Return whether to use HTML5 markup.
-	 *
-	 * @return	boolean
-	 */
-	public static function html5()
-	{
-		return self::get_config()->get('_html5', TRUE);
-	}
-
-	/**
-	 * Return the required form field symbol.
-	 *
-	 * @return	string
-	 */
-	public static function required_symbol()
-	{
-		$config = self::get_config()->get('_required_symbol', array());
-		return Arr::get($config, '_html', '*&nbsp;');
-	}
-
-	/**
-	 * Return the required symbol placement (before or after the label).
-	 *
-	 * @return	string
-	 */
-	public static function required_symbol_placement()
-	{
-		$config = self::get_config()->get('_required_symbol', array());
-		return Arr::get($config, '_placement', MMI_Form::REQ_SYMBOL_BEFORE);
-	}
-
-	/**
-	 * Return whether the form validates unicode input.
-	 *
-	 * @return	boolean
-	 */
-	public static function unicode()
-	{
-		return self::get_config()->get('_unicode', FALSE);
 	}
 
 	/**

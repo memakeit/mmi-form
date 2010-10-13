@@ -51,11 +51,6 @@ abstract class Kohana_MMI_Form_Field
 	protected $_form;
 
 	/**
-	 * @var boolean use HTML5 markup?
-	 */
-	protected $_html5;
-
-	/**
 	 * @var array the label default settings
 	 */
 	protected $_label_defaults;
@@ -93,7 +88,6 @@ abstract class Kohana_MMI_Form_Field
 		$method = self::get_method();
 		$options['_method'] = $method;
 
-		$this->_html5 = MMI_Form::html5();
 		$this->_init_options($options);
 		$this->_posted = (strcasecmp($method, 'post') === 0);
 	}
@@ -459,7 +453,7 @@ abstract class Kohana_MMI_Form_Field
 		$options = $this->_merge_options($options);
 
 		// Set the label defaults
-		$label_defaults = MMI_Form::get_config()->get('_label', array());
+		$label_defaults = $this->_get_form_meta('label', array());
 		$label_type_specific = self::get_config()->get('_label', array());
 		$this->_label_defaults = Arr::merge($label_defaults, $label_type_specific);
 
@@ -514,6 +508,10 @@ abstract class Kohana_MMI_Form_Field
 			$options['id'] = str_replace('.', '', microtime(TRUE));
 			$options['_id_generated'] = TRUE;
 		}
+		if ($name === '')
+		{
+			$options['name'] = $options['id'];
+		}
 
 		// Separate the meta data from the HTML attributes
 		$attributes = array();
@@ -548,7 +546,7 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		// Ensure field sub-arrays are properly merged
-		$config_default = MMI_Form::get_config()->get('_field', array());
+		$config_default = $this->_get_form_meta('field', array());
 		$config_type = self::get_config()->get($options['type'], array());
 		foreach (array('_callbacks', '_filters', '_rules') as $name)
 		{
@@ -606,7 +604,7 @@ abstract class Kohana_MMI_Form_Field
 	protected function _combine_value($options, $key)
 	{
 		$config = self::get_config();
-		$defaults = $config->get('_defaults', array());
+		$defaults = $this->_get_form_meta('field', array());
 		$type = Arr::get($options, 'type', 'text');
 		$type_specific = $config->get($type, array());
 		$value =
@@ -861,7 +859,7 @@ abstract class Kohana_MMI_Form_Field
 	protected function _get_allowed_attributes()
 	{
 		$type = Arr::get($this->_attributes, 'type');
-		if ($this->_html5)
+		if ($this->_get_form_meta('html5', TRUE))
 		{
 			return MMI_HTML5_Attributes_Input::get($type);
 		}
@@ -909,7 +907,7 @@ abstract class Kohana_MMI_Form_Field
 
 		// Process rules that have a UTF8 parameter
 		$utf8_rules = self::$_utf8_rules;
-		if (MMI_Form::unicode())
+		if ($this->_get_form_meta('unicode', FALSE))
 		{
 			foreach ($rules as $name => $parms)
 			{
@@ -920,6 +918,27 @@ abstract class Kohana_MMI_Form_Field
 			}
 		}
 		$this->_meta['rules'] = $rules;
+	}
+
+	/**
+	 * Retrieve a meta value from the associated form.
+	 *
+	 * @param	string	the meta name
+	 * @param	mixed	the default value
+	 * @return	mixed
+	 */
+	protected function _get_form_meta($name, $default = NULL)
+	{
+		$form = $this->form();
+		if ($form instanceof MMI_Form)
+		{
+			$value = $form->meta($name);
+		}
+		if ( ! isset($value))
+		{
+			$value = $default;
+		}
+		return $value;
 	}
 
 	/**

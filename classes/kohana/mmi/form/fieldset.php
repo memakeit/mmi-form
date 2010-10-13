@@ -25,11 +25,6 @@ class Kohana_MMI_Form_FieldSet
 	protected $_form;
 
 	/**
-	 * @var boolean use HTML5 markup?
-	 */
-	protected $_html5;
-
-	/**
 	 * @var array the associated meta data
 	 */
 	protected $_meta = array();
@@ -38,12 +33,11 @@ class Kohana_MMI_Form_FieldSet
 	 * Set whether to use HTML5 markup.
 	 * Initialize the options.
 	 *
-	 * @param	array	an associative array of label options
+	 * @param	array	an associative array of fieldset options
 	 * @return	void
 	 */
 	public function __construct($options = array())
 	{
-		$this->_html5 = MMI_Form::html5();
 		$this->_init_options($options);
 	}
 
@@ -127,77 +121,6 @@ class Kohana_MMI_Form_FieldSet
 	}
 
 	/**
-	 * Merge the user-specified and config file settings.
-	 * Separate the meta data from the HTML attributes.
-	 *
-	 * @param	array	an associative array of label options
-	 * @return	void
-	 */
-	protected function _init_options($options)
-	{
-		if ( ! is_array($options))
-		{
-			$options = array();
-		}
-
-		// Get the CSS class
-		$class = $this->_combine_value($options, 'class');
-
-		// Merge the user-specified and config settings
-		$options = array_merge(self::get_config(), $options);
-
-		// Set the CSS class
-		if ( ! empty($class))
-		{
-			$options['class'] = $class;
-		}
-
-		// Separate the meta data from the HTML attributes
-		$attributes = array();
-		$meta = array();
-		foreach ($options as $name => $value)
-		{
-			$name = trim($name);
-			if (substr($name, 0, 1) === '_')
-			{
-				$meta[trim($name, '_')] = $value;
-			}
-			else
-			{
-				$attributes[$name] = $value;
-			}
-		}
-		$this->_attributes = $attributes;
-		$this->_meta = $meta;
-	}
-
-	/**
-	 * Combine default values from the config file with a user-specified value.
-	 * When multiple values are found, they are appended in order from most
-	 * general (config file) to most specific (user-specified).
-	 *
-	 * @param	array	the user-specified settings
-	 * @param	string	the key of the value being combined
-	 * @return	string
-	 */
-	protected function _combine_value($options, $key)
-	{
-		$value =
-			Arr::get(self::get_config(), $key, '').' '.
-			Arr::get($options, $key, '').' '
-		;
-		$value = trim(preg_replace('/\s+/', ' ', $value));
-
-		// Remove duplicates
-		if ($value !== '')
-		{
-			$value = array_unique(explode(' ', $value));
-			$value = implode(' ', $value);
-		}
-		return $value;
-	}
-
-	/**
 	 * Add a closing fieldset tag to the form.
 	 * This method is chainable.
 	 *
@@ -241,6 +164,79 @@ class Kohana_MMI_Form_FieldSet
 		}
 		$parms = $this->_get_view_parms_open();
 		return $view->set($parms)->render();
+	}
+
+	/**
+	 * Merge the user-specified and config file settings.
+	 * Separate the meta data from the HTML attributes.
+	 *
+	 * @param	array	an associative array of fieldset options
+	 * @return	void
+	 */
+	protected function _init_options($options)
+	{
+		if ( ! is_array($options))
+		{
+			$options = array();
+		}
+
+		// Get the CSS class
+		$class = $this->_combine_value($options, 'class');
+
+		// Merge the user-specified and config settings
+		$config = $this->_get_form_meta('fieldset', array());
+		$options = array_merge($config, $options);
+
+		// Set the CSS class
+		if ( ! empty($class))
+		{
+			$options['class'] = $class;
+		}
+
+		// Separate the meta data from the HTML attributes
+		$attributes = array();
+		$meta = array();
+		foreach ($options as $name => $value)
+		{
+			$name = trim($name);
+			if (substr($name, 0, 1) === '_')
+			{
+				$meta[trim($name, '_')] = $value;
+			}
+			else
+			{
+				$attributes[$name] = $value;
+			}
+		}
+		$this->_attributes = $attributes;
+		$this->_meta = $meta;
+	}
+
+	/**
+	 * Combine default values from the config file with a user-specified value.
+	 * When multiple values are found, they are appended in order from most
+	 * general (config file) to most specific (user-specified).
+	 *
+	 * @param	array	the user-specified settings
+	 * @param	string	the key of the value being combined
+	 * @return	string
+	 */
+	protected function _combine_value($options, $key)
+	{
+		$config = $this->_get_form_meta('fieldset', array());
+		$value =
+			Arr::get($config, $key, '').' '.
+			Arr::get($options, $key, '').' '
+		;
+		$value = trim(preg_replace('/\s+/', ' ', $value));
+
+		// Remove duplicates
+		if ($value !== '')
+		{
+			$value = array_unique(explode(' ', $value));
+			$value = implode(' ', $value);
+		}
+		return $value;
 	}
 
 	/**
@@ -337,22 +333,33 @@ class Kohana_MMI_Form_FieldSet
 	 */
 	protected function _get_allowed_attributes()
 	{
-		if ($this->_html5)
+		if ($this->_get_form_meta('html5', TRUE))
 		{
 			return MMI_HTML5_Attributes_Fieldset::get();
 		}
 		return MMI_HTML4_Attributes_Fieldset::get();
 	}
 
+
 	/**
-	 * Get the fieldset configuration settings.
+	 * Retrieve a meta value from the associated form.
 	 *
-	 * @return	array
+	 * @param	string	the meta name
+	 * @param	mixed	the default value
+	 * @return	mixed
 	 */
-	public static function get_config()
+	protected function _get_form_meta($name, $default = NULL)
 	{
-		(self::$_config === NULL) AND self::$_config = MMI_Form::get_config()->get('_fieldset', array());
-		return self::$_config;
+		$form = $this->form();
+		if ($form instanceof MMI_Form)
+		{
+			$value = $form->meta($name);
+		}
+		if ( ! isset($value))
+		{
+			$value = $default;
+		}
+		return $value;
 	}
 
 	/**

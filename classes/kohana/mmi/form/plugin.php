@@ -100,6 +100,27 @@ abstract class Kohana_MMI_Form_Plugin
 	}
 
 	/**
+	 * Retrieve a meta value from the associated form.
+	 *
+	 * @param	string	the meta name
+	 * @param	mixed	the default value
+	 * @return	mixed
+	 */
+	protected function _get_form_meta($name, $default = NULL)
+	{
+		$form = $this->form();
+		if ($form instanceof MMI_Form)
+		{
+			$value = $form->meta($name);
+		}
+		if ( ! isset($value))
+		{
+			$value = $default;
+		}
+		return $value;
+	}
+
+	/**
 	 * Create a plugin instance.
 	 *
 	 * @param	string	the plugin type

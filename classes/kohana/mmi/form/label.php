@@ -25,11 +25,6 @@ class Kohana_MMI_Form_Label
 	protected $_form;
 
 	/**
-	 * @var boolean use HTML5 markup?
-	 */
-	protected $_html5;
-
-	/**
 	 * @var array the associated meta data
 	 */
 	protected $_meta = array();
@@ -43,7 +38,6 @@ class Kohana_MMI_Form_Label
 	 */
 	public function __construct($options = array())
 	{
-		$this->_html5 = MMI_Form::html5();
 		$this->_init_options($options);
 	}
 
@@ -166,7 +160,8 @@ class Kohana_MMI_Form_Label
 		$class = $this->_combine_value($options, 'class');
 
 		// Merge the user-specified and config settings
-		$options = array_merge(self::get_config(), $options);
+		$config = $this->_get_form_meta('label', array());
+		$options = array_merge($config, $options);
 
 		// Set the CSS class
 		if ( ! empty($class))
@@ -204,8 +199,9 @@ class Kohana_MMI_Form_Label
 	 */
 	protected function _combine_value($options, $key)
 	{
+		$config = $this->_get_form_meta('label', array());
 		$value =
-			Arr::get(self::get_config(), $key, '').' '.
+			Arr::get($config, $key, '').' '.
 			Arr::get($options, $key, '').' '
 		;
 		$value = trim(preg_replace('/\s+/', ' ', $value));
@@ -250,10 +246,11 @@ class Kohana_MMI_Form_Label
 		$required = Arr::get($meta, 'required', FALSE);
 		if ($required)
 		{
-			$symbol = MMI_Form::required_symbol();
+			$symbol = $this->_get_form_meta('required_symbol', array());
 			if ( ! empty($symbol))
 			{
-				$placement = MMI_Form::required_symbol_placement();
+				$placement = Arr::get($symbol, '_placement', MMI_Form::REQ_SYMBOL_BEFORE);
+				$symbol = Arr::get($symbol, '_html', '*&nbsp;');
 				$html = ($placement === MMI_Form::REQ_SYMBOL_BEFORE) ? $symbol.$html : $html.$symbol;
 			}
 		}
@@ -303,7 +300,7 @@ class Kohana_MMI_Form_Label
 	 */
 	protected function _get_allowed_attributes()
 	{
-		if ($this->_html5)
+		if ($this->_get_form_meta('html5', TRUE))
 		{
 			return MMI_HTML5_Attributes_Label::get();
 		}
@@ -311,14 +308,24 @@ class Kohana_MMI_Form_Label
 	}
 
 	/**
-	 * Get the label configuration settings.
+	 * Retrieve a meta value from the associated form.
 	 *
-	 * @return	array
+	 * @param	string	the meta name
+	 * @param	mixed	the default value
+	 * @return	mixed
 	 */
-	public static function get_config()
+	protected function _get_form_meta($name, $default = NULL)
 	{
-		(self::$_config === NULL) AND self::$_config = MMI_Form::get_config()->get('_label', array());
-		return self::$_config;
+		$form = $this->form();
+		if ($form instanceof MMI_Form)
+		{
+			$value = $form->meta($name);
+		}
+		if ( ! isset($value))
+		{
+			$value = $default;
+		}
+		return $value;
 	}
 
 	/**
