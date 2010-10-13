@@ -3,26 +3,39 @@
 This module is for generating form markup in either HTML4 or HTML5.
 By default, HTML5 elements and attributes are generated.
 
-Notable features of this module include:
+This module provides the following plugins:
 
-* included plugins:
-    * CSRF
-    * reCAPTCHA
-	* a jQuery form validation
-* included filters:
-	* an HTML Purifier filter
+* CSRF
+* reCAPTCHA
+* jQuery form validation
+
+This module provides the following filters:
+	* an HTML Purifier filter (requires shadowhand's [purifier](http://github.com/shadowhand/purifier.git) module)
 
 ## Dependencies
 
-* [mmi-core](http://github.com/memakeit/mmi-core) (only used in the test controllers)
+* [mmi-core](http://github.com/memakeit/mmi-core) (only for the test controllers)
 
-## Usage
+## Workflow
 
-## Test Controllers
-Simple test controllers are located in `classes/controller/mmi/form/test`.
+* create a form object
+* add plugins
+* add form fields
+* validate and/or render the form
 
+## Usage:
 
 ## Notes
+
+**Namespaces**
+
+
+## Configuration
+
+## Test Controllers
+Test controllers are located in `classes/controller/mmi/form/test`.
+
+
 
 classRuleSettings: {
 	required: {required: true},
