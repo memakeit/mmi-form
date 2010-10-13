@@ -15,31 +15,6 @@ $simple = array
 
 return array
 (
-	'_defaults' => array
-	(
-		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD, MMI_Form::ORDER_ERROR),
-		'class' => 'fld',
-	),
-	'_group' => array
-	(
-		'_before' => '',
-		'_after' => '</div>',
-		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
-		'_item'=> array
-		(
-			'_before' => '',
-			'_after' => '',
-			'_label' => array('_before' => '', '_after' => '<br />'),
-			'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL),
-			'class' => 'group',
-		),
-		'_error' => array('_after' => '<br />'),
-		'_label' => array
-		(
-			'_before' => '<div class="group">',
-			'_after' => '',
-		),
-	),
 	'button' => $simple,
 	'checkbox' => array
 	(
@@ -71,8 +46,8 @@ return array
 	(
 		'_before' => '<br />'.PHP_EOL,
 		'_after' => PHP_EOL.'</div>',
-		'_error' => array('_after' => ''),
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
+		'_error' => array('_after' => ''),
 		'cols' => 80,
 		'rows' => 8,
 	),

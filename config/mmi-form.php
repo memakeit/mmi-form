@@ -3,6 +3,32 @@
 // Form configuration
 return array
 (
+	'_field' => array
+	(
+		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD, MMI_Form::ORDER_ERROR),
+		'class' => 'fld',
+	),
+	'_group' => array
+	(
+		'_before' => '',
+		'_after' => '</div>',
+		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
+		'_label' => array
+		(
+			'_before' => '<div class="group">',
+			'_after' => '',
+		),
+		'_error' => array('_after' => '<br />'),
+		'_item'=> array
+		(
+			'_before' => '',
+			'_after' => '',
+			'_label' => array('_before' => '', '_after' => '<br />'),
+			'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL),
+			'class' => 'group',
+		),
+	),
+
 	'_error' => array
 	(
 		'_before' => '',
@@ -38,22 +64,20 @@ return array
 		),
 		'_failure' => array
 		(
-			'_msg' => array
-			(
-				'general' => 'There was a problem processing your request. Please try again.',
-				'single' => '1 field is invalid. It has been highlighted.',
-				'multiple' => '%d fields are invalid. They have been highlighted.',
-			),
+			'_msg_general' => 'There was a problem processing your request. Please try again.',
+			'_msg_single' => '1 field is invalid. It has been highlighted.',
+			'_msg_multiple' => '%d fields are invalid. They have been highlighted.',
 			'class' => 'error',
 		),
 		'_file' => 'validate',
 		'_translate' => FALSE,
 		'class' => 'msg',
-		'id' => 'frm_status',
+		'id' => 'mmi_frm_status',
 	),
 
 	'_auto_validate'	=> FALSE,
 	'_html5'			=> TRUE,
+	'_required_before'	=> TRUE,
 	'_required_symbol'	=> '<strong>*</strong>&nbsp;',
 	'_show_messages' 	=> TRUE,
 	'_unicode'			=> TRUE,
