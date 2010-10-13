@@ -1,11 +1,20 @@
 # MMI Form Module
 
-This module if for creating forms.
-By default, the HTML generated uses HTML5 elements and attributes.
+This module is for generating forms using either HTML4 or HTML5.
+By default, HTML5 elements and attributes are generated.
+
+Notable features of this module include:
+
+* included plugins:
+    * CSRF
+    * reCAPTCHA
+	* a jQuery form validation
+* included filters:
+    * an HTML Purifier filter
 
 ## Dependencies
 
-* [mmi-core](http://github.com/memakeit/mmi-core)
+* [mmi-core](http://github.com/memakeit/mmi-core) (only used in the test controllers)
 
 ## Usage
 
