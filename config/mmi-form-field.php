@@ -18,6 +18,7 @@ return array
 	'button' => $simple,
 	'checkbox' => array
 	(
+		'_label' => array('_after' => ''),
 		'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
 	),
 	'datalist' => array
@@ -29,6 +30,7 @@ return array
 	'hidden' => $simple,
 	'radio' => array
 	(
+		'_after' => '',
 		'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
 	),
 	'keygen' => $no_error,

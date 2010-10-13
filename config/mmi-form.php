@@ -16,7 +16,7 @@ return array
 		'_label' => array
 		(
 			'_before' => '<div class="group">',
-			'_after' => '',
+			'_after' => ':',
 		),
 		'_error' => array('_after' => '<br />'),
 		'_item'=> array
@@ -42,6 +42,7 @@ return array
 	'_label' => array
 	(
 		'_before' => '<div>'.PHP_EOL,
+		'_after' => ':',
 		'class' => 'lbl',
 	),
 	'_open' => array

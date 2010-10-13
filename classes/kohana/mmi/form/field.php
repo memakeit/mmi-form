@@ -51,6 +51,11 @@ abstract class Kohana_MMI_Form_Field
 	protected $_html5;
 
 	/**
+	 * @var array the label default settings
+	 */
+	protected $_label_defaults;
+
+	/**
 	 * @var array the associated meta data
 	 */
 	protected $_meta = array();
@@ -359,7 +364,7 @@ abstract class Kohana_MMI_Form_Field
 		$attributes = $this->_attributes;
 		$meta = $this->_meta;
 		$name = MMI_Form::clean_id($this->name());
-		$label = trim(Arr::get($this->_label_meta(), 'html'), ':');
+		$label = Arr::get($this->_label_meta(), 'html');
 		$value = Arr::get($attributes, 'value', '');
 
 		// Add validation settings
@@ -425,6 +430,11 @@ abstract class Kohana_MMI_Form_Field
 		$type_specific = self::get_config()->get($options['type'], array());
 		$options = array_merge($defaults, $type_specific, $options);
 
+		// Set the label defaults
+		$label_defaults = Arr::get($defaults, '_label', array());
+		$label_type_specific = Arr::get($type_specific , '_label', array());
+		$this->_label_defaults = Arr::merge($label_defaults, $label_type_specific);
+
 		// Set the CSS class
 		if ( ! empty($class))
 		{
@@ -478,18 +488,22 @@ abstract class Kohana_MMI_Form_Field
 		}
 
 		// Separate the meta data from the HTML attributes
+		$attributes = array();
+		$meta = array();
 		foreach ($options as $name => $value)
 		{
 			$name = trim($name);
 			if (substr($name, 0, 1) === '_')
 			{
-				$this->_meta[trim($name, '_')] = $value;
+				$meta[trim($name, '_')] = $value;
 			}
 			else
 			{
-				$this->_attributes[$name] = $value;
+				$attributes[$name] = $value;
 			}
 		}
+		$this->_attributes = $attributes;
+		$this->_meta = $meta;
 	}
 
 	/**
@@ -671,15 +685,10 @@ abstract class Kohana_MMI_Form_Field
 		$label = Arr::get($this->_meta, 'label', array());
 		if ( ! is_array($label))
 		{
-			$label = array('_html' => $label);
+			$label = array_merge($this->_label_defaults, array('_html' => $label));
 		}
 		$label['for'] = $this->id();
-		$html = trim(strval(Arr::get($label, '_html', '')));
-		if ($html !== '' AND substr($html, -1) !== ':')
-		{
-			$html .= ':';
-		}
-		$label['_html'] = $html;
+		$label['_html'] = trim(strval(Arr::get($label, '_html', '')));
 		return $label;
 	}
 

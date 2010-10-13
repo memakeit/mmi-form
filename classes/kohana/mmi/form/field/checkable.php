@@ -21,18 +21,6 @@ abstract class Kohana_MMI_Form_Field_Checkable extends MMI_Form_Field
 	}
 
 	/**
-	 * Get the label settings.
-	 *
-	 * @return	array
-	 */
-	protected function _label_meta()
-	{
-		$label = parent::_label_meta();
-		$label['_html'] = trim($label['_html'], ':');
-		return $label;
-	}
-
-	/**
 	 * Load the post data.
 	 *
 	 * @return	void

@@ -275,17 +275,8 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 	protected function _label_meta()
 	{
 		$label = Arr::path($this->_meta, 'group._label', array());
-		if ( ! is_array($label))
-		{
-			$label = array('_html' => $label);
-		}
 		$label['for'] = $this->name();
-		$html = trim(strval(Arr::get($label, '_html', '')));
-		if ($html !== '' AND substr($html, -1) !== ':')
-		{
-			$html .= ':';
-		}
-		$label['_html'] = $html;
+		$label['_html'] = trim(strval(Arr::get($label, '_html', '')));
 		return $label;
 	}
 
