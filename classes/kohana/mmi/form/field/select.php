@@ -154,7 +154,7 @@ class Kohana_MMI_Form_Field_Select extends MMI_Form_Field_Selectable
 	 */
 	protected function _get_allowed_attributes()
 	{
-		if ($this->_html5)
+		if ($this->_get_form_meta('html5', TRUE))
 		{
 			return MMI_HTML5_Attributes_Select::get();
 		}

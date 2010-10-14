@@ -49,7 +49,7 @@ class Kohana_MMI_Form_Field_Meter extends MMI_Form_Field implements MMI_Form_Fie
 	 */
 	protected function _get_allowed_attributes()
 	{
-		if ($this->_html5)
+		if ($this->_get_form_meta('html5', TRUE))
 		{
 			return MMI_HTML5_Attributes_Meter::get();
 		}
