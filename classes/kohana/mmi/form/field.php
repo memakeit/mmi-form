@@ -184,6 +184,15 @@ abstract class Kohana_MMI_Form_Field
 			{
 				$form = MMI_Form::instance();
 			}
+			if ( ! $form instanceof MMI_Form)
+			{
+				$msg = 'A form must be created before creating form fields.';
+				if (class_exists('MMI_Log'))
+				{
+					MMI_Log::log_error(__METHOD__, __LINE__, $msg);
+				}
+				throw new Kohana_Exception($msg);
+			}
 			return $form;
 		}
 		if ($value instanceof MMI_Form)
@@ -565,7 +574,6 @@ abstract class Kohana_MMI_Form_Field
 		}
 		return array_merge($config_default, $config_type, $options);
 	}
-
 
 	/**
 	 * Cast a value to a string.  If the value is an array, each array value is cast to a string.
