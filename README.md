@@ -16,6 +16,7 @@ module)
 
 ## Dependencies
 
+* shadowhand's [purifier](http://github.com/shadowhand/purifier) (if using the purify filter)
 * [mmi-core](http://github.com/memakeit/mmi-core) (only for the test controllers)
 
 ## Workflow
