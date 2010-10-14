@@ -30,7 +30,7 @@ class Controller_MMI_Form_Test_Field_Text extends Controller_MMI_Form_Test_Field
 			'class' => 'text',
 			'id' => 'text1',
 			'maxlength' => 10,
-			'pattern' => '\d+',
+			'pattern' => '^\d+$',
 			'required' => 'required',
 		);
 		$field = MMI_Form_Field::factory($type, $settings);

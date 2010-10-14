@@ -34,8 +34,8 @@ class Controller_MMI_Form_Test_Field_Fieldset extends Controller_MMI_Form_Test_F
 		$fieldset = MMI_Form_FieldSet::factory($settings);
 		$this->_form
 			->add_html($fieldset->open())
-			->add_html(MMI_Debug::mget($fieldset->open(), $type.' (open)', $fieldset))
-			->add_html(MMI_Debug::mget($fieldset->close(), $type.' (close)', $fieldset))
+			->add_html(MMI_Debug::get($fieldset->open(), $type.' (open)'))
+			->add_html(MMI_Debug::get($fieldset->close(), $type.' (close)'))
 			->add_html($fieldset->close())
 		;
 	}

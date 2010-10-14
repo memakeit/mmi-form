@@ -42,7 +42,7 @@ class Controller_MMI_Form_Test_Field_File extends Controller_MMI_Form_Test_Field
 		$settings = array_merge($settings, array
 		(
 			'_label' => 'File 2',
-			'accept' => '',
+			'accept' => 'pdf',
 			'id' => 'file2',
 			'required' => '',
 		));

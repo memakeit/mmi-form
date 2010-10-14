@@ -27,13 +27,10 @@ class Controller_MMI_Form_Test_Field_Select extends Controller_MMI_Form_Test_Fie
 		(
 			'_label' => 'Select 1',
 			'_namespace' => 'mmi',
-			'_rules' => array
-			(
-				'range_items' => array('min' => 2, 'max' => 3)
-			),
 			'_selected' => 'value2',
 			'class' => 'select',
 			'id' => 'select1',
+			'required' => 'required',
 		);
 		$field = MMI_Form_Field::factory($type, $settings);
 		$field
@@ -54,6 +51,10 @@ class Controller_MMI_Form_Test_Field_Select extends Controller_MMI_Form_Test_Fie
 		(
 			'_label' => 'Select 2',
 			'_selected' => array('value100', 'value301'),
+			'_rules' => array
+			(
+				'range_items' => array('min' => 2, 'max' => 3)
+			),
 			'id' => 'select2',
 			'multiple' => 'multiple',
 			'size' => 5,
