@@ -375,6 +375,11 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	public function valid()
 	{
+		if ($this instanceof MMI_Form_Field_NonValidating)
+		{
+			return TRUE;
+		}
+
 		if ( ! $this->_posted)
 		{
 			return TRUE;
@@ -630,6 +635,13 @@ abstract class Kohana_MMI_Form_Field
 	 */
 	protected function _load_post_data()
 	{
+		if ($this instanceof MMI_Form_Field_NonPosting)
+		{
+			$this->_post_data_loaded = TRUE;
+			$this->_state |= MMI_Form::STATE_POSTED;
+			return;
+		}
+
 		if ( ! $this->_posted)
 		{
 			return;

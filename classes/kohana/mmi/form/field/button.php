@@ -7,7 +7,7 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
+class Kohana_MMI_Form_Field_Button extends MMI_Form_Field implements MMI_Form_Field_NonValidating, MMI_Form_Field_NonPosting
 {
 	/**
 	 * Set default options.
@@ -72,21 +72,6 @@ class Kohana_MMI_Form_Field_Button extends MMI_Form_Field
 	{
 		parent::reset();
 		$this->meta('html', Arr::get($this->_meta, 'default', ''));
-	}
-
-	/**
-	 * Load the post data.
-	 *
-	 * @return	void
-	 */
-	protected function _load_post_data()
-	{
-		if ( ! $this->_posted)
-		{
-			return;
-		}
-		$this->_post_data_loaded = TRUE;
-		$this->_state |= MMI_Form::STATE_POSTED;
 	}
 
 	/**

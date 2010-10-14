@@ -7,7 +7,7 @@
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
  */
-class Kohana_MMI_Form_Field_DataList extends MMI_Form_Field_Selectable
+class Kohana_MMI_Form_Field_DataList extends MMI_Form_Field_Selectable implements MMI_Form_Field_NonValidating, MMI_Form_Field_NonPosting
 {
 	/**
 	 * Set default options.
@@ -23,21 +23,6 @@ class Kohana_MMI_Form_Field_DataList extends MMI_Form_Field_Selectable
 		}
 		$options['_type'] = 'datalist';
 		parent::__construct($options);
-	}
-
-	/**
-	 * Load the post data.
-	 *
-	 * @return	void
-	 */
-	protected function _load_post_data()
-	{
-		if ( ! $this->_posted)
-		{
-			return;
-		}
-		$this->_post_data_loaded = TRUE;
-		$this->_state |= MMI_Form::STATE_POSTED;
 	}
 
 	/**
