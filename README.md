@@ -46,24 +46,32 @@ from the server-side validation rules
 
 **The Accept Attribute**
 
+The `file` input's `accept` attribute has different implementations depending on the browser. The
+most common implementation is no implementation. Opera 10 filters the files displayed in the open
+file dialog when a MIME type is specified.  However, MIME types break the jQuery plugin's
+validation of the `accept` attribute.  If a MIME type is specified, jQuery validation is disabled.
+The jQuery plugin correctly validates the `accept` attribute when a file extension is specified
+(ex: `pdf` or `jpeg|png`).
+
 **The Pattern Attribute**
 
 **The Min, Max, and Step Attributes**
 
-Server-side validation of the `step` attribute is implemented for the date input types
-(`date`, `datetime`, `datetime-local`, `month`, `time`, `week`) only if the value can be converted
-to a timestamp.  The UNIX timestamps range is from 13 Dec 1901 20:45:54 UTC to
-19 Jan 2038 03:14:07 UTC (see [Year 2038 Problem](http://en.wikipedia.org/wiki/Year_2038_problem)).
-Dates outside this range support `min` and `max` server-side validation (using `DateTime` objects),
-but step validation is *not* implemeted.
+The `date`, `datetime`, `datetime-local`, and `week` input types support server-side
+validation of the `step` attribute *only if the value can be converted to a timestamp*.
+The UNIX timestamp range is from 13 Dec 1901 20:45:54 UTC to 19 Jan 2038 03:14:07 UTC
+(see [Year 2038 Problem](http://en.wikipedia.org/wiki/Year_2038_problem)).  Dates outside
+this range support `min` and `max` server-side validation (using `DateTime` objects),
+but `step` validation is *not implemented*.  Since the `month` and `time` input types do not use
+timestamps, they support server-side validation of the `step` attribute for all values.
 
-For numeric and range input types, server-side validation of the `min`, `max`, and `step` attributes
-is supported.
+The `numeric` and `range` input types support server-side validation of the `min`, `max`, and `step`
+attributes.
 
 **jQuery Rules Generated from Field Class Names**
 
-The jQuery form validation [plugin](http://docs.jquery.com/Plugins/Validation) automatically
-generates rules from a field's CSS classes. The following classes generate validation rules:
+The [jQuery form validation plugin](http://docs.jquery.com/Plugins/Validation) automatically
+generates rules from a field's CSS classes. The following CSS classes generate validation rules:
 
 * `required` => `{required: true}`,
 * `email` => `{email: true}`,
