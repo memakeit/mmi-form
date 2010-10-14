@@ -605,7 +605,7 @@ class Kohana_MMI_Form
 				{
 					case self::ORDER_ERROR:
 						$options = array_merge(Arr::get($this->_meta, 'error', array()), $field->meta('error'));
-						$frm[] = MMI_Form_Label::factory($options)->render();
+						$frm[] = MMI_Form_Label::factory($options)->form($this)->render();
 						break;
 
 					case self::ORDER_FIELD:
@@ -618,7 +618,7 @@ class Kohana_MMI_Form
 						{
 							$options['_required'] = TRUE;
 						}
-						$frm[] = MMI_Form_Label::factory($options)->render();
+						$frm[] = MMI_Form_Label::factory($options)->form($this)->render();
 						break;
 				}
 			}
@@ -764,7 +764,7 @@ class Kohana_MMI_Form
 		}
 		$this->add_field('html', array
 		(
-			'_html'		=> MMI_Form_FieldSet::factory($options)->close(),
+			'_html'		=> MMI_Form_FieldSet::factory($options)->form($this)->close(),
 			'_source'	=> MMI_Form_Field_HTML::SRC_STRING,
 		));
 		return $this;
@@ -785,7 +785,7 @@ class Kohana_MMI_Form
 		}
 		$this->add_field('html', array
 		(
-			'_html'		=> MMI_Form_FieldSet::factory($options)->open(),
+			'_html'		=> MMI_Form_FieldSet::factory($options)->form($this)->open(),
 			'_source'	=> MMI_Form_Field_HTML::SRC_STRING,
 		));
 		return $this;
