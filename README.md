@@ -49,6 +49,7 @@ from the server-side validation rules
 **The Pattern Attribute**
 
 **The Min, Max, and Step Attributes**
+
 Server-side validation of the `step` attribute is implemented for the date input types
 (`date`, `datetime`, `datetime-local`, `month`, `time`, `week`) only if the value can be converted
 to a timestamp.  The UNIX timestamps range is from 13 Dec 1901 20:45:54 UTC to
@@ -60,6 +61,7 @@ For numeric and range input types, server-side validation of the `min`, `max`, a
 is supported.
 
 **jQuery Rules Generated from Field Class Names**
+
 The jQuery form validation [plugin](http://docs.jquery.com/Plugins/Validation) automatically
 generates rules from a field's CSS classes. The following classes generate validation rules:
 
