@@ -73,4 +73,4 @@ classRuleSettings: {
 	creditcard: {creditcard: true}
 },
 
-##Links
+## Inspiration &amp; Credits
