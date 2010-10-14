@@ -5,11 +5,10 @@ By default, HTML5 elements and attributes are generated.
 
 The advantages of using this module include:
 
-* in browsers that do not provide support for the new input types (email, tel, url, etc) or
-new input attributes (pattern, required, etc) server-side validation rules are *automatically*
-generated
-* with the jQuery form validation plugin, client-side validation is generated using the server-side
-validation rules
+* in browsers that do not support the new input types (email, tel, url, etc) or new input
+attributes (pattern, required, etc) server-side validation rules are *automatically* generated
+* with the jQuery form validation plugin enabled, client-side validation is generated using the
+server-side validation rules
 
 This module provides the following plugins:
 
