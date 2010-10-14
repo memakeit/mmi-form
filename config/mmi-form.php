@@ -16,6 +16,7 @@ return array
 	(
 		'_before' => '',
 		'_after' => '</div>',
+		'_filters' => array(),
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
 		'_label' => array
 		(

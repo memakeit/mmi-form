@@ -152,7 +152,7 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 
 		// Ensure group sub-arrays are properly merged
 		$group_defaults = $this->_get_form_meta('group', array());
-		foreach (array('_error', '_item', '_label') as $name)
+		foreach (array('_error', '_item', '_label', '_callbacks', '_filters', '_rules') as $name)
 		{
 			$value_default = Arr::get($group_defaults, $name, array());
 			$value = Arr::get($group_options, $name, array());
@@ -163,15 +163,17 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 		}
 		$options['_group'] = array_merge($group_defaults, $group_options);
 		$options['_is_group'] = TRUE;
-
 		parent::_init_options($options);
 
-		// Set the order meta value to the group order value
+		// Set the meta value to the group value
 		$group_options = Arr::get($this->_meta, 'group', array());
-		$order = Arr::get($group_options, '_order');
-		if ( ! empty($order))
+		foreach (array('order', 'callbacks', 'filters', 'rules') as $name)
 		{
-			$this->_meta['order'] = $order;
+			$value = Arr::get($group_options, '_'.$name);
+			if (isset($value))
+			{
+				$this->_meta[$name] = $value;
+			}
 		}
 	}
 
