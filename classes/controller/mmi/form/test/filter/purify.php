@@ -54,7 +54,7 @@ class Controller_MMI_Form_Test_Filter_Purify extends Controller
 		echo $html;
 		if ($this->debug)
 		{
-			MMI_Debug::mdump($html, 'form', $form);
+			MMI_Debug::dump($html, 'form');
 		}
 	}
 } // End Controller_MMI_Form_Test_Filter_Purify
