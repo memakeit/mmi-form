@@ -138,6 +138,10 @@ class Kohana_MMI_Form
 			$options['type'] = $field;
 			$field = MMI_Form_Field::factory($field, $options);
 		}
+		if ($field instanceof MMI_Form_Field)
+		{
+			$field->form($this);
+		}
 
 		// Add the namespace
 		$namespace = trim(strval($field->meta('namespace')));
@@ -283,6 +287,7 @@ class Kohana_MMI_Form
 			{
 				$plugin->method_prefix($id.'_');
 			}
+			$plugin->form($this);
 			$this->_plugins[$id] = $plugin;
 		}
 		return $this;
