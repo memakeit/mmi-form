@@ -35,6 +35,10 @@ return array
 	'output' => $no_error,
 	'progress' => $no_error,
 	'reset' => $simple,
+	'select' => array
+	(
+		'_filters' => array(),
+	),
 	'submit' => array
 	(
 		'_before' => '<div class="submit">',
