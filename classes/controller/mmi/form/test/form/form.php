@@ -21,6 +21,11 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 	 */
 	public function action_index()
 	{
+		$form = MMI_Form::factory(array
+		(
+			'_open' => array('_before' => 'Test Form')
+		));
+
 		$settings = array
 		(
 			'_label' => 'Label 1',
@@ -39,7 +44,7 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 		$type = 'text';
 		$txt = MMI_Form_Field::factory($type, $settings);
 
-		$form = MMI_Form::factory(array('_open' => array('_before' => 'Test Form')))
+		$form
 			->add_field($type, $settings)
 			->fieldset_open(array('_legend' => 'Submit ...', 'id' => 'fs1', '_namespace' => 'mmi'))
 			->add_submit()

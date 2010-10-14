@@ -23,6 +23,11 @@ class Controller_MMI_Form_Test_Filter_Purify extends Controller
 	 */
 	public function action_index()
 	{
+		$form = MMI_Form::factory(array
+		(
+			'_open' => array('_before' => 'Purify Filter Test'),
+		));
+
 		$settings = array
 		(
 			'_filters'	=> array
@@ -40,10 +45,6 @@ class Controller_MMI_Form_Test_Filter_Purify extends Controller
 		$type = 'textarea';
 		$txt = MMI_Form_Field::factory($type, $settings);
 
-		$form = MMI_Form::factory(array
-		(
-			'_open' => array('_before' => 'Purify Filter Test'),
-		));
 		$form
 			->add_field($txt)
 			->add_submit()

@@ -22,6 +22,12 @@ class Controller_MMI_Form_Test_Plugin_reCAPTCHA extends Controller
 	 */
 	public function action_index()
 	{
+		$form = MMI_Form::factory(array
+		(
+			'_auto_validate' => TRUE,
+			'_open' => array('_before' => 'reCAPTCHA Test Form'),
+		));
+
 		$settings = array
 		(
 			'_label' => 'First Name',
@@ -40,11 +46,6 @@ class Controller_MMI_Form_Test_Plugin_reCAPTCHA extends Controller
 		$type = 'text';
 		$txt = MMI_Form_Field::factory($type, $settings);
 
-		$form = MMI_Form::factory(array
-		(
-			'_auto_validate' => TRUE,
-			'_open' => array('_before' => 'reCAPTCHA Test Form'),
-		));
 		$form
 			->add_field($txt)
 			->add_captcha('recaptcha')
