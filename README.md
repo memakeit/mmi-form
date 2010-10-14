@@ -27,11 +27,19 @@ from the server-side validation rules
 * add form fields (highly recommended)
 * validate and/or render the form
 
-## Usage: Form Creation
+## Forms
 
-## Usage: Field Creation
+**Configuration**
 
-## Usage: Plugins
+
+## Form Fields
+
+**Configuration**
+
+
+## Plugins
+
+**Configuration**
 
 
 ## Notes
@@ -45,15 +53,6 @@ from the server-side validation rules
 **jQuery Rules Generated from Field Class Names**
 
 **Checkbox and Radio Button Groups**
-
-
-## Configuration
-
-**Forms**
-
-**Fields**
-
-**Plugins**
 
 
 ## Test Controllers
