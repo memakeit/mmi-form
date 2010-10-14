@@ -52,8 +52,9 @@ from the server-side validation rules
 Server-side validation of the `step` attribute is implemented for the date input types
 (`date`, `datetime`, `datetime-local`, `month`, `time`, `week`) only if the value can be converted
 to a timestamp.  The UNIX timestamps range is from 13 Dec 1901 20:45:54 UTC to
-19 Jan 2038 03:14:07 UTC.  Dates outside this range support `min` and `max` server-side
-validation (using `DateTime` objects), but step validation is *not* implemeted.
+19 Jan 2038 03:14:07 UTC (see [Year 2038 Problem](http://en.wikipedia.org/wiki/Year_2038_problem)).
+Dates outside this range support `min` and `max` server-side validation (using `DateTime` objects),
+but step validation is *not* implemeted.
 
 For numeric and range input types, server-side validation of the `min`, `max`, and `step` attributes
 is supported.
