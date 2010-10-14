@@ -23,6 +23,7 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 	{
 		$form = MMI_Form::factory(array
 		(
+			'_auto_validate' => FALSE,
 			'_open' => array('_before' => 'Test Form')
 		));
 
@@ -42,10 +43,10 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 			'value' => 'memakeit',
 		);
 		$type = 'text';
-		$txt = MMI_Form_Field::factory($type, $settings);
+		$field = MMI_Form_Field::factory($type, $settings);
 
 		$form
-			->add_field($type, $settings)
+			->add_field($field)
 			->fieldset_open(array('_legend' => 'Submit ...', 'id' => 'fs1', '_namespace' => 'mmi'))
 			->add_submit()
 			->fieldset_close()
@@ -55,8 +56,14 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 //		$jquery = $form->jval_get_validation_js();
 //		MMI_Debug::dead($jquery, 'jquery_get_validation_js');
 //MMI_Debug::dead($form, 'form');
-		$html = $form->render();
+
+		$html = trim($form->render());
 		echo $html;
+		if ($this->debug)
+		{
+			MMI_Debug::dump($html, 'form');
+		}
+
 //		MMI_Debug::mdump($html, 'form', $form);
 //		MMI_Debug::dump($form->valid(), 'valid');
 //		MMI_Debug::dump($form->error(), 'errors');
