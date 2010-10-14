@@ -187,6 +187,7 @@ EOJS;
 			{
 				$this->_generate_kohana_rules($field);
 				$this->_generate_custom_rules($field);
+				$this->_process_accept_attr($field);
 				$this->_process_min_max_attr($field);
 			}
 		}
@@ -304,6 +305,90 @@ EOJS;
 	}
 
 	/**
+	 * Process the accept attribute.
+	 * If the accept attribute is specified as a MIME type, the default jQuery accept logic
+	 * must be disabled by setting the rule to false.
+	 *
+	 * @param	MMI_From_Field	the form field object
+	 * @return	void
+	 */
+	protected function _process_accept_attr($field)
+	{
+		$attributes = $field->attribute();
+		$type = strtolower(Arr::get($attributes, 'type', 'text'));
+		if ($type !== 'file')
+		{
+			// Do not process accept attribute if an input type does not support it
+			return;
+		}
+
+		$accept = trim(strval(Arr::get($attributes, 'accept', '')));
+		if ($accept !== '' AND strpos($accept, '/'))
+		{
+			$id = $field->id();
+			$jquery_rule = $this->_get_jquery_rule_name('accept');
+			$this->_options['rules'][$id][$jquery_rule] = FALSE;
+		}
+	}
+
+	/**
+	 * Process the min and max attributes.
+	 * For numeric input types (number and range), set the validation message.
+	 * For date-time input types (date, datetime, datetime-local, month, time, week),
+	 * remove the validation rule.  The min and max rules expect numeric data, not a
+	 * date-time string.  If the min and max rules are not explicitly removed,
+	 * the validation plugin will automatically generate them using the non-numeric
+	 * attribute values.
+	 *
+	 * @param	MMI_From_Field	the form field object
+	 * @return	void
+	 */
+	protected function _process_min_max_attr($field)
+	{
+		$id = $field->id();
+		$rules = Arr::path($this->_options, 'rules.'.$id, array());
+		if (array_key_exists('range', $rules))
+		{
+			// Do not process the min and max attributes if a range rule exists
+			return;
+		}
+
+		$type_datetime = array('date', 'datetime', 'datetime-local', 'month', 'time', 'week');
+		$type_numeric = array('number', 'range');
+
+		$attributes = $field->attribute();
+		$type = strtolower(Arr::get($attributes, 'type', 'text'));
+		if ( ! in_array($type, $type_datetime) AND ! in_array($type, $type_numeric))
+		{
+			// Do not process the min and max attributes if an input type does not support it
+			return;
+		}
+
+		foreach (array('min', 'max') as $attr_name)
+		{
+			$attr_value = trim(strval(Arr::get($attributes, $attr_name, '')));
+			if ($attr_value !== '')
+			{
+				$jquery_rule = $this->_get_jquery_rule_name($attr_name);
+				if (is_numeric($attr_value) AND in_array($type, $type_numeric))
+				{
+					$rule_parms = array($attr_value);
+					$label = trim(Arr::get($field->meta('label'), 'html'), ':');
+					$msg = MMI_Form_Messages::format_error_msg($label, 'cust_'.$attr_name, $rule_parms);
+					$parms = $this->_parse_rule_parms($attr_name, $rule_parms);
+
+					$this->_options['messages'][$id][$jquery_rule] = $msg;
+					$this->_options['rules'][$id][$jquery_rule] = $parms;
+				}
+				elseif (in_array($type, $type_datetime))
+				{
+					$this->_options['rules'][$id][$jquery_rule] = FALSE;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Get the field name, enclosing it in quotes when necessary.
 	 *
 	 * @param	MMI_Form_Field	the form field object
@@ -371,62 +456,6 @@ EOJS;
 				break;
 		}
 		return $default;
-	}
-
-	/**
-	 * Process the min and max attributes.
-	 * For numeric input types (number and range), set the validation message.
-	 * For date-time input types (date, datetime, datetime-local, month, time, week),
-	 * remove the validation rule.  The min and max rules expect numeric data, not a
-	 * date-time string.  If the min and max rules are not explicitly removed,
-	 * the validation plugin will automatically generate them using the non-numeric
-	 * attribute values.
-	 *
-	 * @return	void
-	 */
-	protected function _process_min_max_attr($field)
-	{
-		$id = $field->id();
-		$rules = Arr::path($this->_options, 'rules.'.$id, array());
-		if (array_key_exists('range', $rules))
-		{
-			// Do not process min and max when a range rule exists
-			return;
-		}
-
-		$type_datetime = array('date', 'datetime', 'datetime-local', 'month', 'time', 'week');
-		$type_numeric = array('number', 'range');
-
-		$attributes = $field->attribute();
-		$type = strtolower(Arr::get($attributes, 'type', 'text'));
-		if ( ! in_array($type, $type_datetime) AND ! in_array($type, $type_numeric))
-		{
-			// Do not process min and max when the input type does not support it
-			return;
-		}
-
-		foreach (array('min', 'max') as $attr_name)
-		{
-			$attr_value = trim(strval(Arr::get($attributes, $attr_name, '')));
-			if ($attr_value !== '')
-			{
-				$jquery_rule = $this->_get_jquery_rule_name($attr_name);
-				if (is_numeric($attr_value) AND in_array($type, $type_numeric))
-				{
-					$rule_parms = array($attr_value);
-					$label = trim(Arr::get($field->meta('label'), 'html'), ':');
-					$msg = MMI_Form_Messages::format_error_msg($label, 'cust_'.$attr_name, $rule_parms);
-					$parms = $this->_parse_rule_parms($attr_name, $rule_parms);
-
-					$this->_options['messages'][$id][$jquery_rule] = $msg;
-					$this->_options['rules'][$id][$jquery_rule] = $parms;
-				}
-				elseif (in_array($type, $type_datetime))
-				{
-					$this->_options['rules'][$id][$jquery_rule] = FALSE;
-				}
-			}
-		}
 	}
 
 	/**
