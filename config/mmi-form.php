@@ -51,14 +51,14 @@ return array
 	),
 	'_open' => array
 	(
-		'_before' => '_BEFORE_FORM_',
+		'_before' => '',
 		'_after' => '',
 		'class' => 'frm',
 	),
 	'_close' => array
 	(
 		'_before' => '',
-		'_after' => '_AFTER_FORM_',
+		'_after' => '',
 	),
 	'_messages' => array
 	(
