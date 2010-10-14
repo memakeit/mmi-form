@@ -511,11 +511,11 @@ abstract class Kohana_MMI_Form_Field
 		$name = trim(strval(Arr::get($options, 'name', '')));
 		if ($id === '' AND $name !== '')
 		{
-			$options['id'] = $name;
+			$id = $options['id'] = $name;
 		}
 		elseif ($name === '' AND $id !== '')
 		{
-			$options['name'] = $id;
+			$name = $options['name'] = $id;
 		}
 		if ($id === '')
 		{
