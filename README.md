@@ -5,19 +5,20 @@ By default, HTML5 elements and attributes are generated.
 
 The advantages of using this module include:
 
-* CSRF and CAPTCHA plugins that can be created with 1 line of code
+* forms and form fields are easy to create and configure
+* checkbox and radio button groups are automatically created when an array of choices is
+specified
+* CSRF and CAPTCHA functionality can each be implemented with 1 line of code.
 * in browsers that do not support the new input types (email, tel, url, etc) or new input
 attributes (pattern, required, etc), the corresponding server-side validation rules are
 *automagically* generated
-* with the jQuery form validation plugin enabled, client-side validation rules are generated
+* with the jQuery validation plugin enabled, client-side validation script is generated
 from the server-side validation rules
-* an HTML Purifier filter (requires shadowhand's [purifier](http://github.com/shadowhand/purifier)
-module)
 
 ## Dependencies
 
-* shadowhand's [purifier](http://github.com/shadowhand/purifier) (if using the purify filter)
 * [mmi-core](http://github.com/memakeit/mmi-core) (only for the test controllers)
+* shadowhand's [purifier](http://github.com/shadowhand/purifier) (if using the purify filter)
 
 ## Workflow
 
@@ -26,14 +27,28 @@ module)
 * add form fields (highly recommended)
 * validate and/or render the form
 
-## Usage:
+## Usage: Form Creation
+
+## Usage: Field Creation
+
+## Usage: Plugin Usage
+
 
 ## Notes
 
-**Namespaces**
+**The Accept Attribute**
+**The Pattern Attribute**
+**The Step Attribute**
+**Checkbox and Radio Button Groups**
 
 
 ## Configuration
+
+**Forms**
+**Fields**
+
+
+
 
 ## Test Controllers
 Test controllers are located in `classes/controller/mmi/form/test`.
