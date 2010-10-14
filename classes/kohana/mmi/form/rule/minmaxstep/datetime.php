@@ -86,9 +86,11 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
 		$value = strval(Arr::get($_POST, $field, ''));
+		$value_set = FALSE;
 		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
+			$value_set = TRUE;
 		}
 		$method = ($value instanceof DateTime) ? 'get_value_dt' : 'get_value';
 
@@ -114,7 +116,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			return TRUE;
 		}
 
-		if ( ! empty($value))
+		if ($value_set)
 		{
 			$validate->error($field, 'range', array($min_orig, $max_orig));
 		}
@@ -135,9 +137,11 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
 		$value = strval(Arr::get($_POST, $field, ''));
+		$value_set = FALSE;
 		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
+			$value_set = TRUE;
 		}
 		$method = ($value instanceof DateTime) ? 'get_value_dt' : 'get_value';
 
@@ -157,7 +161,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			return TRUE;
 		}
 
-		if ( ! empty($value))
+		if ($value_set)
 		{
 			$validate->error($field, 'cust_max', array($max_orig));
 		}
@@ -178,9 +182,11 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
 		$value = strval(Arr::get($_POST, $field, ''));
+		$value_set = FALSE;
 		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
+			$value_set = TRUE;
 		}
 		$method = ($value instanceof DateTime) ? 'get_value_dt' : 'get_value';
 
@@ -200,7 +206,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			return TRUE;
 		}
 
-		if ( ! empty($value))
+		if ($value_set)
 		{
 			$validate->error($field, 'cust_min', array($min_orig));
 		}
@@ -221,9 +227,11 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		$class = 'MMI_Form_Rule_MinMaxStep_'.ucfirst($mode);
 
 		$value = strval(Arr::get($_POST, $field, ''));
+		$value_set = FALSE;
 		if ( ! empty($value))
 		{
 			$value = call_user_func(array($class, 'get_value'), $value);
+			$value_set = TRUE;
 		}
 		$method = ($value instanceof DateTime) ? 'get_value_dt' : 'get_value';
 
@@ -260,7 +268,7 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 			}
 		}
 
-		if ( ! empty($value))
+		if ($value_set)
 		{
 			$info = array();
 			if (method_exists($class, 'format_step') AND ! empty($step))
@@ -273,15 +281,6 @@ class Kohana_MMI_Form_Rule_MinMaxStep_DateTime
 		}
 		return FALSE;
 	}
-
-
-
-
-
-
-
-
-
 
 	/**
 	 * Convert the value to a timestamp.
