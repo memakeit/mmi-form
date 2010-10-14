@@ -31,28 +31,33 @@ from the server-side validation rules
 
 ## Usage: Field Creation
 
-## Usage: Plugin Usage
+## Usage: Plugins
 
 
 ## Notes
 
 **The Accept Attribute**
+
 **The Pattern Attribute**
+
 **The Step Attribute**
+
+**jQuery Rules Generated from Field Class Names**
+
 **Checkbox and Radio Button Groups**
 
 
 ## Configuration
 
 **Forms**
+
 **Fields**
 
-
+**Plugins**
 
 
 ## Test Controllers
 Test controllers are located in `classes/controller/mmi/form/test`.
-
 
 
 classRuleSettings: {
@@ -67,3 +72,5 @@ classRuleSettings: {
 	digits: {digits: true},
 	creditcard: {creditcard: true}
 },
+
+##Links
