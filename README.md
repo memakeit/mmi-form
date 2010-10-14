@@ -5,21 +5,14 @@ By default, HTML5 elements and attributes are generated.
 
 The advantages of using this module include:
 
+* CSRF and CAPTCHA plugins that can be created with 1 line of code
 * in browsers that do not support the new input types (email, tel, url, etc) or new input
 attributes (pattern, required, etc), the corresponding server-side validation rules are
 *automagically* generated
 * with the jQuery form validation plugin enabled, client-side validation rules are generated
 from the server-side validation rules
-
-This module provides the following plugins:
-
-* CSRF
-* reCAPTCHA
-* jQuery form validation
-
-This module provides the following filters:
-
-* an HTML Purifier filter (requires shadowhand's [purifier](http://github.com/shadowhand/purifier) module)
+* an HTML Purifier filter (requires shadowhand's [purifier](http://github.com/shadowhand/purifier)
+module)
 
 ## Dependencies
 
