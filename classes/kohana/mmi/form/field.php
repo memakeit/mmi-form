@@ -459,7 +459,7 @@ abstract class Kohana_MMI_Form_Field
 
 		// Set the label defaults
 		$label_defaults = $this->_get_form_meta('label', array());
-		$label_type_specific = self::get_config()->get('_label', array());
+		$label_type_specific = Arr::path(self::get_config(TRUE), $options['type'].'._label', array());
 		$this->_label_defaults = Arr::merge($label_defaults, $label_type_specific);
 
 		// Set the CSS class
@@ -751,6 +751,7 @@ abstract class Kohana_MMI_Form_Field
 	protected function _label_meta()
 	{
 		$label = Arr::get($this->_meta, 'label', array());
+
 		if ( ! is_array($label))
 		{
 			$label = array_merge($this->_label_defaults, array('_html' => $label));
