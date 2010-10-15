@@ -75,23 +75,23 @@ use timestamps for calculations, they support server-side validation of the `ste
 for all values.
 
 The `numeric` and `range` input types support server-side validation of the `min`, `max`, and
-`step` attributes.
+`step` attributes for all values.
 
 **jQuery Rules Generated from Field Class Names**
 
-The [jQuery form validation plugin](http://docs.jquery.com/Plugins/Validation) automatically
+The jQuery form validation [plugin](http://docs.jquery.com/Plugins/Validation) automatically
 generates rules from a field's CSS classes. The following CSS classes generate validation rules:
 
-* `required` => `{required: true}`,
-* `email` => `{email: true}`,
-* `url` => `{url: true}`,
-* `date` => `{date: true}`,
-* `dateISO` => `{dateISO: true}`,
-* `dateDE` => `{dateDE: true}`,
-* `number` => `{number: true}`,
-* `numberDE` => `{numberDE: true}`,
-* `digits` => `{digits: true}`,
-* `creditcard` => `{creditcard: true}`
+* `required` => {required: true},
+* `email` => {email: true},
+* `url` => {url: true},
+* `date` => {date: true},
+* `dateISO` => {dateISO: true},
+* `dateDE` => {dateDE: true},
+* `number` => {number: true},
+* `numberDE` => {numberDE: true},
+* `digits` => {digits: true},
+* `creditcard` => {creditcard: true}
 
 **Checkbox and Radio Button Groups**
 
