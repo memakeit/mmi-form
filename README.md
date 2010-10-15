@@ -191,6 +191,7 @@ The following code will invoke the plugin's `get_validation_js()` method.
 	$js = $form->jqv_get_validation_js();
 
 **Configuration**
+
 The configuration file for the jQuery validation plugin is named
 `mmi-form-plugin-jquery-validation.php`.
 
