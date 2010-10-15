@@ -39,12 +39,123 @@ from the server-side validation rules
 
 ## Plugins
 
+Plugins are added to the form with the `add_plugin($plugin, $method_prefix, $options)` method.
+The first parameter is a plugin name or a `MMI_Form_Plugin` object. The second parameter is a
+plugin prefix which is used to call plugin methods via the form (see the section about the
+jQuery validation plugin for more details). The third parameter is an associative array of plugin
+options. The options are ignored if a `MMI_Form_Plugin` object was specified as the first parameter.
+The following code shows the two ways a CSRF plugin can be added to a form.
+
+The plugin object is created by the form:
+
+	$form = MMI_Form::factory(array
+	(
+		'_auto_validate' => TRUE,
+		'_namespace' => 'mmi',
+		'id' => 'form1',
+	));
+	$form->add_plugin('csrf', 'csrf', array
+	(
+		'_namespace' => 'mmi',
+		'id' => 'token',
+	));
+	$form->add_submit('Testing CSRF');
+
+The plugin object is explicitly created:
+
+	$form = MMI_Form::factory(array
+	(
+		'_auto_validate' => TRUE,
+		'_namespace' => 'mmi',
+		'id' => 'form1',
+	));
+	$plugin = MMI_Form_Plugin::factory('csrf', array
+	(
+		'_namespace' => 'mmi',
+		'id' => 'token',
+	));
+	$form->add_plugin($plugin, 'csrf');
+	$form->add_submit('Testing CSRF');
+
+The HTML output is the same for both:
+
+	<form action="/memakeit/mmi/form/test/form/form" method="post" id="mmi_form1" accept-charset="utf-8" class="frm">
+	<div id="mmi_frm_status" class="msg"></div>
+	<div><input type="hidden" id="mmi_token" name="mmi_token" value="security4cb879ecbd780" class="fld" /></div>
+	<div class="submit"><input type="submit" name="12871582528516" value="Testing CSRF" class="fld" /></div>
+	</form>
+
+### CAPTCHA Plugin
+
+The form method `add_captcha($driver, $options)` is the easiest way to add a
+[CAPTCHA](http://en.wikipedia.org/wiki/CAPTCHA) to a form. A driver for the Google reCAPTCHA
+is included. The following PHP specifies a white theme and Spanish as the UI language.
+
+	$form->add_captcha('recaptcha', array
+	(
+		'_lang' => 'es',
+		'_theme' => 'white'
+	));
+
+It generates the following HTML.
+
+	<script type="text/javascript">
+	//<![CDATA[
+		var RecaptchaOptions = { theme: 'white', lang: 'es' };
+	//]]>
+	</script>
+	<script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=XXXXXXXXXX"></script>
+	<noscript>
+		<iframe src="http://www.google.com/recaptcha/api/noscript?k=XXXXXXXXXX" height="300" width="500" frameborder="0"></iframe>
+		<br/><textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+		<input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+	</noscript>
+
+The configuration file for the reCAPTCHA plugin is named `mmi-form-plugin-recaptcha.php`.
+The most important reCAPTCHA options are:
+
+* `_lang` the UI language
+* `_private_key` overrides the private key in the config file
+* `_public_key` overrides the public key in the config file
+* `_theme` valid values are blackglass, clean, custom, red, and white
+* `_use_ssl` submit the data using SSL?
+
+### CSRF Plugin
+
+The form method `add_csrf($id, $namespace)` is the easiest way to add
+[cross-site request forgery](http://en.wikipedia.org/wiki/Cross-site_request_forgery)
+protection to a form. The following PHP
+
+	$form->add_csrf('csrf', 'mmi');
+
+generates a hidden form field used by the CSRF plugin during validation.
+
+	<div><input type="hidden" id="mmi_csrf" name="mmi_csrf" value="security4cb87d8ba5da0" class="fld" /></div>
+
 **Configuration**
+
+There is no separate configuration file for the CSRF plugin. The most important options are:
+
+* `_namespace` used to generate the hidden form field id
+* `id` used to generate  the hidden form field id
+
+### jQuery Validation Plugin
+
+The configuration file for the reCAPTCHA plugin is named `mmi-form-plugin-jquery-validation.php`.
+The most important reCAPTCHA options are:
+
+* `_lang` the UI language
+* `_private_key` overrides the private key in the config file
+* `_public_key` overrides the public key in the config file
+* `_theme` valid values are blackglass, clean, custom, red, and white
+* `_use_ssl` submit the data using SSL?
+
+
 
 
 ## Notes
 
-**The Accept Attribute**
+### The Accept Attribute
 
 The implementation of the `file` input's `accept` attribute varies by browser.
 The most common implementation is no implementation. Opera 10 filters the files displayed
@@ -54,7 +165,7 @@ is disabled. The jQuery plugin correctly validates the `accept` attribute when a
 (ex: `pdf` or `gif|png`) is specified
 (see [plugin documentation](http://docs.jquery.com/Plugins/Validation/Methods/accept)).
 
-**The Pattern Attribute**
+### The Pattern Attribute
 
 The implementation of the `pattern` attribute also varies by browser. Chrome 6 and Opera 10
 both support in browser validation of the `pattern` attribute. If the pattern is `\d+`,
@@ -63,37 +174,37 @@ requires an input value that contains 1 or more digits but that can contain othe
 The jQuery plugin uses the same logic as Opera 10 for validation. To ensure consistent
 validation, use the `^` and `$` to mark the start and end of the string being validated.
 
-**The Min, Max, and Step Attributes**
+### The Min, Max, and Step Attributes
 
 The `date`, `datetime`, `datetime-local`, and `week` input types support server-side
-validation of the `step` attribute *only if the value can be converted to a timestamp*.
+validation of the `step` attribute _only if the value can be converted to a timestamp_.
 The UNIX timestamp range is from 13 Dec 1901 20:45:54 UTC to 19 Jan 2038 03:14:07 UTC
 (see [Year 2038 Problem](http://en.wikipedia.org/wiki/Year_2038_problem)). Dates outside
 this range support `min` and `max` server-side validation (using `DateTime` objects),
-but `step` validation is *not implemented*. Since the `month` and `time` input types do not
+but `step` validation is _not implemented_. Since the `month` and `time` input types do not
 use timestamps for calculations, they support server-side validation of the `step` attribute
 for all values.
 
 The `numeric` and `range` input types support server-side validation of the `min`, `max`, and
 `step` attributes for all values.
 
-**jQuery Rules Generated from Field Class Names**
+### jQuery Rules Generated from Field Class Names
 
 The jQuery form validation [plugin](http://docs.jquery.com/Plugins/Validation) automatically
 generates rules from a field's CSS classes. The following CSS classes generate validation rules:
 
-* `required` => {required: true},
-* `email` => {email: true},
-* `url` => {url: true},
+* `creditcard` => {creditcard: true}
 * `date` => {date: true},
-* `dateISO` => {dateISO: true},
 * `dateDE` => {dateDE: true},
+* `dateISO` => {dateISO: true},
+* `digits` => {digits: true},
+* `email` => {email: true},
 * `number` => {number: true},
 * `numberDE` => {numberDE: true},
-* `digits` => {digits: true},
-* `creditcard` => {creditcard: true}
+* `required` => {required: true},
+* `url` => {url: true},
 
-**Checkbox and Radio Button Groups**
+### Checkbox and Radio Button Groups
 
 While thought was given to wrapping checkbox and radio button groups in `fieldset` tags, they are
 wrapped in `div` tags.
@@ -104,7 +215,8 @@ Test controllers are located in `classes/controller/mmi/form/test`.
 
 ## Inspiration &amp; Credits
 
+* the [Kohana 3 PHP Framework](http://github.com/kohana)
 * the jQuery form validation [plugin](http://docs.jquery.com/Plugins/Validation)
-* shadowhand's [purifier](http://github.com/shadowhand/purifier) (if using the purify filter)
-* bmidgets [kohana-formo](http://github.com/bmidget/kohana-formo) is another great option for
+* shadowhand's [purifier](http://github.com/shadowhand/purifier)
+* bmidget's [kohana-formo](http://github.com/bmidget/kohana-formo) is another great option for
 Kohana 3 form generation
