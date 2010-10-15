@@ -22,16 +22,9 @@ from the server-side validation rules
 * [mmi-core](http://github.com/memakeit/mmi-core) (only for the test controllers)
 * shadowhand's [purifier](http://github.com/shadowhand/purifier) (if using the purify filter)
 
-## Workflow
-
-* create a form object (essential)
-* add plugins (optional)
-* add form fields (highly recommended)
-* validate and/or render the form
-
 ## Documentation
 
-Further documentation is found in the guide directory.
+Further documentation is found in the `guide` directory.
 
 ## Test Controllers
 
