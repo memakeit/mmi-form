@@ -6,3 +6,4 @@
 		- [CAPTCHA](mmi-form.plugins.captcha)
 		- [CSRF](mmi-form.plugins.csrf)
 		- [jQuery Validation](mmi-form.plugins.jquery.validation)
+	- [Notes](mmi-form.notes)
