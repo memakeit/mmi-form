@@ -111,6 +111,8 @@ It generates the following HTML.
 		<input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
 	</noscript>
 
+**Configuration**
+
 The configuration file for the reCAPTCHA plugin is named `mmi-form-plugin-recaptcha.php`.
 The most important reCAPTCHA options are:
 
