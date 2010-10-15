@@ -469,6 +469,29 @@ class Kohana_MMI_Form
 	}
 
 	/**
+	 * Get or set the form id.
+	 * This method is chainable when setting a value.
+	 *
+	 * @param	string	the form id
+	 * @return	mixed
+	 */
+	public function id($value = NULL)
+	{
+		if (func_num_args() === 0)
+		{
+			$id = trim(strval(Arr::get($this->_attributes, 'id', '')));
+			if ($id !== '')
+			{
+				$namespace = Arr::get($this->_meta, 'namespace', '');
+				$id = MMI_Form_Field::field_id($id, $namespace);
+			}
+			return $id;
+		}
+		$this->_attributes['id'] = $value;
+		return $this;
+	}
+
+	/**
  	 * Get or set field meta data.
 	 * If no parameters are specified, all meta data is returned.
 	 * If a key is specified, it is used to retrieve the meta data value.
@@ -700,26 +723,16 @@ class Kohana_MMI_Form
 	 * This method is chainable.
 	 *
 	 * @param	string	the form field id
+	 * @param	string	the form field namespace
 	 * @return	MMI_Form
 	 */
-	public function add_csrf($id = NULL)
+	public function add_csrf($id = NULL, $namespace = NULL)
 	{
-		$id = trim(strval($id));
-		if ($id === '')
-		{
-			$id = 'mmi_csrf';
-		}
-		$this->add_field('hidden', array
+		return $this->add_plugin('csrf', 'csrf', array
 		(
+			'_namespace' => $namespace,
 			'id' => $id,
-			'_rules' => array
-			(
-				'not_empty'			=> NULL,
-				'Security::check'	=> NULL,
-			),
-			'value' => Security::token(TRUE),
 		));
-		return $this;
 	}
 
 	/**
@@ -1164,14 +1177,7 @@ class Kohana_MMI_Form
 	{
 		$allowed = $this->_get_allowed_attributes();
 		$attributes = $this->_attributes;
-
-		// Process the id and namespace
-		$id = trim(strval(Arr::get($attributes, 'id', '')));
-		if ($id !== '')
-		{
-			$namespace = Arr::get($this->_meta, 'namespace');
-			$attributes['id'] = MMI_Form_Field::field_id($id, $namespace);
-		}
+		$attributes['id'] = $this->id();
 		return array_intersect_key($attributes, array_flip($allowed));
 	}
 
@@ -1237,11 +1243,9 @@ class Kohana_MMI_Form
 	 */
 	public static function factory($options = array())
 	{
-		if ( ! self::$instance)
-		{
-			self::$instance = new MMI_Form($options);
-		}
-		return self::$instance;
+		$form = new MMI_Form($options);
+		self::$instance = $form;
+		return $form;
 	}
 
 	/**
