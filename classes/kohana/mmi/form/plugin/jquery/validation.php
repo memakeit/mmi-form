@@ -26,7 +26,6 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		'spaces'		=> '\u0020\u00a0',
 		'underscores'	=> '\u0029\u005d\u007d',
 	);
-
 	/**
 	 * @var array a map of Kohana validation methods and their jQuery equivalents
 	 */
@@ -849,6 +848,15 @@ EOJS;
 		return array_combine($keys, $keys);
 	}
 
+	/**
+	 * Get the default unicode ranges.
+	 *
+	 * @return	array
+	 */
+	public static function get_default_unicode_ranges()
+	{
+		return self::$_default_unicode_ranges;
+	}
 
 	/**
 	 * Get the default JavaScript configuration.
