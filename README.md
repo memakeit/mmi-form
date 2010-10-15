@@ -41,7 +41,7 @@ from the server-side validation rules
 
 Plugins are added to the form with the `add_plugin($plugin, $method_prefix, $options)` method.
 The first parameter is a plugin name or a `MMI_Form_Plugin` object. The second parameter is a
-plugin prefix which is used to call plugin methods via the form (see the section about the
+plugin prefix which is used to call plugin methods via the form (see the notes about the
 jQuery validation plugin for more details). The third parameter is an associative array of plugin
 options. The options are ignored if a `MMI_Form_Plugin` object was specified as the first parameter.
 The following code shows the two ways a CSRF plugin can be added to a form.
@@ -141,17 +141,66 @@ There is no separate configuration file for the CSRF plugin. The most important 
 
 ### jQuery Validation Plugin
 
-The configuration file for the reCAPTCHA plugin is named `mmi-form-plugin-jquery-validation.php`.
-The most important reCAPTCHA options are:
+Usage of the jQuery validation plugin is slightly more complicated. It is accomplished by:
 
-* `_lang` the UI language
-* `_private_key` overrides the private key in the config file
-* `_public_key` overrides the public key in the config file
-* `_theme` valid values are blackglass, clean, custom, red, and white
-* `_use_ssl` submit the data using SSL?
+1. adding the [jQuery library](http://docs.jquery.com/Downloading_jQuery#Download_jQuery) to the page
+`echo HTML::script('<your path>/jquery-1.4.2.min.js').PHP_EOL;`
 
+2. adding the jQuery plugin to the page (either `jquery.validate.min.js` or `jquery.validate.js`
+can be used; both are located in the media directory)
+`echo HTML::script('<your path>/jquery.validate.min.js').PHP_EOL;`
 
+3. creating the form object
+`$form = MMI_Form::factory();`
 
+4. adding the plugin to the form
+`$form->add_plugin('jquery_validation', 'jqv');`
+
+5. adding fields to the form
+`$form->add_field('text', array
+(
+	'_label' => 'Text 1',
+	'_rules' => array('min_length' => array(5)),
+	'id' => 'text1',
+	'required' => 'required',
+));`
+
+6. adding a submit button
+`$form->add_submit();`
+
+7. generating the validation JavaScript
+`$js = $form->jqv_get_validation_js();`
+
+8. including the validation JavaScript in the page
+`echo '<script type="text/javascript">'.$js.'</script>';`
+
+**Notes**
+A plugin method is called via the form using the plugin's prefix and method name. The following
+code adds the jQuery validation plugin and specifies its prefix as 'jqv'.
+
+	$form->add_plugin('jquery_validation', 'jqv');
+
+To invoke the plugin's `get_validation_js()` method, a form method is called.
+The name of the form method is the plugin prefix (`jqv`) + an underscore (`_`) +
+the method name (`get_validation_js()`). Behind the scenes, the plugin prefix is used
+to retrieve the plugin object. Using the plugin object, the method is called using reflection.
+
+The following code will invoke the plugin's `get_validation_js()` method.
+
+	$js = $form->jqv_get_validation_js();
+
+**Configuration**
+The configuration file for the jQuery validation plugin is named
+`mmi-form-plugin-jquery-validation.php`.
+
+An array of plugin [options](http://docs.jquery.com/Plugins/Validation/validate#toptions) can be
+specified using the `options` key. Reasonable defaults are supplied by the
+`MMI_Form_Plugin_JQuery_Validation::get_default_config($debug, $error_class, $valid_class)` method.
+
+If the form supports Unicode (set via the form's `unicode` meta property), the plugin will
+validate form fields using Unicode ranges whenever possible. The Unicode ranges are specified
+using the `unicode` key. Reasonable defaults are supplied by the
+`MMI_Form_Plugin_JQuery_Validation::get_default_unicode_ranges()` method.
 
 ## Notes
 
@@ -209,7 +258,6 @@ generates rules from a field's CSS classes. The following CSS classes generate v
 While thought was given to wrapping checkbox and radio button groups in `fieldset` tags, they are
 wrapped in `div` tags.
 
-
 ## Test Controllers
 Test controllers are located in `classes/controller/mmi/form/test`.
 
@@ -217,6 +265,6 @@ Test controllers are located in `classes/controller/mmi/form/test`.
 
 * the [Kohana 3 PHP Framework](http://github.com/kohana)
 * the jQuery form validation [plugin](http://docs.jquery.com/Plugins/Validation)
-* shadowhand's [purifier](http://github.com/shadowhand/purifier)
-* bmidget's [kohana-formo](http://github.com/bmidget/kohana-formo) is another great option for
-Kohana 3 form generation
+* shadowhand's [purifier](http://github.com/shadowhand/purifier) module
+* bmidget's [kohana-formo](http://github.com/bmidget/kohana-formo) module is another great option
+for Kohana 3 form generation
