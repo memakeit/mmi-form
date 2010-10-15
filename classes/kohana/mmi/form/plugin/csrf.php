@@ -29,11 +29,15 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 		}
 		parent::__construct($options);
 
-		$id = trim(strval(Arr::get($this->_options, 'id', '')));
+		$options = $this->_options;
+		$id = trim(strval(Arr::get($options, 'id', '')));
+		$namespace = trim(strval(Arr::get($options, '_namespace', '')));
 		if ($id === '')
 		{
-			$this->_options['id'] = 'mmi_token';
+			$id = 'token';
+			$namespace = 'mmi';
 		}
+		Security::$token_name = MMI_Form_Field::field_id($id, $namespace);;
 		$this->_token = Security::token();
 		$this->_set_token();
 	}
@@ -64,6 +68,7 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 	protected function _set_token()
 	{
 		// Generate a new token and save it in the session
+		Security::$token_name = $this->_id();
 		$token = Security::token(TRUE);
 
 		// Add a hidden form field
