@@ -3,7 +3,7 @@
 This module is for generating form markup in either HTML4 or HTML5.
 By default, HTML5 elements and attributes are generated.
 
-The advantages of using this module include:
+**Features include:**
 
 * forms and form fields are easy to create and configure
 * checkbox and radio button groups are automatically created when an array of choices is
@@ -11,9 +11,11 @@ specified
 * CSRF and CAPTCHA functionality can each be implemented with 1 line of code.
 * in browsers that do not support the new input types (email, tel, url, etc) or new input
 attributes (pattern, required, etc), the corresponding server-side validation rules are
-*automagically* generated
+automagically generated
 * with the jQuery validation plugin enabled, client-side validation script is generated
 from the server-side validation rules
+* both client and server-side messages are extracted from the same message file
+* HTML Purifier is integrated as a filter
 
 ## Dependencies
 
@@ -27,7 +29,12 @@ from the server-side validation rules
 * add form fields (highly recommended)
 * validate and/or render the form
 
+## Documentation
+
+Further documentation is found in the guide directory.
+
 ## Test Controllers
+
 Test controllers are located in `classes/controller/mmi/form/test`.
 
 ## Inspiration &amp; Credits
