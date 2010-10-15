@@ -85,7 +85,7 @@ The HTML output is the same for both:
 	<div class="submit"><input type="submit" name="12871582528516" value="Testing CSRF" class="fld" /></div>
 	</form>
 
-### CAPTCHA Plugin
+## CAPTCHA Plugin
 
 The form method `add_captcha($driver, $options)` is the easiest way to add a
 [CAPTCHA](http://en.wikipedia.org/wiki/CAPTCHA) to a form. A driver for the Google reCAPTCHA
@@ -120,7 +120,7 @@ The most important reCAPTCHA options are:
 * `_theme` valid values are blackglass, clean, custom, red, and white
 * `_use_ssl` submit the data using SSL?
 
-### CSRF Plugin
+## CSRF Plugin
 
 The form method `add_csrf($id, $namespace)` is the easiest way to add
 [cross-site request forgery](http://en.wikipedia.org/wiki/Cross-site_request_forgery)
@@ -139,7 +139,7 @@ There is no separate configuration file for the CSRF plugin. The most important 
 * `_namespace` used to generate the hidden form field id
 * `id` used to generate  the hidden form field id
 
-### jQuery Validation Plugin
+## jQuery Validation Plugin
 
 Usage of the jQuery validation plugin is slightly more complicated. It is accomplished by:
 
@@ -175,6 +175,7 @@ can be used; both are located in the media directory)
 `echo '<script type="text/javascript">'.$js.'</script>';`
 
 **Notes**
+
 A plugin method is called via the form using the plugin's prefix and method name. The following
 code adds the jQuery validation plugin and specifies its prefix as 'jqv'.
 
