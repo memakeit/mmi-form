@@ -43,7 +43,7 @@ class Controller_MMI_Form_Test_Field_HTML extends Controller_MMI_Form_Test_Field
 		$this->_form->add_field($field);
 		if ($this->debug)
 		{
-			MMI_Debug::mdump($field->render(), $type.' (static callback)');
+			MMI_Debug::dump($field->render(), $type.' (static callback)');
 		}
 
 		$field = MMI_Form_Field::factory($type, $settings);
@@ -59,7 +59,7 @@ class Controller_MMI_Form_Test_Field_HTML extends Controller_MMI_Form_Test_Field
 		$this->_form->add_field($field);
 		if ($this->debug)
 		{
-			MMI_Debug::mdump($field->render(), $type.' (callback)');
+			MMI_Debug::dump($field->render(), $type.' (callback)');
 		}
 
 		$this->_form->add_html('</div>');

@@ -69,7 +69,7 @@ class Controller_MMI_Form_Test_Field extends Controller
 		$html = trim($form->render());
 		if ($this->debug)
 		{
-			$html .= MMI_Debug::mget($html, 'form', $form);
+			$html .= MMI_Debug::get($html, 'form', $form);
 		}
 		echo $html;
 	}
