@@ -2,14 +2,14 @@
 
 ## Configuration
 
-Configuration of forms and fields is done using an options array.
+Configuration of forms and fields is done using an associative array of options.
 
-Option names that start with an underscore are used as meta information by the class being
-configured.
+Option names that start with an underscore (`_namespace`, `_rules`, etc) are used as
+meta information.
 
-Options that do _not_ start with an underscore correspond to HTML attributes. Whether an
-HTML attribute is output depends on whether it is valid for the given input type and HTML
-version. The HTML version is specified using the `_html5` form option.
+Options that do _not_ start with an underscore (`class`, `id`, etc) correspond to HTML
+attributes. Whether an HTML attribute is output depends on whether it is valid for the
+input type and HTML version. The HTML version is specified using the `_html5` form option.
 
 ## Workflow
 

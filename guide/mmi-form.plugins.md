@@ -1,13 +1,16 @@
-## Plugins
+# Plugins
 
 Plugins are added to the form with the `add_plugin($plugin, $method_prefix, $options)` method.
-The first parameter is a plugin name or a `MMI_Form_Plugin` object. The second parameter is a
-plugin prefix which is used to call plugin methods via the form (see the notes below). The
-third parameter is an associative array of plugin options. The options are ignored if a
-`MMI_Form_Plugin` object was specified as the first parameter. The following code shows the
-two ways a CSRF plugin can be added to a form.
 
-The plugin object is created by the form:
+* The first parameter is a plugin name or a `MMI_Form_Plugin` object.
+* The second parameter is a plugin prefix which is used to call plugin methods via the
+form (see notes below).
+* The third parameter is an associative array of plugin options. The options are ignored if a
+`MMI_Form_Plugin` object was specified as the first parameter.
+
+The following code shows the two ways a CSRF plugin can be added to a form.
+
+The plugin object is created via the form.
 
 	$form = MMI_Form::factory(array
 	(
@@ -22,7 +25,7 @@ The plugin object is created by the form:
 	));
 	$form->add_submit('Testing CSRF');
 
-The plugin object is explicitly created:
+The plugin object is explicitly created.
 
 	$form = MMI_Form::factory(array
 	(
@@ -38,7 +41,7 @@ The plugin object is explicitly created:
 	$form->add_plugin($plugin, 'csrf');
 	$form->add_submit('Testing CSRF');
 
-The HTML output is the same for both:
+The HTML output is the same for both.
 
 	<form action="/memakeit/mmi/form/test/form/form" method="post" id="mmi_form1" accept-charset="utf-8" class="frm">
 	<div id="mmi_frm_status" class="msg"></div>
@@ -53,15 +56,15 @@ code adds the jQuery validation plugin and specifies its prefix as 'jqv'.
 
 	$form->add_plugin('jquery_validation', 'jqv');
 
-The plugin's `get_validation_js()` method is invoked via a form method called
-`jqv_get_validation_js()`. This form method name is derived from the following elements:
+The plugin's `get_validation_js()` method is invoked via a form by calling `jqv_get_validation_js()`.
+This form method name is built from:
 
 * the plugin prefix (`jqv`)
 * an underscore (`_`)
-* the plugin method name (`get_validation_js()`
+* the plugin method name (`get_validation_js()`)
 
-Behind the scenes, the plugin prefix is used to retrieve the plugin object. Using the plugin
-object, the method is called using reflection.
+Behind the scenes, the plugin prefix is used to retrieve the plugin object. The plugin method
+is then called using reflection.
 
 The following code will invoke the plugin's `get_validation_js()` method.
 

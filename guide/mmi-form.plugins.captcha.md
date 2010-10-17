@@ -3,6 +3,7 @@
 The form method `add_captcha($driver, $options)` is the easiest way to add a
 [CAPTCHA](http://en.wikipedia.org/wiki/CAPTCHA) to a form. A driver for the
 [Google reCAPTCHA](http://www.google.com/recaptcha) is included.
+
 The following PHP specifies a white theme and Spanish as the UI language.
 
 	$form->add_captcha('recaptcha', array
@@ -28,6 +29,7 @@ It generates the following HTML.
 ## Configuration
 
 The configuration file for the reCAPTCHA plugin is named `mmi-form-plugin-recaptcha.php`.
+
 The most important reCAPTCHA options are:
 
 * `_lang` the UI language
