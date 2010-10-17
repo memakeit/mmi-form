@@ -10,6 +10,9 @@
  */
 class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 {
+	// Class constants
+	const UNICODE = 'U';
+
 	/**
 	 * @var Kohana_Config the plugin configuration
 	 */
@@ -24,7 +27,7 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 		'letters'		=> '\u0041-\u005a\u0061-\u007a\u00aa\u00b5\u00ba\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u024f',
 		'numbers'		=> '\u0030-\u0039\u00b2\u00b3\u00b9\u00bc-\u00be',
 		'spaces'		=> '\u0020\u00a0',
-		'underscores'	=> '\u0029\u005d\u007d',
+		'underscores'	=> '\u005f',
 	);
 	/**
 	 * @var array a map of Kohana validation methods and their jQuery equivalents
@@ -32,7 +35,6 @@ class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 	protected static $_rule_map = array
 	(
 		'credit_card'	=> 'creditcard',
-		'digits'		=> 'digit',
 		'matches'		=> 'equalTo',
 		'max_items'		=> 'maxlength',
 		'max_length'	=> 'maxlength',
@@ -213,12 +215,12 @@ EOJS;
 			$msg = MMI_Form_Messages::format_error_msg($label, $rule_name, $rule_parms);
 			$parms = $this->_parse_rule_parms($rule_name, $rule_parms);
 
-			switch($rule_name)
+			switch ($rule_name)
 			{
 				// Built-in validation methods
 				case 'max_length':
 					// This rule is handled by the input attribute maxlength
-					break;
+				break;
 
 				case 'date':
 				case 'email':
@@ -229,12 +231,18 @@ EOJS;
 				case 'url':
 					$this->_options['messages'][$field_name][$jquery_rule] = $msg;
 					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-					break;
+				break;
 
 				// Custom validation methods
 				case 'alpha':
 				case 'alpha_dash':
 				case 'alpha_numeric':
+				case 'digit':
+					// Methods with a Unicode option
+					$this->_methods[] = $jquery_rule;
+					$this->_options['rules'][$field_name][$jquery_rule] = ($rule_parms === NULL OR ! $parms) ? 'N' : (self::UNICODE);
+				break;
+
 				case 'color':
 				case 'decimal':
 				case 'exact_length':
@@ -243,29 +251,21 @@ EOJS;
 				case 'phone':
 					$this->_methods[] = $jquery_rule;
 					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-					break;
+				break;
 
 				case 'credit_card':
 					$extra_rule = 'credit_card_type';
 					$this->_methods[] = $extra_rule;
 					$this->_options['rules'][$field_name][$extra_rule] = (count($rule_parms) === 1) ? $rule_parms[0] : 'default';
-					$this->_options['rules'][$field_name][$jquery_rule] = TRUE;
-					break;
 
-				case 'digit':
-					if ($this->_unicode)
-					{
-						$jquery_rule = 'digits_unicode';
-						$this->_methods[] = $jquery_rule;
-					}
-					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-					break;
+					$this->_options['rules'][$field_name][$jquery_rule] = TRUE;
+				break;
 
 				case 'regex':
 					$this->_methods[] = $jquery_rule;
 					$parms = preg_quote(substr($parms, 1, -1));
 					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-					break;
+				break;
 			}
 		}
 	}
@@ -291,14 +291,14 @@ EOJS;
 			$msg = MMI_Form_Messages::format_error_msg($label, 'cust_'.$rule_name, $rule_parms);
 			$parms = $this->_parse_rule_parms($rule_name, $rule_parms);
 
-			switch($rule_name)
+			switch ($rule_name)
 			{
 				case 'max_items':
 				case 'min_items':
 				case 'range_items':
 					$this->_options['messages'][$field_name][$jquery_rule] = $msg;
 					$this->_options['rules'][$field_name][$jquery_rule] = $parms;
-					break;
+				break;
 			}
 		}
 	}
@@ -452,7 +452,7 @@ EOJS;
 		{
 			case 'phone':
 				$default = '[7, 10, 11]';
-				break;
+			break;
 		}
 		return $default;
 	}
@@ -485,21 +485,23 @@ EOJS;
 	protected function _get_alpha_method()
 	{
 		$method = 'alpha';
-		if ($this->_unicode)
-		{
-			$unicode_ranges = self::_get_unicode_ranges();
-			$regex = '/^['.$unicode_ranges['letters'].']+$/';
-		}
-		else
-		{
-			$regex = '/^[a-z]+$/i';
-		}
+		$regex = '/^[a-z]+$/i';
+		$unicode_ranges = self::_get_unicode_ranges();
+		$regex_unicode = '/^['.$unicode_ranges['letters'].']+$/';
 		$msg = $this->_get_jquery_msg($method);
+		$code = self::UNICODE;
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
-	return this.optional(element) || $regex.test(value);
-}, '$msg');
+	if (parms === '{$code}')
+	{
+		return this.optional(element) || {$regex_unicode}.test(value);
+	}
+	else
+	{
+		return this.optional(element) || {$regex}.test(value);
+	}
+}, '{$msg}');
 EOJS;
 	}
 
@@ -511,21 +513,23 @@ EOJS;
 	protected function _get_alpha_dash_method()
 	{
 		$method = 'alpha_dash';
-		if ($this->_unicode)
-		{
-			$unicode_ranges = self::_get_unicode_ranges();
-			$regex = '/^['.$unicode_ranges['dashes'].$unicode_ranges['letters'].$unicode_ranges['numbers'].$unicode_ranges['underscores'].']+$/';
-		}
-		else
-		{
-			$regex = '/^[\-a-z0-9_]+$/i';
-		}
+		$regex = '/^[-\w]+$/i';
+		$unicode_ranges = self::_get_unicode_ranges();
+		$regex_unicode = '/^['.$unicode_ranges['dashes'].$unicode_ranges['letters'].$unicode_ranges['numbers'].$unicode_ranges['underscores'].']+$/';
 		$msg = $this->_get_jquery_msg($method);
+		$code = self::UNICODE;
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
-	return this.optional(element) || $regex.test(value);
-}, '$msg');
+	if (parms === '{$code}')
+	{
+		return this.optional(element) || {$regex_unicode}.test(value);
+	}
+	else
+	{
+		return this.optional(element) || {$regex}.test(value);
+	}
+}, '{$msg}');
 EOJS;
 	}
 
@@ -537,21 +541,23 @@ EOJS;
 	protected function _get_alpha_numeric_method()
 	{
 		$method = 'alpha_numeric';
-		if ($this->_unicode)
-		{
-			$unicode_ranges = self::_get_unicode_ranges();
-			$regex = '/^['.$unicode_ranges['letters'].$unicode_ranges['numbers'].']+$/';
-		}
-		else
-		{
-			$regex = '/^[a-z0-9]+$/i';
-		}
+		$regex = '/^[a-z0-9]+$/i';
+		$unicode_ranges = self::_get_unicode_ranges();
+		$regex_unicode = '/^['.$unicode_ranges['letters'].$unicode_ranges['numbers'].']+$/';
 		$msg = $this->_get_jquery_msg($method);
+		$code = self::UNICODE;
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
-	return this.optional(element) || $regex.test(value);
-}, '$msg');
+	if (parms === '{$code}')
+	{
+		return this.optional(element) || {$regex_unicode}.test(value);
+	}
+	else
+	{
+		return this.optional(element) || {$regex}.test(value);
+	}
+}, '{$msg}');
 EOJS;
 	}
 
@@ -566,10 +572,10 @@ EOJS;
 		$msg = $this->_get_jquery_msg($method);
 		$regex = '/^#?[0-9a-f]{3}([0-9a-f]{3})?$/i';
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
-	return this.optional(element) || $regex.test(value);
-}, '$msg');
+	return this.optional(element) || {$regex}.test(value);
+}, '{$msg}');
 EOJS;
 	}
 
@@ -597,28 +603,28 @@ EOJS;
 				$default .= $num.' | ';
 				$length = explode(',', Arr::get($settings, 'length', ''));
 				$length = (count($length) === 1)
-					? ('value.length === '.$length[0])
+					? ('(value.length === '.$length[0].')')
 					: ('jQuery.inArray(value.length, ['.implode(', ', $length).']) > -1');
 				$prefix = Arr::get($settings, 'prefix', array());
-				$js1[] = "if (parms === '$name') { validTypes |= ".$num.'; }';
+				$js1[] = "if (parms === '{$name}') { validTypes |= {$num}; }";
 				if (strcasecmp($name, 'unknown') === 0)
 				{
-					$js2[] = "if (validTypes & $num) { /* unknown */ return true; }";
+					$js2[] = "if (validTypes & {$num}) { /* unknown */ return true; }";
 				}
 				else
 				{
-					$js2[] = "if (validTypes & $num && /^($prefix)/.test(value)) { /* $name */ return $length; }";
+					$js2[] = "if ((validTypes & {$num}) && /^({$prefix})/.test(value)) { /* {$name} */ return {$length}; };";
 				}
 			}
 			$i *= 2;
 		}
-		$js1[] = "if (parms === 'default') { validTypes = ".trim($default, ' |').'; }';
+		$js1[] = "if (parms === 'default') { validTypes = ".trim($default, ' |')."; }";
 
 		$js1 = implode(PHP_EOL."\t", $js1);
 		$js2 = implode(PHP_EOL."\t", $js2);
 
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
 	if (/[^0-9-]+/.test(value)) {
 		return false;
@@ -626,11 +632,11 @@ jQuery.validator.addMethod('$method', function(value, element, parms)
 
 	value = value.replace(/\D/g, '');
 	var validTypes = 0x0000;
-	$js1
+	{$js1}
 
-	$js2
+	{$js2}
 	return false;
-}, '$msg');
+}, '{$msg}');
 EOJS;
 	}
 
@@ -646,7 +652,7 @@ EOJS;
 		$locale = localeconv();
 		$decimal_point = preg_quote($locale['decimal_point']);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
 	var digits = '+';
 	var places;
@@ -663,7 +669,7 @@ jQuery.validator.addMethod('$method', function(value, element, parms)
 	var temp = '^[0-9]'+digits+'{$decimal_point}[0-9]'+places+'$';
 	var regex = new RegExp(temp, 'i');
 	return this.optional(element) || regex.test(value);
-}, jQuery.validator.format('$msg'));
+}, jQuery.validator.format('{$msg}'));
 EOJS;
 	}
 
@@ -672,17 +678,26 @@ EOJS;
 	 *
 	 * @return	string
 	 */
-	protected function _get_digits_unicode_method()
+	protected function _get_digit_method()
 	{
-		$method = 'digits_unicode';
-		$msg = $this->_get_jquery_msg('digit');
+		$method = 'digit';
+		$regex = '/^\d+$/';
 		$unicode_ranges = self::_get_unicode_ranges();
-		$regex = '/^['.$unicode_ranges['numbers'].']+$/';
+		$regex_unicode = '/^['.$unicode_ranges['numbers'].']+$/';
+		$msg = $this->_get_jquery_msg($method);
+		$code = self::UNICODE;
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
-	return this.optional(element) || $regex.test(value);
-}, '$msg');
+	if (parms === '{$code}')
+	{
+		return this.optional(element) || {$regex_unicode}.test(value);
+	}
+	else
+	{
+		return this.optional(element) || {$regex}.test(value);
+	}
+}, '{$msg}');
 EOJS;
 	}
 
@@ -696,11 +711,11 @@ EOJS;
 		$method = 'exact_length';
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
 	value = jQuery.trim(value);
 	return this.optional(element) || parseInt(value.length) === parms;
-}, jQuery.validator.format('$msg'));
+}, jQuery.validator.format('{$msg}'));
 EOJS;
 	}
 
@@ -716,10 +731,10 @@ EOJS;
 		$ipv4 = '/^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})$/';
 		$ipv6 = '/^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/';
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
-	return this.optional(element) || $ipv4.test(value) || $ipv6.test(value);
-}, '$msg');
+	return this.optional(element) || {$ipv4}.test(value) || {$ipv6}.test(value);
+}, '{$msg}');
 EOJS;
 	}
 
@@ -735,10 +750,10 @@ EOJS;
 		$locale = localeconv();
 		$decimal_point = preg_quote($locale['decimal_point']);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
-	return this.optional(element) || /^-?[\d$decimal_point]+$/.test(value);
-}, '$msg');
+	return this.optional(element) || /^-?[\d{$decimal_point}]+$/.test(value);
+}, '{$msg}');
 EOJS;
 	}
 
@@ -752,11 +767,11 @@ EOJS;
 		$method = 'phone';
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
 	value = value.replace(/\D/g, '');
 	return this.optional(element) || jQuery.inArray(value.length, parms) > -1;
-}, '$msg');
+}, '{$msg}');
 EOJS;
 	}
 
@@ -770,11 +785,11 @@ EOJS;
 		$method = 'regex';
 		$msg = $this->_get_jquery_msg($method);
 		return<<<EOJS
-jQuery.validator.addMethod('$method', function(value, element, parms)
+jQuery.validator.addMethod('{$method}', function(value, element, parms)
 {
 	var regex = new RegExp(parms, 'i');
 	return this.optional(element) || regex.test(value);
-}, '$msg');
+}, '{$msg}');
 EOJS;
 	}
 
@@ -933,7 +948,7 @@ EOJS;
 	 * @param	string	the id of the status element
 	 * @return	string
 	 */
-	public static function get_default_invalid_handler($status_id = '#frm_status')
+	public static function get_default_invalid_handler($status_id = '#mmi_frm_status')
 	{
 		$substitute = 9999;
 		$msg_single = MMI_Form_Messages::msg_failure_single();
@@ -966,7 +981,7 @@ EOJS;
 	 * @param	string	the id of the buttons container
 	 * @return	string
 	 */
-	public static function get_default_submit_handler($status_id = '#frm_status', $buttons_id = 'div.submit', $message = 'Submitting ...')
+	public static function get_default_submit_handler($status_id = '#mmi_frm_status', $buttons_id = 'div.submit', $message = 'Submitting ...')
 	{
 return<<<EOJS
 function(frm)
