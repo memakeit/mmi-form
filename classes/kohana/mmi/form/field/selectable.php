@@ -169,7 +169,7 @@ abstract class Kohana_MMI_Form_Field_Selectable extends MMI_Form_Field
 			else
 			{
 				// Convert the selected options to an array
-				$selected = array((string) $selected);
+				$selected = array( (string) $selected);
 			}
 		}
 

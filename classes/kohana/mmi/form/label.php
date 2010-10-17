@@ -209,10 +209,7 @@ class Kohana_MMI_Form_Label
 	protected function _combine_value($options, $key)
 	{
 		$config = $this->_get_form_meta('label', array());
-		$value =
-			Arr::get($config, $key, '').' '.
-			Arr::get($options, $key, '').' '
-		;
+		$value = Arr::get($config, $key, '').' '.Arr::get($options, $key, '').' ';
 		$value = trim(preg_replace('/\s+/', ' ', $value));
 
 		// Remove duplicates
@@ -260,7 +257,7 @@ class Kohana_MMI_Form_Label
 			{
 				$placement = Arr::get($symbol, '_placement', MMI_Form::REQ_SYMBOL_BEFORE);
 				$symbol = Arr::get($symbol, '_html', '*&nbsp;');
-				$html = ($placement === MMI_Form::REQ_SYMBOL_BEFORE) ? $symbol.$html : $html.$symbol;
+				$html = ($placement === MMI_Form::REQ_SYMBOL_BEFORE) ? ($symbol.$html) : ($html.$symbol);
 			}
 		}
 

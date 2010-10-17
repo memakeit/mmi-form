@@ -233,10 +233,7 @@ class Kohana_MMI_Form_FieldSet
 	protected function _combine_value($options, $key)
 	{
 		$config = $this->_get_form_meta('fieldset', array());
-		$value =
-			Arr::get($config, $key, '').' '.
-			Arr::get($options, $key, '').' '
-		;
+		$value = Arr::get($config, $key, '').' '.Arr::get($options, $key, '').' ';
 		$value = trim(preg_replace('/\s+/', ' ', $value));
 
 		// Remove duplicates

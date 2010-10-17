@@ -589,7 +589,7 @@ abstract class Kohana_MMI_Form_Field
 		}
 		elseif (is_array($input))
 		{
-			foreach($input as $name => $value)
+			foreach ($input as $name => $value)
 			{
 				if (is_array($value))
 				{
@@ -620,11 +620,7 @@ abstract class Kohana_MMI_Form_Field
 		$defaults = $this->_get_form_meta('field', array());
 		$type = Arr::get($options, 'type', 'text');
 		$type_specific = $config->get($type, array());
-		$value =
-			Arr::get($defaults, $key, '').' '.
-			Arr::get($type_specific, $key, '').' '.
-			Arr::get($options, $key, '')
-		;
+		$value = Arr::get($defaults, $key, '').' '.Arr::get($type_specific, $key, '').' '.Arr::get($options, $key, '');
 		$value = trim(preg_replace('/\s+/', ' ', $value));
 
 		// Remove duplicates

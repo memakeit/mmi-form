@@ -94,15 +94,15 @@ abstract class Kohana_MMI_Form_Field_Group extends MMI_Form_Field
 				{
 					case MMI_Form::ORDER_ERROR:
 						$html[] = $this->_item_error($id);
-						break;
+					break;
 
 					case MMI_Form::ORDER_FIELD:
 						$html[] = $this->_item_field($id, strval($value), $form_value);
-						break;
+					break;
 
 					case MMI_Form::ORDER_LABEL:
 						$html[] = $this->_item_label($id, $name);
-						break;
+					break;
 				}
 			}
 			$items[] = implode(PHP_EOL, $html);
