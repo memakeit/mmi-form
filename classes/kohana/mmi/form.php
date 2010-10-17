@@ -629,11 +629,11 @@ class Kohana_MMI_Form
 					case self::ORDER_ERROR:
 						$options = array_merge(Arr::get($this->_meta, 'error', array()), $field->meta('error'));
 						$frm[] = MMI_Form_Label::factory($options)->form($this)->render();
-						break;
+					break;
 
 					case self::ORDER_FIELD:
 						$frm[] = $field->render();
-						break;
+					break;
 
 					case self::ORDER_LABEL:
 						$options = $field->meta('label');
@@ -642,7 +642,7 @@ class Kohana_MMI_Form
 							$options['_required'] = TRUE;
 						}
 						$frm[] = MMI_Form_Label::factory($options)->form($this)->render();
-						break;
+					break;
 				}
 			}
 		}
@@ -971,10 +971,7 @@ class Kohana_MMI_Form
 	protected function _combine_value($options, $key)
 	{
 		$defaults = self::get_config(TRUE);
-		$value =
-			Arr::get($defaults, $key, '').' '.
-			Arr::get($options, $key, '')
-		;
+		$value = Arr::get($defaults, $key, '').' '.Arr::get($options, $key, '');
 		$value = trim(preg_replace('/\s+/', ' ', $value));
 
 		// Remove duplicates
