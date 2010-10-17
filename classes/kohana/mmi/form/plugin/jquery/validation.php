@@ -7,6 +7,8 @@
  * @author		Me Make It
  * @copyright	(c) 2010 Me Make It
  * @license		http://www.memakeit.com/license
+ * @link		http://docs.jquery.com/Plugins/Validation
+ * @link		http://bassistance.de/jquery-plugins/jquery-plugin-validation/
  */
 class Kohana_MMI_Form_Plugin_JQuery_Validation extends MMI_Form_Plugin
 {
