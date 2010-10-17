@@ -12,6 +12,7 @@ return array
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD, MMI_Form::ORDER_ERROR),
 		'class' => 'fld',
 	),
+
 	'_group' => array
 	(
 		'_before' => '',
@@ -89,6 +90,5 @@ return array
 		'_placement' => MMI_Form::REQ_SYMBOL_BEFORE,
 	),
 	'_show_messages' 	=> TRUE,
-	'_unicode'			=> TRUE,
 	'class'				=> 'frm',
 );
