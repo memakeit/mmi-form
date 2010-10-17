@@ -55,7 +55,7 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 //		$form->add_plugin('jquery_validation', 'jval');
 //		$jquery = $form->jval_get_validation_js();
 //		MMI_Debug::dead($jquery, 'jquery_get_validation_js');
-//MMI_Debug::dead($form, 'form');
+//		MMI_Debug::dead($form, 'form');
 
 		$html = trim($form->render());
 		echo $html;

@@ -12,7 +12,7 @@ class Controller_MMI_Form_Test_Field extends Controller
 	/**
 	 * @var boolean turn debugging on?
 	 **/
-	public $debug = TRUE;
+	public $debug = FALSE;
 
 	/**
 	 * @var boolean automatically add a submit button?
@@ -26,12 +26,18 @@ class Controller_MMI_Form_Test_Field extends Controller
 
 	/**
 	 * Create the form object.
-	 *
+
+	 * @param	Request	the request that created the controller
 	 * @return	void
 	 */
-	public function __construct()
+	public function __construct($request)
 	{
-		$this->_form = MMI_Form::factory();
+		$this->_form = MMI_Form::factory(array
+		(
+			'id' => 'mmi_form',
+			'_auto_validate' => FALSE,
+		));
+		parent::__construct($request);
 	}
 
 	/**
@@ -46,8 +52,25 @@ class Controller_MMI_Form_Test_Field extends Controller
 		{
 			$form->add_submit();
 		}
+
+		if ($_POST)
+		{
+			if ($form->valid())
+			{
+				$form->reset();
+				echo 'form valid<br/>';
+			}
+			else
+			{
+				echo 'form invalid<br/>';
+			}
+		}
+
 		$html = trim($form->render());
+		if ($this->debug)
+		{
+			$html .= MMI_Debug::mget($html, 'form', $form);
+		}
 		echo $html;
-		MMI_Debug::mdump($html, 'form', $form);
 	}
 } // End Controller_MMI_Form_Test_Field
