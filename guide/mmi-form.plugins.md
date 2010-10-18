@@ -6,7 +6,7 @@ Plugins are added to the form with the `add_plugin($plugin, $method_prefix, $opt
 * The second parameter is a plugin prefix which is used to call plugin methods via the
 form (see notes below).
 * The third parameter is an associative array of plugin options. The options are ignored if a
-`MMI_Form_Plugin` object was specified as the first parameter.
+`MMI_Form_Plugin` object is specified as the first parameter.
 
 The following code shows the two ways a CSRF plugin can be added to a form.
 
