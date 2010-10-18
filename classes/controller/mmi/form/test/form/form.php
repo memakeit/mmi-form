@@ -33,8 +33,8 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 			'_namespace' => 'mmi',
 			'_rules' => array
 			(
-				'min_length' => array(6),
 				'alpha' => array(FALSE),
+				'min_length' => array(6),
 			),
 
 			'class' => 'text',
@@ -52,23 +52,11 @@ class Controller_MMI_Form_Test_Form_Form extends Controller
 			->fieldset_close()
 		;
 
-//		$form->add_plugin('jquery_validation', 'jval');
-//		$jquery = $form->jval_get_validation_js();
-//		MMI_Debug::dead($jquery, 'jquery_get_validation_js');
-//		MMI_Debug::dead($form, 'form');
-
 		$html = trim($form->render());
 		echo $html;
 		if ($this->debug)
 		{
 			MMI_Debug::dump($html, 'form');
 		}
-
-//		MMI_Debug::dump($html, 'form', $form);
-//		MMI_Debug::dump($form->valid(), 'valid');
-//		MMI_Debug::dump($form->error(), 'errors');
-//		MMI_Debug::dump($form->updated(), 'updated');
-//		MMI_Debug::dump($form->diff(), 'diff');
-//		MMI_Debug::dump(MMI_Form::instance(), 'form');
 	}
 } // End Controller_MMI_Form_Test_Form_Form
