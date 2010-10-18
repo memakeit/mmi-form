@@ -41,7 +41,7 @@ class Kohana_MMI_Form_Filter_HTML
 		}
 		else
 		{
-			if ( ! is_array($options) AND is_string($options) AND ! empty($options))
+			if ( ! is_array($options) AND ! empty($options) AND is_string($options))
 			{
 				$options = array('HTML.Allowed' => $options);
 			}
