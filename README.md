@@ -12,11 +12,11 @@ specified
 * in browsers that do not support the new input types (email, tel, url, etc) or new input
 attributes (pattern, required, etc), the corresponding server-side validation rules are
 generated
-* with the jQuery validation plugin enabled, client-side validation script is generated
-from the server-side validation rules
+* with the jQuery validation plugin enabled, client-side script is generated from the
+server-side validation rules
 * both client and server-side messages are extracted from the same message file
 * HTML Purifier is integrated as a filter
-* custom validation rules to support server-side validation of the HTML5 `min`, `max`, and
+* custom validation rules to support server-side validation of HTML5's `min`, `max`, and
 `step` attributes
 
 ## Dependencies
