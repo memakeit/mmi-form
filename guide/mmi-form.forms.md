@@ -28,3 +28,7 @@ The meta options are:
 opening form tag
 * `_required_symbol` (array) the `_html` and `_placement` of the required symbol
 * `_show_messages` (bool) show generated feedback messages?
+
+## Test Controllers
+
+Test controllers are located in `classes/controller/mmi/form/test/form/`.

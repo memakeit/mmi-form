@@ -37,3 +37,7 @@ The most important reCAPTCHA options are:
 * `_public_key` overrides the public key in the config file
 * `_theme` valid values are blackglass, clean, custom, red, and white
 * `_use_ssl` submit the data using SSL?
+
+## Test Controllers
+
+A test controller is located in `classes/controller/mmi/form/test/plugin/recaptcha`.

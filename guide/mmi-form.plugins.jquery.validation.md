@@ -56,9 +56,13 @@ When specified ,the plugin will validate fields using Unicode ranges. The Unicod
 are specified using the `unicode` key. Reasonable defaults are supplied by the
 `MMI_Form_Plugin_JQuery_Validation::get_default_unicode_ranges()` method.
 
-# Notes
+## Notes
 
-## The Accept Attribute
+### Custom Messages
+
+A custom validation message can be specified using the field's `title` attribute.
+
+### The Accept Attribute
 
 The implementation of the `file` input's `accept` attribute varies by browser.
 The most common implementation is no implementation. If a MIME type is specified, Opera 10
@@ -68,7 +72,7 @@ is disabled. The plugin correctly validates the `accept` attribute when a file e
 (`pdf`, `gif|png`, etc) is specified
 (see [plugin documentation](http://docs.jquery.com/Plugins/Validation/Methods/accept)).
 
-## The Pattern Attribute
+### The Pattern Attribute
 
 The implementation of the `pattern` attribute also varies by browser. Chrome 6 and Opera 10
 both support in browser `pattern` validation. If the pattern is `\d+`, Chrome 6 requires an
@@ -79,22 +83,9 @@ uses the same logic as Opera 10.
 To ensure consistent validation, use `^` and `$` to mark the start and end of the string
 being validated.
 
-## The Min, Max, and Step Attributes
 
-The `date`, `datetime`, `datetime-local`, and `week` input types support server-side
-validation of the `step` attribute _only if the value can be converted to a timestamp_.
-The UNIX timestamp range is from 13 Dec 1901 20:45:54 UTC to 19 Jan 2038 03:14:07 UTC
-(see [Year 2038 Problem](http://en.wikipedia.org/wiki/Year_2038_problem)). Dates outside
-this range support `min` and `max` server-side validation (using `DateTime` objects). However
-`step` validation is _not implemented_.
 
-Since the `month` and `time` input types do not use timestamps for calculations,
-they support server-side validation of the `step` attribute for all values.
-
-The `numeric` and `range` input types support server-side validation of the `min`, `max`, and
-`step` attributes for all values.
-
-## Rules Generated from Field Class Names
+### Rules Generated from Field Class Names
 
 The jQuery form validation generates rules from a field's CSS classes.
 The following CSS classes generate validation rules:
@@ -109,3 +100,7 @@ The following CSS classes generate validation rules:
 * `numberDE` => {numberDE: true},
 * `required` => {required: true},
 * `url` => {url: true},
+
+## Test Controllers
+
+A test controller is located in `classes/controller/mmi/form/test/plugin/jquery`.

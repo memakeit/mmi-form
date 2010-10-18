@@ -4,7 +4,7 @@ Plugins are added to the form with the `add_plugin($plugin, $method_prefix, $opt
 
 * The first parameter is a plugin name or a `MMI_Form_Plugin` object.
 * The second parameter is a plugin prefix which is used to call plugin methods via the
-form (see notes below).
+form (see plugin prefixes below).
 * The third parameter is an associative array of plugin options. The options are ignored if a
 `MMI_Form_Plugin` object is specified as the first parameter.
 
@@ -49,7 +49,7 @@ The HTML output is the same for both.
 	<div class="submit"><input type="submit" name="12871582528516" value="Testing CSRF" class="fld" /></div>
 	</form>
 
-## Notes
+## Plugin Prefixes
 
 A plugin method is called via the form using the plugin's prefix and method name. The following
 code adds the jQuery validation plugin and specifies its prefix as 'jqv'.
@@ -69,3 +69,7 @@ is then called using reflection.
 The following code will invoke the plugin's `get_validation_js()` method.
 
 	$js = $form->jqv_get_validation_js();
+
+## Test Controllers
+
+Test controllers are located in `classes/controller/mmi/form/test/plugin/`.

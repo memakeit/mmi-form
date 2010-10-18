@@ -66,6 +66,7 @@ The meta options are:
 * `_after` (string) the HTML to display after the field
 * `_before` (string) the HTML to display before the field
 * `_callbacks` (array) the validation callbacks
+* `_choices` (array) the choices for a checkbox group, datalist, radio button group, or select
 * `_error` (array) specifies error label attributes and the HTML to display before and after the
 error label tag
 * `_filters` (array) the validation filters
@@ -75,5 +76,13 @@ and after the label tag. if a string, specifies the label HTML
 * `_order` (array) the order in which the field and its label and errors are displayed
 * `_rules` (array) the validation rules
 
+Virtually any layout can be achieved for a field by creatively using the `_before`, `_after`,
+`_order`, `_label` (`_before` and `_after` keys), and `_error` (`_before` and `_after` keys)
+meta options.
+
 Additional meta attributes are available for the `button`, `datalist`, `html`, `select`,
 and `textarea` fields.
+
+## Test Controllers
+
+Test controllers are located in `classes/controller/mmi/form/test/field/`.

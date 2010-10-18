@@ -6,7 +6,7 @@
 		- [Groups](mmi-form.fields.groups)
 		- [HTML](mmi-form.fields.html)
 		- [Select](mmi-form.fields.select)
-		- [Select](mmi-form.fields.textarea)
+		- [Textarea](mmi-form.fields.textarea)
 	- [Plugins](mmi-form.plugins)
 		- [CAPTCHA](mmi-form.plugins.captcha)
 		- [CSRF](mmi-form.plugins.csrf)

@@ -20,3 +20,7 @@ The most important options are:
 
 * `_namespace` used to generate the hidden form field id
 * `id` used to generate the hidden form field id
+
+## Test Controllers
+
+A test controller is located in `classes/controller/mmi/form/test/plugin/csrf`.
