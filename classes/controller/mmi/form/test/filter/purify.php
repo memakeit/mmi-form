@@ -32,15 +32,22 @@ class Controller_MMI_Form_Test_Filter_Purify extends Controller
 		(
 			'_filters'	=> array
 			(
-				'MMI_Form_Filter_HTML::purify' => array('b,i'),
+				'MMI_Form_Filter_HTML::purify' => array
+				(
+					array
+					(
+						'AutoFormat.AutoParagraph' => TRUE,
+						'HTML.Allowed' => 'a[href],b,i,p',
+					)
+				),
 			),
 			'_label' => 'Notes',
 			'_namespace' => 'mmi',
 
-			'_after' => '<br/><i>only &lt;b&gt; and &lt;i&gt; tags are allowed</i>',
+			'_after' => '<br/><i>tags allowed: a[href], b, i, and p<br/>auto-formating of paragraphs is enabled</i>',
 			'class' => 'textarea',
 			'id' => 'textarea1',
-			'value' => '<span><b>memakeit</b></span>!',
+			'value' => '<span><b>memakeit</b></span>!'.PHP_EOL.PHP_EOL.'hello'.PHP_EOL.PHP_EOL.'goodbye',
 		);
 		$type = 'textarea';
 		$txt = MMI_Form_Field::factory($type, $settings);
