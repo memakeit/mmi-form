@@ -1094,6 +1094,7 @@ abstract class Kohana_MMI_Form_Field
 					'_label' => array('_after' => '', '_before' => ''),
 					'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
 				);
+			break;
 
 			case self::DEFAULTS_FIELD_ONLY:
 				return array
@@ -1102,6 +1103,7 @@ abstract class Kohana_MMI_Form_Field
 					'_after' => '</div>',
 					'_order' => array(MMI_Form::ORDER_FIELD),
 				);
+			break;
 
 			case self::DEFAULTS_NO_ERROR:
 				return array
@@ -1109,6 +1111,7 @@ abstract class Kohana_MMI_Form_Field
 					'_after' => PHP_EOL.'</div>',
 					'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
 				);
+			break;
 		}
 	}
 } // End Kohana_MMI_Form_Field
