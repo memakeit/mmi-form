@@ -19,4 +19,4 @@ There is no separate configuration file for the CSRF plugin.
 The most important options are:
 
 * `_namespace` used to generate the hidden form field id
-* `id` used to generate  the hidden form field id
+* `id` used to generate the hidden form field id

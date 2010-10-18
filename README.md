@@ -16,7 +16,7 @@ generated
 from the server-side validation rules
 * both client and server-side messages are extracted from the same message file
 * HTML Purifier is integrated as a filter
-* custom validation rules to support server-side validation of the `min`, `max`, and
+* custom validation rules to support server-side validation of the HTML5 `min`, `max`, and
 `step` attributes
 
 ## Dependencies
