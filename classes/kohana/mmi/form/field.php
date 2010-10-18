@@ -9,6 +9,11 @@
  */
 abstract class Kohana_MMI_Form_Field
 {
+	// Defaults constants
+	const DEFAULTS_CHECKABLE = 'checkable';
+	const DEFAULTS_FIELD_ONLY = 'field_only';
+	const DEFAULTS_NO_ERROR = 'no_error';
+
 	/**
 	 * @var Kohana_Config the field configuration
 	 */
@@ -1071,5 +1076,39 @@ abstract class Kohana_MMI_Form_Field
 			return $namespace.$name;
 		}
 		return $namespace.'_'.$name;
+	}
+
+	/**
+	 * Get the default field settings.
+	 *
+	 * @param	string	the field type
+	 * @return	array
+	 */
+	public static function defaults($type = self::DEFAULTS_SIMPLE)
+	{
+		switch ($type)
+		{
+			case self::DEFAULTS_CHECKABLE:
+				return array
+				(
+					'_label' => array('_after' => '', '_before' => ''),
+					'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
+				);
+
+			case self::DEFAULTS_FIELD_ONLY:
+				return array
+				(
+					'_before' => '<div>',
+					'_after' => '</div>',
+					'_order' => array(MMI_Form::ORDER_FIELD),
+				);
+
+			case self::DEFAULTS_NO_ERROR:
+				return array
+				(
+					'_after' => PHP_EOL.'</div>',
+					'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD),
+				);
+		}
 	}
 } // End Kohana_MMI_Form_Field
