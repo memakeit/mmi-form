@@ -23,23 +23,30 @@ class Controller_MMI_Form_Test_Form_Scratch extends Controller
 	{
 		$form = MMI_Form::factory(array
 		(
-			'_auto_validate' => TRUE,
+			'_auto_validate' => FALSE,
 			'_namespace' => 'mmi',
 			'id' => 'form1',
 		));
 		$form->add_field('text', array
 		(
-			'_label' => '<b>First Name</b>',
+			'_label' => 'First Name',
 			'_namespace' => 'mmi',
 			'id' => 'text1',
+			'required' => 'required',
 		));
-		$form->add_submit('Testing Text Field');
+		$form->add_submit('Testing ...');
 
-		$html = trim($form->render());
-		echo $html;
-		if ($this->debug)
+		if ($_POST)
 		{
-			MMI_Debug::dump($html, 'form');
+			if ($form->valid())
+			{
+				$form->reset();
+			}
+			else
+			{
+				// Invalid logic here
+			}
 		}
+		echo $form->render();
 	}
 } // End Controller_MMI_Form_Test_Form_Scratch
