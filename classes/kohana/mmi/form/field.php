@@ -921,19 +921,6 @@ abstract class Kohana_MMI_Form_Field
 		{
 			$rules['not_empty'] = NULL;
 		}
-
-		// Process rules that have a UTF8 parameter
-		$utf8_rules = self::$_utf8_rules;
-		if ($this->_get_form_meta('unicode', FALSE))
-		{
-			foreach ($rules as $name => $parms)
-			{
-				if (empty($parms) AND in_array($name, $utf8_rules))
-				{
-					$rules[$name] = array(TRUE);
-				}
-			}
-		}
 		$this->_meta['rules'] = $rules;
 	}
 
