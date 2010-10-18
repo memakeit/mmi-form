@@ -37,13 +37,13 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 			$id = 'token';
 			$namespace = 'mmi';
 		}
-		Security::$token_name = MMI_Form_Field::field_id($id, $namespace);;
+		Security::$token_name = MMI_Form_Field::field_id($id, $namespace);
 		$this->_token = Security::token();
 		$this->_set_token();
 	}
 
 	/**
-	 * Is the CSRF token valid?  If not, set an error in the form.
+	 * Is the CSRF token valid? If not, set an error in the form.
 	 *
 	 * @param 	Validate	the validation object
 	 * @param	string		the field name

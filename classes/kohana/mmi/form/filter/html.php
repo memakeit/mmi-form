@@ -84,7 +84,7 @@ class Kohana_MMI_Form_Filter_HTML
 	 * for HTML Purifier can be set in `APPPATH/config/purifier.php` in the
 	 * "settings" key.
 	 *
-	 * @return  HTMLPurifier
+	 * @return	HTMLPurifier
 	 */
 	protected static function _htmlpurifier()
 	{

@@ -335,8 +335,8 @@ EOJS;
 	 * Process the min and max attributes.
 	 * For numeric input types (number and range), set the validation message.
 	 * For date-time input types (date, datetime, datetime-local, month, time, week),
-	 * remove the validation rule.  The min and max rules expect numeric data, not a
-	 * date-time string.  If the min and max rules are not explicitly removed,
+	 * remove the validation rule. The min and max rules expect numeric data, not a
+	 * date-time string. If the min and max rules are not explicitly removed,
 	 * the validation plugin will automatically generate them using the non-numeric
 	 * attribute values.
 	 *

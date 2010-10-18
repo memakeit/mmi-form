@@ -88,7 +88,7 @@ class Kohana_MMI_Form
 
 	/**
 	 * Get the request method.
-	 * Set whether to use HTML5 markup.  Set whether data was posted.
+	 * Set whether to use HTML5 markup. Set whether data was posted.
 	 * Initialize the options.
 	 *
 	 * @param	array	an associative array of field options

@@ -77,7 +77,7 @@ abstract class Kohana_MMI_Form_Field
 
 	/**
 	 * Get the request method.
-	 * Set whether to use HTML5 markup.  Set whether data was posted.
+	 * Set whether to use HTML5 markup. Set whether data was posted.
 	 * Initialize the options.
 	 *
 	 * @param	array	an associative array of field options
@@ -576,7 +576,7 @@ abstract class Kohana_MMI_Form_Field
 	}
 
 	/**
-	 * Cast a value to a string.  If the value is an array, each array value is cast to a string.
+	 * Cast a value to a string. If the value is an array, each array value is cast to a string.
 	 *
 	 * @param	mixed	the value to cast to a string
 	 * @return	mixed

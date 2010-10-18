@@ -133,7 +133,7 @@ class Kohana_MMI_Form_FieldSet
 	 * Add a closing fieldset tag to the form.
 	 * This method is chainable.
 	 *
-	 * @return  MMI_Form
+	 * @return	MMI_Form
 	 */
 	public function close()
 	{
@@ -156,7 +156,7 @@ class Kohana_MMI_Form_FieldSet
 	 * Add an opening fieldset tag to the form.
 	 * This method is chainable.
 	 *
-	 * @return  MMI_Form
+	 * @return	MMI_Form
 	 */
 	public function open()
 	{
