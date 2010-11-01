@@ -21,7 +21,7 @@ server-side validation rules
 
 ## Dependencies
 
-* [mmi-core](http://github.com/memakeit/mmi-core) (only for the test controllers)
+* [mmi-core](http://github.com/memakeit/mmi-core) (only for test controllers)
 * shadowhand's [purifier](http://github.com/shadowhand/purifier) (if using the purify filter)
 
 ## Documentation
