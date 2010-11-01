@@ -1,6 +1,6 @@
 # MMI Form Module
 
-This module is for generating form markup in either HTML4 or HTML5.
+This module generates form markup in either HTML4 or HTML5.
 By default, HTML5 elements and attributes are generated.
 
 **Features include:**
