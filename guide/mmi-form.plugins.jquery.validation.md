@@ -1,47 +1,47 @@
 # jQuery Validation Plugin
 
-Usage of the jQuery validation plugin is slightly more involved. It is accomplished by:
+Usage of the jQuery validation plugin is slightly more involved. Follow these steps.
 
-1. adding the [jQuery library](http://docs.jquery.com/Downloading_jQuery#Download_jQuery) to
+1. add the [jQuery library](http://docs.jquery.com/Downloading_jQuery#Download_jQuery) to
 the page
 
-	`echo HTML::script('<your path>/jquery-1.4.2.min.js').PHP_EOL;`
+		echo HTML::script('<your path>/jquery-1.4.2.min.js').PHP_EOL;
 
-2. adding the [validation plugin](http://bassistance.de/jquery-plugins/jquery-plugin-validation/)
+2. add the [validation plugin](http://bassistance.de/jquery-plugins/jquery-plugin-validation/)
 to the page. Either `jquery.validate.min.js` or `jquery.validate.js` can be used. Both are located
 in the media directory.
 
-	`echo HTML::script('<your path>/jquery.validate.min.js').PHP_EOL;`
+		echo HTML::script('<your path>/jquery.validate.min.js').PHP_EOL;
 
-3. creating the form object
+3. create the form object
 
-	`$form = MMI_Form::factory();`
+		$form = MMI_Form::factory();
 
-4. adding the plugin to the form
+4. add the plugin to the form
 
-	`$form->add_plugin('jquery_validation', 'jqv');`
+		$form->add_plugin('jquery_validation', 'jqv');
 
-5. adding fields to the form
+5. add fields to the form
 
-	`$form->add_field('text', array
-	(
-		'_label' => 'Text 1',
-		'_rules' => array('min_length' => array(5)),
-		'id' => 'text1',
-		'required' => 'required'
-	));`
+		$form->add_field('text', array
+		(
+			'_label' => 'Text 1',
+			'_rules' => array('min_length' => array(5)),
+			'id' => 'text1',
+			'required' => 'required'
+		));
 
-6. adding a submit button
+6. add a submit button
 
-	`$form->add_submit();`
+		$form->add_submit();
 
-7. generating the validation JavaScript
+7. generate the validation JavaScript
 
-	`$js = $form->jqv_get_validation_js();`
+		$js = $form->jqv_get_validation_js();
 
-8. including the validation JavaScript in the page
+8. include the validation JavaScript in the page
 
-	`echo '<script type="text/javascript">'.$js.'</script>';`
+		echo '<script type="text/javascript">'.$js.'</script>';
 
 ## Configuration
 
