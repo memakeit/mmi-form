@@ -891,7 +891,7 @@ class Kohana_MMI_Form
 		{
 			$options['_required_symbol'] = array
 			(
-				'_html' => '*&nbsp;',
+				'_html' => '<strong>*</strong>&nbsp;',
 				'_placement' => MMI_Form::REQ_SYMBOL_BEFORE,
 			);
 		}
@@ -949,6 +949,20 @@ class Kohana_MMI_Form
 			}
 		}
 		$options['_field'] = array_merge($field_default, $field);
+
+		// Ensure message sub-arrays are properly merged
+		$messages_default = $config->get('_messages', array());
+		$messages = Arr::get($options, '_messages', array());
+		foreach (array('_failure', '_success') as $name)
+		{
+			$value = Arr::get($messages, $name, array());
+			if ( ! empty($value))
+			{
+				$value_default = Arr::get($messages_default, $name, array());
+				$messages[$name] = array_merge($value_default, $value);
+			}
+		}
+		$options['_messages'] = array_merge($messages_default, $messages);
 
 		$required_symbol = Arr::get($options, '_required_symbol', array());
 		if ( ! empty($required_symbol))
