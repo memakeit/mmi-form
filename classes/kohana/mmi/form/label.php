@@ -252,11 +252,11 @@ class Kohana_MMI_Form_Label
 		$required = Arr::get($meta, 'required', FALSE);
 		if ($required)
 		{
-			$symbol = $this->_get_form_meta('required_symbol', array());
+			$symbol = array_merge($this->_get_form_meta('required_symbol', array()), Arr::get($meta, 'required_symbol', array()));
 			if ( ! empty($symbol))
 			{
 				$placement = Arr::get($symbol, '_placement', MMI_Form::REQ_SYMBOL_BEFORE);
-				$symbol = Arr::get($symbol, '_html', '*&nbsp;');
+				$symbol = Arr::get($symbol, '_html', '<strong>*</strong>&nbsp;');
 				$html = ($placement === MMI_Form::REQ_SYMBOL_BEFORE) ? ($symbol.$html) : ($html.$symbol);
 			}
 		}
