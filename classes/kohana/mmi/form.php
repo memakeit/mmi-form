@@ -585,6 +585,22 @@ class Kohana_MMI_Form
 	}
 
 	/**
+	 * Get the form field values.
+	 *
+	 * @return	array
+	 */
+	public function values()
+	{
+		$values = array();
+		foreach ($this->_fields as $field)
+		{
+			$id = trim($field->id(), '.');
+			$values[$id] = $field->value();
+		}
+		return $values;
+	}
+
+	/**
 	 * Get or set an item in the view cache.
 	 *
 	 * @param	string	the view id
