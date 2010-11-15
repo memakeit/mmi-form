@@ -532,6 +532,24 @@ class Kohana_MMI_Form
 	}
 
 	/**
+ 	 * Check whether a plugin is configured for the form.
+	 *
+	 * @param	string	the plugin id
+	 * @return	boolean
+	 */
+	public function plugin_exists($id)
+	{
+		foreach ($this->_plugins as $name => $plugin)
+		{
+			if ($id === $name)
+			{
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+
+	/**
  	 * Get whether any field values have been updated.
 	 *
 	 * @return	string
