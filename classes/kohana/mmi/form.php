@@ -1074,12 +1074,24 @@ class Kohana_MMI_Form
 		if ($this->_posted)
 		{
 			$count_all = count($this->error());
-			$count_general = count( $this->_errors);
+			$count_general = count($this->_errors);
 			if ($count_all > 0)
 			{
 				if ($count_general === $count_all)
 				{
-					$msg = MMI_Form_Messages::msg_failure();
+					$msg;
+					foreach ($this->_errors as $error)
+					{
+						if (substr($error, 0, 1) !== '_')
+						{
+							$msg = $error;
+							break;
+						}
+					}
+					if ( ! isset($msg))
+					{
+						$msg = MMI_Form_Messages::msg_failure();
+					}
 				}
 				else
 				{

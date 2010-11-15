@@ -111,7 +111,7 @@ class Kohana_MMI_Form_Plugin_reCAPTCHA extends MMI_Form_Plugin implements MMI_Fo
 		}
 		if ( ! $valid)
 		{
-			$this->form()->error('invalid CAPTCHA response');
+			$this->form()->error('_invalid CAPTCHA response_');
 		}
 		return $valid;
 	}

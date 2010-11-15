@@ -55,7 +55,7 @@ class Kohana_MMI_Form_Plugin_CSRF extends MMI_Form_Plugin
 		$valid = ($this->_token === $_POST[$this->_id()]);
 		if ( ! $valid)
 		{
-			$this->form()->error('invalid csrf');
+			$this->form()->error('_invalid csrf_');
 		}
 		return $valid;
 	}
