@@ -375,7 +375,7 @@ class Kohana_MMI_Form
 		{
 			if ($field->updated())
 			{
-				$diff[$id] = $field->diff();
+				$diff[trim($id, '.')] = $field->diff();
 			}
 		}
 		return $diff;
@@ -592,10 +592,9 @@ class Kohana_MMI_Form
 	public function values()
 	{
 		$values = array();
-		foreach ($this->_fields as $field)
+		foreach ($this->_fields as $id => $field)
 		{
-			$id = trim($field->id(), '.');
-			$values[$id] = $field->value();
+			$values[trim($id, '.')] = $field->value();
 		}
 		return $values;
 	}
