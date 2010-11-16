@@ -1,0 +1,222 @@
+/* mmi-form/form.css */
+
+/*	html5-boilerplate
+ ******************************************************************************/
+input, select { vertical-align: middle; }
+select, input, textarea, button { font: 99% sans-serif; }
+select, input, textarea { color: #333; }
+textarea { overflow: auto; }
+.ie6 legend, .ie7 legend { margin-left: -7px; }
+input[type="radio"] { vertical-align: text-bottom; }
+input[type="checkbox"] { vertical-align: bottom; }
+.ie7 input[type="checkbox"] { vertical-align: baseline; }
+.ie6 input { vertical-align: text-bottom; }
+label, input[type="button"], input[type="submit"], input[type="image"], button { cursor: pointer; }
+button, input, select, textarea { margin: 0; }
+/*
+input:valid, textarea:valid {}
+input:invalid, textarea:invalid
+{
+	  border-radius: 1px;
+	-moz-box-shadow: 0px 0px 5px red;
+ -webkit-box-shadow: 0px 0px 5px red;
+		 box-shadow: 0px 0px 5px red;
+}
+.no-boxshadow input:invalid,
+.no-boxshadow textarea:invalid { background-color: #f0dddd; }
+*/
+button { overflow: visible; width: auto; }
+
+/*	status
+ ******************************************************************************/
+#mmi_frm_status
+{
+	color: #333;
+	display: none;
+	border: 2px solid #666;
+	font-size: 1.25em;
+	font-weight: bold;
+	padding: 20px;
+	margin: 10px 0;
+}
+
+#mmi_frm_status.error
+{
+	background: #FDD;
+	border-color: #C00;
+	color: #900;
+	display: block;
+}
+
+#mmi_frm_status.success
+{
+	background: #BEB;
+	border-color: #090;
+	color: #060;
+	display: block;
+}
+
+/*	field div and p
+ ******************************************************************************/
+form.frm div.fld,
+form.frm div.group
+{
+	clear: both;
+	float: left;
+	margin-bottom: 20px;
+}
+
+/*	labels
+ ******************************************************************************/
+form.frm label
+{
+	float: left;
+	height: 24px;
+	line-height: 24px;
+}
+
+form.frm label.error,
+form.frm label.success
+{
+	font-weight: bold;
+	padding-top: 4px;
+	margin-left: 10px;
+}
+
+form.frm div.checkable label.error,
+form.frm div.textarea label.error,
+form.frm div.checkable label.success,
+form.frm div.textarea label.success
+{
+	padding-top: 0;
+}
+
+form.frm label.error
+{
+	color: #C00;
+}
+
+/*	inputs
+ ******************************************************************************/
+form.frm button,
+form.frm input,
+form.frm select,
+form.frm textarea
+{
+	border: 2px solid #999;
+	clear: both;
+	float: left;
+	padding: 4px;
+}
+
+form.frm button,
+form.frm input
+{
+	height: 32px;
+}
+
+form.frm select
+{
+	padding: 0;
+}
+
+form.frm input.checkable
+{
+	height: auto;
+	margin: 6px 5px 0 0;
+}
+
+.ie6 form.frm input.checkable,
+.ie7 form.frm input.checkable,
+.ie8 form.frm input.checkable
+{
+	border-width: 0;
+	margin: 4px 5px 0 0;
+}
+
+/*	input error styles
+ ******************************************************************************/
+form.frm button.error,
+form.frm input.error,
+form.frm select.error,
+form.frm textarea.error
+{
+	background: #FDD;
+	border-color: #C00;
+}
+
+/*	input focus styles
+ ******************************************************************************/
+form.frm input:focus,
+form.frm select:focus,
+form.frm textarea:focus,
+form.frm input.error:focus,
+form.frm select.error:focus,
+form.frm textarea.error:focus
+{
+	border-color: #666;
+	outline-width: 0;
+	z-index: 1;
+	box-shadow: #09F 0 0 5px;
+	-moz-box-shadow: #09F 0 0 5px;
+	-webkit-box-shadow: #09F 0 0 5px;
+}
+
+/*	button styles
+ ******************************************************************************/
+form.frm button,
+form.frm input.btn,
+{
+	float: left;
+}
+
+form.frm input.btn.minimal,
+form.frm div.submitting
+{
+	background: #E3E3E3;
+	border: 2px solid #CCC;
+	padding: 4px 10px;
+	text-align: center;
+	text-shadow: 0 1px 0 #FFF;
+	box-shadow: inset 0 0 1px 1px #F6F6F6;
+	-moz-box-shadow: inset 0 0 1px 1px #F6F6F6;
+	-webkit-box-shadow: inset 0 0 1px 1px #F6F6F6;
+}
+
+form.frm input.btn.minimal:hover,
+form.frm button.minimal:hover
+{
+	background: #D9D9D9;
+	color: #222;
+	box-shadow: inset 0 0 1px 1px #EAEAEA;
+	-moz-box-shadow: inset 0 0 1px 1px #EAEAEA;
+	-webkit-box-shadow: inset 0 0 1px 1px #EAEAEA;
+}
+
+form.frm input.btn.minimal:active,
+form.frm button.minimal:active
+{
+	background: #D0D0D0;
+	color: #000;
+	box-shadow: inset 0 0 1px 1px #E3E3E3;
+	-moz-box-shadow: inset 0 0 1px 1px #E3E3E3;
+	-webkit-box-shadow: inset 0 0 1px 1px #E3E3E3;
+}
+
+/*	submitting styles
+ ******************************************************************************/
+form.frm div.submitting
+{
+	background: #E3E3E3 url('../../img/animated/loading16x16.gif') no-repeat 6px 50%;
+	clear: both;
+	float: left;
+	font: 99% sans-serif;
+	padding: 5px 10px 4px 30px;
+	text-align: right;
+}
+
+.ie6 form.frm div.submitting,
+.ie7 form.frm div.submitting
+{
+	background: #E3E3E3 url('../../img/animated/loading16x16_frame_0025.gif') no-repeat 6px 50%;
+}
