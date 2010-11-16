@@ -988,7 +988,7 @@ return<<<EOJS
 function(frm)
 {
 	$('{$status_id}').removeClass(validator.settings.errorClass).hide();
-	$('{$buttons_id}').replaceWith('<div class="submit">{$message}</div>');
+	$('{$buttons_id}').replaceWith('<div class="submitting">{$message}</div>');
 	frm.submit();
 }
 EOJS;
