@@ -1091,8 +1091,11 @@ abstract class Kohana_MMI_Form_Field
 			case self::DEFAULTS_CHECKABLE:
 				return array
 				(
+					'_before' => '<div class="fld">'.PHP_EOL,
+					'_error' => array('_after' => PHP_EOL.'</div>', '_before' => ''),
 					'_label' => array('_after' => '', '_before' => ''),
 					'_order' => array(MMI_Form::ORDER_FIELD, MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR),
+					'class' => 'checkable',
 				);
 			break;
 
