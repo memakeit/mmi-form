@@ -1106,7 +1106,7 @@ class Kohana_MMI_Form
 							break;
 						}
 					}
-					if ( ! isset($msg))
+					if (empty($msg))
 					{
 						$msg = MMI_Form_Messages::msg_failure();
 					}
