@@ -37,7 +37,7 @@ button { overflow: visible; width: auto; }
 	font-size: 1.25em;
 	font-weight: bold;
 	padding: 20px;
-	margin: 10px 0;
+	margin-bottom: 20px;
 }
 
 #mmi_frm_status.error
@@ -71,16 +71,13 @@ form.mmi div.mmi
 form.mmi .mmi label
 {
 	float: left;
-	height: 24px;
-	line-height: 24px;
 }
 
 form.mmi .mmi label.error,
 form.mmi .mmi label.success
 {
 	font-weight: bold;
-	padding-top: 4px;
-	margin-left: 10px;
+	margin: 4px 0 0 10px;
 }
 
 form.mmi .checkable label.error,
@@ -88,7 +85,7 @@ form.mmi .textarea label.error,
 form.mmi .checkable label.success,
 form.mmi .textarea label.success
 {
-	padding-top: 0;
+	margin-top: 0;
 }
 
 form.mmi .mmi label.error
@@ -109,12 +106,6 @@ textarea.mmi
 	padding: 4px;
 }
 
-button.mmi,
-input.mmi
-{
-	height: 32px;
-}
-
 select.mmi
 {
 	padding: 0;
@@ -122,7 +113,6 @@ select.mmi
 
 input.mmi.checkable
 {
-	height: auto;
 	margin: 6px 5px 0 0;
 }
 
@@ -168,6 +158,7 @@ button.mmi,
 input.mmi.btn,
 {
 	float: left;
+	display: block
 }
 
 input.mmi.btn.minimal,
@@ -203,6 +194,7 @@ button.mmi.minimal:active
 	-webkit-box-shadow: inset 0 0 1px 1px #E3E3E3;
 }
 
+
 /*	submitting styles
  ******************************************************************************/
 form.mmi .submitting
@@ -211,6 +203,7 @@ form.mmi .submitting
 	clear: both;
 	float: left;
 	font: 99% sans-serif;
+	margin-bottom: 20px;
 	padding: 5px 10px 4px 10px;
 	text-align: right;
 }
