@@ -882,7 +882,7 @@ EOJS;
 	 * @param	string	the CSS class for valid messages
 	 * @return	array
 	 */
-	public static function get_default_config($debug = FALSE, $error_class = 'error', $valid_class = 'success')
+	public static function get_default_config($debug = FALSE, $error_class = 'error', $valid_class = 'success', $buttons_id = 'div.submit', $submit_msg = 'Submitting &hellip;')
 	{
 		return array
 		(
@@ -891,7 +891,7 @@ EOJS;
 			'errorPlacement'	=> self::get_default_error_placement(),
 			'highlight'			=> self::get_default_highlight(),
 			'invalidHandler'	=> self::get_default_invalid_handler('#'.MMI_Form_Messages::get_status_id()),
-			'submitHandler'		=> self::get_default_submit_handler('#'.MMI_Form_Messages::get_status_id()),
+			'submitHandler'		=> self::get_default_submit_handler('#'.MMI_Form_Messages::get_status_id(), $buttons_id, $submit_msg),
 			'success'			=> self::get_default_success(),
 			'unhighlight'		=> self::get_default_unhighlight(),
 			'validClass'		=> $valid_class,
@@ -988,8 +988,10 @@ EOJS;
 return<<<EOJS
 function(frm)
 {
+	var img = $('<img />', { src: '{$img_src}', height: 16, width: 16 });
 	$('{$status_id}').removeClass(validator.settings.errorClass).hide();
-	$('{$buttons_id}').replaceWith('<div class="submitting"><img src="{$img_src}" height="16" width="16" />{$message}</div>');
+	$('{$buttons_id}').replaceWith('<div class="submitting">{$message}</div>');
+	$('div.submitting').prepend(img);
 	frm.submit();
 }
 EOJS;
