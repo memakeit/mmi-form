@@ -142,7 +142,7 @@ class Kohana_MMI_Form_Messages
 	 */
 	public static function get_status_id()
 	{
-		return Arr::get(self::options(), 'id', 'frm_status');
+		return Arr::get(self::options(), 'id', 'mmi_frm_status');
 	}
 
 	/**
