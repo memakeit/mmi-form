@@ -1,4 +1,4 @@
-/* mmi-form/form.css */
+/* form.css */
 
 /*	html5-boilerplate
  ******************************************************************************/
@@ -56,10 +56,10 @@ button { overflow: visible; width: auto; }
 	display: block;
 }
 
-/*	field div and p
+/*	field div
  ******************************************************************************/
-form.frm div.fld,
-form.frm div.group
+form.mmi div.captcha,
+form.mmi div.mmi
 {
 	clear: both;
 	float: left;
@@ -68,40 +68,40 @@ form.frm div.group
 
 /*	labels
  ******************************************************************************/
-form.frm label
+form.mmi .mmi label
 {
 	float: left;
 	height: 24px;
 	line-height: 24px;
 }
 
-form.frm label.error,
-form.frm label.success
+form.mmi .mmi label.error,
+form.mmi .mmi label.success
 {
 	font-weight: bold;
 	padding-top: 4px;
 	margin-left: 10px;
 }
 
-form.frm div.checkable label.error,
-form.frm div.textarea label.error,
-form.frm div.checkable label.success,
-form.frm div.textarea label.success
+form.mmi .checkable label.error,
+form.mmi .textarea label.error,
+form.mmi .checkable label.success,
+form.mmi .textarea label.success
 {
 	padding-top: 0;
 }
 
-form.frm label.error
+form.mmi .mmi label.error
 {
 	color: #C00;
 }
 
 /*	inputs
  ******************************************************************************/
-form.frm button,
-form.frm input,
-form.frm select,
-form.frm textarea
+button.mmi,
+input.mmi,
+select.mmi,
+textarea.mmi
 {
 	border: 2px solid #999;
 	clear: both;
@@ -109,26 +109,26 @@ form.frm textarea
 	padding: 4px;
 }
 
-form.frm button,
-form.frm input
+button.mmi,
+input.mmi
 {
 	height: 32px;
 }
 
-form.frm select
+select.mmi
 {
 	padding: 0;
 }
 
-form.frm input.checkable
+input.mmi.checkable
 {
 	height: auto;
 	margin: 6px 5px 0 0;
 }
 
-.ie6 form.frm input.checkable,
-.ie7 form.frm input.checkable,
-.ie8 form.frm input.checkable
+.ie6 input.mmi.checkable,
+.ie7 input.mmi.checkable,
+.ie8 input.mmi.checkable
 {
 	border-width: 0;
 	margin: 4px 5px 0 0;
@@ -136,10 +136,10 @@ form.frm input.checkable
 
 /*	input error styles
  ******************************************************************************/
-form.frm button.error,
-form.frm input.error,
-form.frm select.error,
-form.frm textarea.error
+button.mmi.error,
+input.mmi.error,
+select.mmi.error,
+textarea.mmi.error
 {
 	background: #FDD;
 	border-color: #C00;
@@ -147,12 +147,12 @@ form.frm textarea.error
 
 /*	input focus styles
  ******************************************************************************/
-form.frm input:focus,
-form.frm select:focus,
-form.frm textarea:focus,
-form.frm input.error:focus,
-form.frm select.error:focus,
-form.frm textarea.error:focus
+input.mmi:focus,
+select.mmi:focus,
+textarea.mmi:focus,
+input.mmi.error:focus,
+select.mmi.error:focus,
+textarea.mmi.error:focus
 {
 	border-color: #666;
 	outline-width: 0;
@@ -164,14 +164,14 @@ form.frm textarea.error:focus
 
 /*	button styles
  ******************************************************************************/
-form.frm button,
-form.frm input.btn,
+button.mmi,
+input.mmi.btn,
 {
 	float: left;
 }
 
-form.frm input.btn.minimal,
-form.frm div.submitting
+input.mmi.btn.minimal,
+form.mmi .submitting
 {
 	background: #E3E3E3;
 	border: 2px solid #CCC;
@@ -183,8 +183,8 @@ form.frm div.submitting
 	-webkit-box-shadow: inset 0 0 1px 1px #F6F6F6;
 }
 
-form.frm input.btn.minimal:hover,
-form.frm button.minimal:hover
+input.mmi.btn.minimal:hover,
+button.mmi.minimal:hover
 {
 	background: #D9D9D9;
 	color: #222;
@@ -193,8 +193,8 @@ form.frm button.minimal:hover
 	-webkit-box-shadow: inset 0 0 1px 1px #EAEAEA;
 }
 
-form.frm input.btn.minimal:active,
-form.frm button.minimal:active
+input.mmi.btn.minimal:active,
+button.mmi.minimal:active
 {
 	background: #D0D0D0;
 	color: #000;
@@ -205,18 +205,30 @@ form.frm button.minimal:active
 
 /*	submitting styles
  ******************************************************************************/
-form.frm div.submitting
+form.mmi .submitting
 {
-	background: #E3E3E3 url('../../img/animated/loading16x16.gif') no-repeat 6px 50%;
+	color: #333;
 	clear: both;
 	float: left;
 	font: 99% sans-serif;
-	padding: 5px 10px 4px 30px;
+	padding: 5px 10px 4px 10px;
 	text-align: right;
 }
 
-.ie6 form.frm div.submitting,
-.ie7 form.frm div.submitting
+.ie6 form.mmi .submitting,
+.ie7 form.mmi .submitting,
+.ie8 form.mmi .submitting
 {
-	background: #E3E3E3 url('../../img/animated/loading16x16_frame_0025.gif') no-repeat 6px 50%;
+	padding-bottom: 5px;
+}
+
+form.mmi .submitting img
+{
+	float: left;
+	margin-right: 10px;
+}
+
+.ie6 form.mmi .submitting img
+{
+	background: url('../../img/animated/loading16x16_frame_0025.gif') no-repeat 0 0;
 }
