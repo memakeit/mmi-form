@@ -737,7 +737,7 @@ class Kohana_MMI_Form
 		// Configure the and add the form field
 		$options = array_merge($options, array
 		(
-			'_before'		=> '<div class="fld">'.PHP_EOL,
+			'_before'		=> '<div class="captcha">'.PHP_EOL,
 			'_after'		=> '</div>'.PHP_EOL,
 			'_html'			=> array($captcha, 'html'),
 			'_source'		=> MMI_Form_Field_HTML::SRC_CALLBACK,
