@@ -982,13 +982,14 @@ EOJS;
 	 * @param	string	the id of the buttons container
 	 * @return	string
 	 */
-	public static function get_default_submit_handler($status_id = '#mmi_frm_status', $buttons_id = 'div.submit', $message = 'Submitting ...')
+	public static function get_default_submit_handler($status_id = '#mmi_frm_status', $buttons_id = 'div.submit', $message = 'Submitting &hellip;')
 	{
+		$img_src = URL::site('media/img/animated/loading16x16.gif');
 return<<<EOJS
 function(frm)
 {
 	$('{$status_id}').removeClass(validator.settings.errorClass).hide();
-	$('{$buttons_id}').replaceWith('<div class="submitting">{$message}</div>');
+	$('{$buttons_id}').replaceWith('<div class="submitting"><img src="{$img_src}" height="16" width="16" />{$message}</div>');
 	frm.submit();
 }
 EOJS;
