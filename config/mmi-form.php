@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-// Form configuration
+// MMI form configuration
 return array
 (
 	'_field' => array
@@ -9,8 +9,9 @@ return array
 		(
 			'trim' => NULL,
 		),
+		'_before' => '<br />',
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_FIELD, MMI_Form::ORDER_ERROR),
-		'class' => 'fld',
+		'class' => 'mmi',
 	),
 
 	'_group' => array
@@ -21,8 +22,8 @@ return array
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
 		'_label' => array
 		(
-			'_before' => '<div class="group">',
-			'_after' => ':',
+			'_before' => '<div class="mmi group checkable">',
+			'_after' => '',
 		),
 		'_error' => array('_after' => '<br />'),
 		'_item'=> array
@@ -47,15 +48,14 @@ return array
 	),
 	'_label' => array
 	(
-		'_before' => '<div>'.PHP_EOL,
-		'_after' => ':',
+		'_before' => '<div class="mmi">'.PHP_EOL,
+		'_after' => '',
 		'class' => 'lbl',
 	),
 	'_open' => array
 	(
 		'_before' => '',
 		'_after' => '',
-		'class' => 'frm',
 	),
 	'_close' => array
 	(
@@ -86,9 +86,9 @@ return array
 	'_html5'			=> TRUE,
 	'_required_symbol'	=> array
 	(
-		'_html' => '<strong>*</strong>&nbsp;',
-		'_placement' => MMI_Form::REQ_SYMBOL_BEFORE,
+		'_html' => '&nbsp;<em>(required)</em>',
+		'_placement' => MMI_Form::REQ_SYMBOL_AFTER,
 	),
 	'_show_messages' 	=> TRUE,
-	'class'				=> 'frm',
+	'class'				=> 'mmi',
 );

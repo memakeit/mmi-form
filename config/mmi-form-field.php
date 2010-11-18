@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-// Field-specific configuration
+// MMI form field configuration
 return array
 (
 	'button' => MMI_Form_Field::defaults(MMI_Form_Field::DEFAULTS_FIELD_ONLY),
@@ -21,18 +21,21 @@ return array
 	'select' => array
 	(
 		'_filters' => array(),
+		'_label' => array('_before' => '<div class="mmi select">'.PHP_EOL),
 	),
 	'submit' => array
 	(
-		'_before' => '<div class="submit">',
+		'_before' => '<div class="mmi submit">',
 		'_after' => '</div>',
 		'_order' => array(MMI_Form::ORDER_FIELD),
+		'class' => 'mmi btn',
 	),
 	'textarea' => array
 	(
 		'_before' => '<br />'.PHP_EOL,
 		'_after' => PHP_EOL.'</div>',
 		'_order' => array(MMI_Form::ORDER_LABEL, MMI_Form::ORDER_ERROR, MMI_Form::ORDER_FIELD),
+		'_label' => array('_before' => '<div class="mmi textarea">'.PHP_EOL),
 		'_error' => array('_after' => ''),
 		'cols' => 80,
 		'rows' => 8,

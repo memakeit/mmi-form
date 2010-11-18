@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-// reCAPTCHA plugin configuration
+// MMI form reCAPTCHA plugin configuration
 return array
 (
 	'mailhide' => array
