@@ -660,69 +660,13 @@ abstract class Kohana_MMI_Form_Field
 		{
 			$name = MMI_Form::clean_id($this->name());
 			$original = Arr::get($this->_meta, 'original');
-			$posted = $this->_apply_filters(Arr::get($_POST, $name, ''));
+			$posted = Arr::get($_POST, $name, '');
 			$this->_meta['posted'] = $posted;
 			$this->_meta['updated'] = ($original !== $posted);
 			$this->_attributes['value'] = $posted;
 		}
 		$this->_post_data_loaded = TRUE;
 		$this->_state |= MMI_Form::STATE_POSTED;
-	}
-
-	/**
-	 * Apply the filters to the field value.
-	 *
-	 * @param	mixed	the field value
-	 * @return	mixed
-	 */
-	protected function _apply_filters($value)
-	{
-		// Process array values
-		if (is_array($value))
-		{
-			foreach ($value as $idx => $val)
-			{
-				$value[$idx] = $this->_apply_filters($val);
-			}
-			return $value;
-		}
-
-		$filters = Arr::get($this->_meta, 'filters', array());
-		if (empty($filters))
-		{
-			return $value;
-		}
-
-		foreach ($filters as $filter => $params)
-		{
-			// Add the field value to the parameters
-			if ( ! isset($params))
-			{
-				$params = array();
-			}
-			array_unshift($params, $value);
-
-			if (strpos($filter, '::') === FALSE)
-			{
-				// Use a function call
-				$function = new ReflectionFunction($filter);
-
-				// Call $function($this[$field], $param, ...) with Reflection
-				$value = $function->invokeArgs($params);
-			}
-			else
-			{
-				// Split the class and method of the rule
-				list($class, $method) = explode('::', $filter, 2);
-
-				// Use a static method call
-				$method = new ReflectionMethod($class, $method);
-
-				// Call $class::$method($this[$field], $param, ...) with Reflection
-				$value = $method->invokeArgs(NULL, $params);
-			}
-		}
-		return $value;
 	}
 
 	/**
