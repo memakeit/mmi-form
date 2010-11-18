@@ -31,6 +31,11 @@ class Kohana_MMI_Form_Filter_HTML
 	 */
 	public static function purify($html, $options = NULL)
 	{
+		if (empty($html))
+		{
+			return '';
+		}
+
 		// Load HTML Purifier
 		$purifier = self::_htmlpurifier();
 
