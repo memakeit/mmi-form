@@ -984,14 +984,17 @@ EOJS;
 	 */
 	public static function get_default_submit_handler($status_id = '#mmi_frm_status', $buttons_id = 'div.submit', $message = 'Submitting &hellip;')
 	{
-		$img_src = URL::site('media/img/animated/loading16x16.gif');
+
 return<<<EOJS
 function(frm)
 {
-	var img = $('<img />', { src: '{$img_src}', height: 16, width: 16 });
 	$('{$status_id}').removeClass(validator.settings.errorClass).hide();
 	$('{$buttons_id}').replaceWith('<div class="submitting">{$message}</div>');
-	$('div.submitting').prepend(img);
+	var img = $('img.submitting');
+	if (img.length > 0)
+	{
+		$('div.submitting').prepend('<img src="' + img.attr('src') + '" />');
+	}
 	frm.submit();
 }
 EOJS;
