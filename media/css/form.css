@@ -113,7 +113,7 @@ select.mmi
 
 input.mmi.checkable
 {
-	margin: 6px 5px 0 0;
+	margin: 3px 5px 0 0;
 }
 
 .ie6 input.mmi.checkable,
@@ -121,7 +121,7 @@ input.mmi.checkable
 .ie8 input.mmi.checkable
 {
 	border-width: 0;
-	margin: 4px 5px 0 0;
+	margin: 1px 5px 0 0;
 }
 
 /*	input error styles
