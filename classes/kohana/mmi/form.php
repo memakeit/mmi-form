@@ -713,12 +713,12 @@ class Kohana_MMI_Form
 		}
 
 		$valid = TRUE;
-		foreach ($this->_fields as $field)
+		foreach ($this->_fields as $id => $field)
 		{
-			$valid &= $field->valid();
+			$valid &=  $field->valid();
 		}
 		$this->_state |= self::STATE_VALIDATED;
-		return ($valid === 1);
+		return ($valid === 1) AND (count($this->_errors) === 0);
 	}
 
 	/**
