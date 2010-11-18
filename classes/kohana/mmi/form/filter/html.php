@@ -33,7 +33,7 @@ class Kohana_MMI_Form_Filter_HTML
 	{
 		if (empty($html))
 		{
-			return '';
+			return $html;
 		}
 
 		// Load HTML Purifier
