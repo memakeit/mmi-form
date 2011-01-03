@@ -107,46 +107,7 @@ class Kohana_MMI_Form_Field_HTML extends MMI_Form_Field
 		{
 			return '';
 		}
-
-		$html = '';
-		if (is_string($callback) AND strpos($callback, '::') !== FALSE)
-		{
-			// Convert the static callback into an array
-			$callback = explode('::', $callback, 2);
-		}
-
-		if (is_array($callback))
-		{
-			// Separate the object and method
-			list ($object, $method) = $callback;
-
-			// Get the arguments
-			$args = array();
-			if (isset($callback[2]))
-			{
-				$args = $callback[2];
-			}
-			if ( ! is_array($args))
-			{
-				$args = array();
-			}
-
-			// Invoke an object method
-			$method = new ReflectionMethod($object, $method);
-			if ( ! is_object($object))
-			{
-				// Object must be null for static calls
-				$object = NULL;
-			}
-			$html = $method->invokeArgs($object, $args);
-		}
-		else
-		{
-			// Invoke a function
-			$function = new ReflectionFunction($callback);
-			$html = $function->invoke();
-		}
-		return $html;
+		return MMI_Util::exec_callback($callback);
 	}
 
 	/**
